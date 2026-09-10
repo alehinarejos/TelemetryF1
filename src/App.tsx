@@ -22,7 +22,8 @@ import { HomeSketchLayout } from './components/HomeSketchLayout';
 import { OfficialLeaderboardView } from './components/OfficialLeaderboardView';
 import { DRIVER_MAP } from './data/drivers';
 import { F1_SCHEDULE } from './data/schedule';
-import { CloudSun, Wind, Droplets, Thermometer, Radio, PlayCircle, Clock, CheckCircle2 } from 'lucide-react';
+import { useLanguage } from './context/LanguageContext';
+import { CloudSun, Wind, Droplets, Thermometer, Radio, Clock, CheckCircle2 } from 'lucide-react';
 
 import './styles/global.css';
 import './styles/dashboard.css';
@@ -35,6 +36,8 @@ import './styles/schedule.css';
 import './styles/home-layout.css';
 
 export const App: React.FC = () => {
+  const { t } = useLanguage();
+  // Telemetry Engine (connected to realistic data stream & official fallback)
   const engineRef = useRef<TelemetryEngine | null>(null);
 
   if (!engineRef.current) {
@@ -52,16 +55,13 @@ export const App: React.FC = () => {
   const [raceControlMessages, setRaceControlMessages] = useState<RaceControlMessage[]>(() => engine.getRaceControlMessages());
   const [teamRadios, setTeamRadios] = useState<TeamRadio[]>(() => engine.getTeamRadios());
 
-  // SignalR connection state
+  // Live connection state
   const [signalRStatus, setSignalRStatus] = useState<SignalRConnectionStatus>('connecting');
-  const [signalRDetails, setSignalRDetails] = useState<string>('Negociando con livetiming.formula1.com/signalrcore...');
+  const [signalRDetails, setSignalRDetails] = useState<string>('Conectado');
 
   // Official live status
   const [isOfficialLive, setIsOfficialLive] = useState<boolean>(false);
-  const [officialStatusMessage, setOfficialStatusMessage] = useState<string>('Comprobando servidor oficial F1 SignalR & OpenF1...');
-  
-  // Standby mode toggle in Telemetry Complete tab
-  const [showLatestSessionPreview, setShowLatestSessionPreview] = useState<boolean>(false);
+  const [officialStatusMessage, setOfficialStatusMessage] = useState<string>('Conectado a los datos oficiales de Fórmula 1');
 
   const nextGp = F1_SCHEDULE.find(gp => !gp.completed) || F1_SCHEDULE[15];
   const nextSessionName = `${nextGp.name} (${nextGp.circuitName})`;
@@ -200,8 +200,8 @@ export const App: React.FC = () => {
         {/* TAB: Full Live Timing & Telemetry Dashboard */}
         {activeTab === 'timing' && (
           <>
-            {/* If there is NO active session on track and user hasn't toggled preview */}
-            {!isOfficialLive && !showLatestSessionPreview ? (
+            {/* If there is NO active session on track */}
+            {!isOfficialLive ? (
               <div className="telemetry-standby-banner" style={{
                 background: 'linear-gradient(135deg, rgba(8, 12, 20, 0.95) 0%, rgba(19, 25, 38, 0.95) 100%)',
                 border: '1px solid var(--f1-border)',
@@ -235,16 +235,16 @@ export const App: React.FC = () => {
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '8px' }}>
                     <span className="f1-badge badge-green" style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                       <CheckCircle2 size={12} />
-                      <span>SIGNALR CONECTADO: livetiming.formula1.com</span>
+                      <span>{t('connected')}</span>
                     </span>
-                    <span className="f1-badge">SIN INTERMEDIARIOS</span>
+                    <span className="f1-badge">{t('official_f1_data').toUpperCase()}</span>
                   </div>
 
                   <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.6rem', fontWeight: 900, color: '#fff', margin: '6px 0' }}>
-                    EN ESPERA DE SESIÓN OFICIAL EN DIRECTO
+                    {t('telemetry_standby_title')}
                   </h2>
                   <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', maxWidth: '620px', lineHeight: 1.6 }}>
-                    El cliente WebSocket nativo de SignalR está conectado directamente a los servidores de Formula 1 (F1 TV). La suscripción a los canales <code>CarData.z</code>, <code>Position.z</code> y <code>TimingData</code> se encuentra activa para transmitir en vivo en cuanto los monoplazas salgan a pista.
+                    {t('telemetry_standby_desc')}
                   </p>
                 </div>
 
@@ -264,29 +264,20 @@ export const App: React.FC = () => {
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <Clock size={16} color="var(--f1-red)" />
-                    <span>Próxima cita en pista: <strong>{nextGp.flag} {nextGp.name} 2026</strong></span>
+                    <span>{t('next_session_on_track')} <strong>{nextGp.flag} {nextGp.name} 2026</strong></span>
                   </div>
                   <span className="f1-badge badge-live" style={{ fontSize: '0.68rem' }}>
-                    CANALES SUSCRITOS
+                    {t('ready_to_broadcast')}
                   </span>
                 </div>
 
                 <div style={{ display: 'flex', gap: '12px', marginTop: '8px', flexWrap: 'wrap', justifyContent: 'center' }}>
                   <button
-                    onClick={() => setShowLatestSessionPreview(true)}
-                    className="f1-btn f1-btn-primary"
-                    style={{ padding: '10px 20px', fontSize: '0.85rem', gap: '8px' }}
-                  >
-                    <PlayCircle size={16} />
-                    <span>Ver Telemetría Oficial de Monza 2026 (Carrera)</span>
-                  </button>
-
-                  <button
                     onClick={() => setActiveTab('schedule')}
-                    className="f1-btn"
-                    style={{ padding: '10px 18px', fontSize: '0.85rem' }}
+                    className="f1-btn f1-btn-primary"
+                    style={{ padding: '10px 22px', fontSize: '0.85rem' }}
                   >
-                    <span>Ver Calendario de Sesiones</span>
+                    <span>{t('view_session_schedule')}</span>
                   </button>
                 </div>
               </div>
@@ -296,39 +287,26 @@ export const App: React.FC = () => {
                 <div className="weather-strip">
                   <div className="weather-item">
                     <CloudSun size={15} color="var(--color-yellow)" />
-                    <span>Pista: <strong>{session.circuit.name}</strong></span>
+                    <span>{t('track')}: <strong>{session.circuit.name}</strong></span>
                   </div>
                   <div className="weather-item">
                     <Thermometer size={14} color="#ff5555" />
-                    <span>Aire: <strong>{session.airTemp}°C</strong></span>
+                    <span>{t('air')}: <strong>{session.airTemp}°C</strong></span>
                   </div>
                   <div className="weather-item">
                     <Thermometer size={14} color="#ff9900" />
-                    <span>Asfalto: <strong>{session.trackTemp}°C</strong></span>
+                    <span>{t('asphalt')}: <strong>{session.trackTemp}°C</strong></span>
                   </div>
                   <div className="weather-item">
                     <Droplets size={14} color="#00a6ff" />
-                    <span>Humedad: <strong>{session.humidity}%</strong></span>
+                    <span>{t('humidity')}: <strong>{session.humidity}%</strong></span>
                   </div>
                   <div className="weather-item">
                     <Wind size={14} color="#94a3b8" />
-                    <span>Viento: <strong>{session.windSpeed} km/h</strong></span>
+                    <span>{t('wind')}: <strong>{session.windSpeed} km/h</strong></span>
                   </div>
                   <div className="weather-item" style={{ marginLeft: 'auto', display: 'flex', gap: '8px', alignItems: 'center' }}>
-                    {isOfficialLive ? (
-                      <span className="f1-badge badge-live">🔴 SEÑAL SIGNALR EN DIRECTO</span>
-                    ) : (
-                      <>
-                        <span className="f1-badge badge-green">DATOS OFICIALES MONZA 2026</span>
-                        <button 
-                          onClick={() => setShowLatestSessionPreview(false)}
-                          className="f1-btn" 
-                          style={{ padding: '2px 8px', fontSize: '0.7rem' }}
-                        >
-                          Volver a En Espera
-                        </button>
-                      </>
-                    )}
+                    <span className="f1-badge badge-live">🔴 {t('live')}</span>
                   </div>
                 </div>
 
@@ -392,7 +370,7 @@ export const App: React.FC = () => {
         )}
       </main>
 
-      {/* Footer Legal Disclaimer */}
+      {/* Footer Disclaimer */}
       <footer style={{
         marginTop: 'auto',
         padding: '24px 20px',
@@ -404,10 +382,10 @@ export const App: React.FC = () => {
         fontFamily: 'var(--font-mono)'
       }}>
         <p style={{ maxWidth: '820px', margin: '0 auto 8px auto', lineHeight: 1.5 }}>
-          Conectado directamente al stream oficial de Formula 1 SignalR (<code>livetiming.formula1.com/signalrcore</code>) • Telemetría sin intermediarios.
+          {t('footer_text')}
         </p>
         <p style={{ color: 'var(--text-secondary)' }}>
-          Datos de telemetría y tiempos oficiales en directo • Campeonato Mundial de Pilotos y Constructores 2026 • Circle of Doom
+          {t('footer_subtext')}
         </p>
       </footer>
     </div>

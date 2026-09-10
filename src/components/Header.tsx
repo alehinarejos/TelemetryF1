@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import type { SessionState } from '../types/telemetry';
 import type { SignalRConnectionStatus } from '../services/f1SignalRClient';
-import { scheduleSyncService } from '../services/scheduleSyncService';
+import { scheduleSyncService, getGrandPrixTimeline } from '../services/scheduleSyncService';
 import type { ScheduleSyncState } from '../services/scheduleSyncService';
+import { useLanguage } from '../context/LanguageContext';
+import { LanguageSelector } from './LanguageSelector';
 import { 
   Calendar, 
   Gauge, 
@@ -30,9 +32,9 @@ export const Header: React.FC<HeaderProps> = ({
   setActiveTab,
   isOfficialLive,
   signalRStatus = 'connected',
-  signalRDetails,
   onRefreshLive,
 }) => {
+  const { t } = useLanguage();
   const isStreaming = signalRStatus === 'live_streaming' || isOfficialLive;
   const isConnected = signalRStatus === 'connected' || signalRStatus === 'live_streaming';
 
@@ -47,13 +49,15 @@ export const Header: React.FC<HeaderProps> = ({
   }, []);
 
   const upcomingGp = scheduleState.schedule.find(g => !g.completed) || scheduleState.schedule[15];
+  const timeline = getGrandPrixTimeline(upcomingGp);
 
-  // Find next upcoming session
-  const nowMs = Date.now();
-  const nextSession = upcomingGp.sessions.find(s => {
-    const t = new Date(s.startTimeUtc).getTime();
-    return !isNaN(t) && t > nowMs;
-  }) || upcomingGp.sessions[0];
+  const activeTimelineSession = timeline.activeSession;
+  const lastFinishedSession = timeline.lastCompletedSession;
+  const nextTargetSession = timeline.nextSession || upcomingGp.sessions[0];
+
+  const targetStartTime = nextTargetSession 
+    ? (typeof nextTargetSession === 'object' && 'startTime' in nextTargetSession ? (nextTargetSession as any).startTime : new Date((nextTargetSession as any).startTimeUtc).getTime())
+    : new Date(`${upcomingGp.startDate}T11:30:00Z`).getTime();
 
   // Live countdown to the next session
   const [sessionCountdown, setSessionCountdown] = useState({
@@ -61,48 +65,62 @@ export const Header: React.FC<HeaderProps> = ({
     hours: 0,
     minutes: 0,
     seconds: 0,
+    formattedText: '',
   });
 
   useEffect(() => {
-    const targetIso = nextSession?.startTimeUtc || `${upcomingGp.startDate}T11:30:00Z`;
-    const targetTime = new Date(targetIso).getTime();
+    const targetTime = isNaN(targetStartTime) ? Date.now() : targetStartTime;
 
     const updateCountdown = () => {
       const diff = Math.max(0, targetTime - Date.now());
       const days = Math.floor(diff / (1000 * 60 * 60 * 24));
       const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((diff % (1000 * 60)) / (1000 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-      setSessionCountdown({ days, hours, minutes, seconds });
+      
+      let formattedText = '';
+      if (days > 0) {
+        formattedText = `${days}d ${String(hours).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}m`;
+      } else {
+        formattedText = `${hours}h ${String(minutes).padStart(2, '0')}m`;
+      }
+
+      setSessionCountdown({ days, hours, minutes, seconds, formattedText });
     };
 
     updateCountdown();
     const interval = setInterval(updateCountdown, 1000);
     return () => clearInterval(interval);
-  }, [nextSession, upcomingGp]);
+  }, [targetStartTime]);
 
   return (
     <header className="f1-header">
       <div className="header-top">
         {/* Brand */}
         <div className="brand-section">
-          <div className="f1-logo-badge">F1</div>
+          <div className="f1-logo-badge" style={{ letterSpacing: '0.02em', padding: '4px 8px', fontSize: '1rem', fontWeight: 900 }}>
+            OC
+          </div>
           <div className="app-title-group">
-            <span className="app-name">Telemetry Live</span>
-            <span className="app-subtitle">Official F1 SignalR & Live Timing Stream</span>
+            <span className="app-name" style={{ letterSpacing: '0.06em', display: 'flex', alignItems: 'center', gap: '5px' }}>
+              OVERCUT <span style={{ color: 'var(--f1-red)', fontSize: '0.82em', fontWeight: 900 }}>F1</span>
+            </span>
+            <span className="app-subtitle">{t('app_subtitle')}</span>
           </div>
         </div>
 
         {/* Center Session Pill: Displays current GP and active session, or time remaining until next session */}
         <div className="session-pill" style={{ padding: '6px 14px', minWidth: '380px' }}>
-          {isStreaming ? (
+          {isStreaming || activeTimelineSession ? (
             // Active Live Session Running
             <>
               <div className="session-track-info">
                 <span className="country-flag">{upcomingGp.flag}</span>
                 <div>
                   <div className="circuit-title">{upcomingGp.name}</div>
-                  <div className="circuit-session-type">{session.type || 'RACE'} SESSION</div>
+                  <div className="circuit-session-type" style={{ color: '#ff4d4d', fontWeight: 800 }}>
+                    {activeTimelineSession ? `${activeTimelineSession.session.name} ${t('session_live')}` : `${session.type || 'RACE'} SESSION`}
+                  </div>
                 </div>
               </div>
 
@@ -134,17 +152,19 @@ export const Header: React.FC<HeaderProps> = ({
                 <span className="f1-badge badge-green">PISTA VERDE</span>
               )}
 
-              <span className="f1-badge badge-live">🔴 EN DIRECTO</span>
+              <span className="f1-badge badge-live">🔴 {t('live')}</span>
             </>
           ) : (
-            // Standby: Shows current GP + Next Session + Time Remaining
+            // Standby / Between Sessions: Shows current GP + Next Session + Time Remaining
             <>
               <div className="session-track-info">
                 <span className="country-flag" style={{ fontSize: '1.4rem' }}>{upcomingGp.flag}</span>
                 <div>
                   <div className="circuit-title" style={{ fontSize: '0.85rem' }}>{upcomingGp.name} 2026</div>
-                  <div className="circuit-session-type" style={{ color: '#00D7B6', fontWeight: 700, fontSize: '0.72rem' }}>
-                    {nextSession.name}
+                  <div className="circuit-session-type" style={{ color: lastFinishedSession ? '#a0aec0' : '#00D7B6', fontWeight: 700, fontSize: '0.72rem' }}>
+                    {lastFinishedSession 
+                      ? t('session_finished', { session: lastFinishedSession.session.name })
+                      : (nextTargetSession ? (nextTargetSession as any).session?.name || (nextTargetSession as any).name : t('waiting'))}
                   </div>
                 </div>
               </div>
@@ -155,10 +175,19 @@ export const Header: React.FC<HeaderProps> = ({
                 <Clock size={14} color="#00D7B6" />
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                   <span style={{ fontSize: '0.62rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', textTransform: 'uppercase' }}>
-                    Próxima sesión en:
+                    {lastFinishedSession && nextTargetSession 
+                      ? t('next_session_in', { session: (nextTargetSession as any).session?.name || (nextTargetSession as any).name })
+                      : t('next_event_in')}
                   </span>
                   <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 800, fontSize: '0.86rem', color: '#fff', letterSpacing: '0.04em' }}>
-                    {sessionCountdown.days}d {String(sessionCountdown.hours).padStart(2, '0')}h {String(sessionCountdown.minutes).padStart(2, '0')}m <strong style={{ color: 'var(--f1-red)' }}>{String(sessionCountdown.seconds).padStart(2, '0')}s</strong>
+                    {sessionCountdown.days > 0 && `${sessionCountdown.days}d `}
+                    {(sessionCountdown.days > 0 || sessionCountdown.hours > 0) && (
+                      <>{sessionCountdown.days > 0 ? String(sessionCountdown.hours).padStart(2, '0') : sessionCountdown.hours}h </>
+                    )}
+                    {(sessionCountdown.days > 0 || sessionCountdown.hours > 0 || sessionCountdown.minutes > 0) && (
+                      <>{(sessionCountdown.days > 0 || sessionCountdown.hours > 0) ? String(sessionCountdown.minutes).padStart(2, '0') : sessionCountdown.minutes}m </>
+                    )}
+                    <strong style={{ color: 'var(--f1-red)' }}>{String(sessionCountdown.seconds).padStart(2, '0')}s</strong>
                   </span>
                 </div>
               </div>
@@ -166,26 +195,33 @@ export const Header: React.FC<HeaderProps> = ({
               <div className="session-divider" />
 
               <span className="f1-badge" style={{ fontSize: '0.66rem', color: 'var(--text-secondary)' }}>
-                EN ESPERA
+                {t('waiting')}
               </span>
             </>
           )}
         </div>
 
-        {/* Official F1 SignalR Live Stream Status Indicator */}
-        <div className="header-actions">
+        {/* Live Status Indicator & Language Selector */}
+        <div className="header-actions" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <div 
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '9px',
-              background: 'rgba(0, 0, 0, 0.5)',
-              border: `1px solid ${isStreaming ? 'rgba(225, 6, 0, 0.4)' : isConnected ? 'rgba(0, 215, 182, 0.3)' : 'var(--f1-border)'}`,
-              borderRadius: '6px',
-              padding: '5px 12px',
-              cursor: 'pointer'
+              gap: '8px',
+              padding: '6px 14px',
+              borderRadius: '20px',
+              background: isStreaming 
+                ? 'rgba(225, 6, 0, 0.16)' 
+                : isConnected 
+                ? 'rgba(0, 215, 182, 0.12)' 
+                : 'rgba(255, 255, 255, 0.05)',
+              border: isStreaming 
+                ? '1px solid rgba(225, 6, 0, 0.4)' 
+                : isConnected 
+                ? '1px solid rgba(0, 215, 182, 0.3)' 
+                : '1px solid rgba(255, 255, 255, 0.1)',
             }}
-            title={signalRDetails || 'Conexión WebSocket directa a livetiming.formula1.com/signalrcore'}
+            title="Estado de conexión oficial"
           >
             {isStreaming ? (
               <Radio 
@@ -203,19 +239,19 @@ export const Header: React.FC<HeaderProps> = ({
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <span style={{ 
                 fontFamily: 'var(--font-mono)', 
-                fontSize: '0.68rem', 
+                fontSize: '0.72rem', 
                 fontWeight: 800, 
                 color: isStreaming ? '#ff4d4d' : isConnected ? '#00D7B6' : '#ffd700',
-                letterSpacing: '0.05em'
+                letterSpacing: '0.04em'
               }}>
                 {isStreaming 
-                  ? 'F1 SIGNALR LIVE STREAM' 
+                  ? t('live')
                   : isConnected 
-                  ? 'F1 SIGNALR CONECTADO' 
-                  : 'F1 SIGNALR NEGOCIANDO'}
+                  ? t('connected')
+                  : t('updating')}
               </span>
               <span style={{ fontSize: '0.64rem', color: 'var(--text-muted)' }}>
-                livetiming.formula1.com • Sin intermediarios
+                {t('official_f1_data')}
               </span>
             </div>
 
@@ -227,47 +263,50 @@ export const Header: React.FC<HeaderProps> = ({
                 }}
                 className="f1-btn"
                 style={{ padding: '4px', marginLeft: '4px', background: 'transparent', border: 'none' }}
-                title="Reconectar con F1 SignalR"
+                title={t('update_data')}
               >
                 <RotateCw size={13} color="var(--text-secondary)" />
               </button>
             )}
           </div>
+
+          {/* Multilingual Selector */}
+          <LanguageSelector />
         </div>
       </div>
 
       {/* Navigation Tabs */}
-      <nav className="header-nav">
+      <nav className="nav-tabs">
         <button 
-          className={`nav-tab ${activeTab === 'home' ? 'active' : ''}`}
+          className={`nav-tab-btn ${activeTab === 'home' ? 'active' : ''}`}
           onClick={() => setActiveTab('home')}
         >
           <LayoutDashboard size={15} />
-          <span>Dashboard Principal</span>
+          <span>{t('tab_dashboard')}</span>
         </button>
 
         <button 
-          className={`nav-tab ${activeTab === 'timing' ? 'active' : ''}`}
+          className={`nav-tab-btn ${activeTab === 'timing' ? 'active' : ''}`}
           onClick={() => setActiveTab('timing')}
         >
           <Gauge size={15} />
-          <span>Telemetría Completa</span>
+          <span>{t('tab_telemetry')}</span>
         </button>
 
         <button 
-          className={`nav-tab ${activeTab === 'leaderboard' ? 'active' : ''}`}
+          className={`nav-tab-btn ${activeTab === 'leaderboard' ? 'active' : ''}`}
           onClick={() => setActiveTab('leaderboard')}
         >
           <Trophy size={15} />
-          <span>Leaderboard Oficial</span>
+          <span>{t('tab_leaderboard')}</span>
         </button>
 
         <button 
-          className={`nav-tab ${activeTab === 'schedule' ? 'active' : ''}`}
+          className={`nav-tab-btn ${activeTab === 'schedule' ? 'active' : ''}`}
           onClick={() => setActiveTab('schedule')}
         >
           <Calendar size={15} />
-          <span>Calendario Oficial</span>
+          <span>{t('tab_schedule')}</span>
         </button>
       </nav>
     </header>

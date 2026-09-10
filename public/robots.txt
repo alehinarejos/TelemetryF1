@@ -1,0 +1,6 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+
+# Sitemap Index
+Sitemap: https://overcut-f1.vercel.app/sitemap.xml

@@ -6,10 +6,11 @@ import type {
   DriverInfo, 
   PitPrediction 
 } from '../types/telemetry';
+import { useLanguage } from '../context/LanguageContext';
 import { CircuitMap } from './CircuitMap';
 import { CarTelemetry } from './CarTelemetry';
 import { CircleOfDoom } from './CircleOfDoom';
-import { Radio, Gauge, MapPin, Eye, PlayCircle } from 'lucide-react';
+import { Radio, Gauge, MapPin, Eye } from 'lucide-react';
 
 interface TelemetrixBoxProps {
   circuit: CircuitInfo;
@@ -21,7 +22,7 @@ interface TelemetrixBoxProps {
   pitPrediction: PitPrediction | null;
   trackStatus: string;
   isOfficialLive: boolean;
-  statusMessage: string;
+  statusMessage?: string;
   nextSessionName: string;
 }
 
@@ -35,14 +36,10 @@ export const TelemetrixBox: React.FC<TelemetrixBoxProps> = ({
   pitPrediction,
   trackStatus,
   isOfficialLive,
-  statusMessage,
   nextSessionName,
 }) => {
-  // If no official race is live, allow the user to see the standby view or test the telemetry
-  const [simulationActive, setSimulationActive] = useState<boolean>(false);
+  const { t } = useLanguage();
   const [viewMode, setViewMode] = useState<'map' | 'gauges' | 'doom'>('map');
-
-  const isShowingTelemetry = isOfficialLive || simulationActive;
 
   return (
     <div className="telemetrix-card">
@@ -50,18 +47,18 @@ export const TelemetrixBox: React.FC<TelemetrixBoxProps> = ({
       <div className="telemetrix-header">
         <div className="telemetrix-title">
           <Gauge color="var(--f1-red)" size={20} />
-          <span>TELEMETRIX</span>
+          <span>{t('telemetrix_title')}</span>
           {isOfficialLive ? (
-            <span className="f1-badge badge-live">OFICIAL EN DIRECTO</span>
+            <span className="f1-badge badge-live">{t('official_live')}</span>
           ) : (
             <span className="f1-badge" style={{ background: 'rgba(255, 255, 255, 0.08)', color: 'var(--text-muted)' }}>
-              OFICIAL FIA
+              {t('official_fia')}
             </span>
           )}
         </div>
 
         {/* View Switcher if telemetry is active */}
-        {isShowingTelemetry && (
+        {isOfficialLive && (
           <div style={{ display: 'flex', gap: '6px' }}>
             <button
               className={`f1-btn ${viewMode === 'map' ? 'f1-btn-active' : ''}`}
@@ -69,7 +66,7 @@ export const TelemetrixBox: React.FC<TelemetrixBoxProps> = ({
               onClick={() => setViewMode('map')}
             >
               <MapPin size={13} />
-              <span>Mapa</span>
+              <span>{t('map')}</span>
             </button>
 
             <button
@@ -78,7 +75,7 @@ export const TelemetrixBox: React.FC<TelemetrixBoxProps> = ({
               onClick={() => setViewMode('gauges')}
             >
               <Gauge size={13} />
-              <span>Gauges</span>
+              <span>{t('gauges')}</span>
             </button>
 
             <button
@@ -87,14 +84,14 @@ export const TelemetrixBox: React.FC<TelemetrixBoxProps> = ({
               onClick={() => setViewMode('doom')}
             >
               <Eye size={13} />
-              <span>Circle of Doom</span>
+              <span>{t('circle_of_doom')}</span>
             </button>
           </div>
         )}
       </div>
 
       {/* Main Content */}
-      {!isShowingTelemetry ? (
+      {!isOfficialLive ? (
         /* Standby State: No official race active right now */
         <div className="standby-container">
           <div className="standby-radar-icon">
@@ -103,33 +100,20 @@ export const TelemetrixBox: React.FC<TelemetrixBoxProps> = ({
           </div>
 
           <h3 className="standby-title">
-            ESPERANDO SESIÓN OFICIAL EN VIVO
+            {t('waiting_next_session')}
           </h3>
 
           <p className="standby-desc">
-            No hay ninguna sesión de Fórmula 1 en pista en este momento. La plataforma está conectada a la API oficial de telemetría (OpenF1 / FIA Live Timing) y se activará en directo automáticamente al arrancar la sesión.
+            {t('waiting_desc')}
           </p>
 
           <div className="standby-status-pill">
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#64748b' }} />
-            <span>{statusMessage}</span>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#00D7B6' }} />
+            <span>{t('waiting_activity')}</span>
           </div>
 
           <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-            Próxima cita oficial: <strong style={{ color: '#fff' }}>{nextSessionName}</strong>
-          </div>
-
-          {/* User toggle to preview/test telemetry engine */}
-          <div className="standby-demo-toggle">
-            <PlayCircle size={18} color="var(--color-yellow)" />
-            <span>¿Deseas probar la interfaz y los gauges mientras esperas?</span>
-            <button
-              className="f1-btn f1-btn-primary"
-              style={{ padding: '6px 14px', fontSize: '0.78rem' }}
-              onClick={() => setSimulationActive(true)}
-            >
-              Activar Simulación
-            </button>
+            {t('next_session')} <strong style={{ color: '#fff' }}>{nextSessionName}</strong>
           </div>
         </div>
       ) : (
@@ -160,35 +144,6 @@ export const TelemetrixBox: React.FC<TelemetrixBoxProps> = ({
               pitPrediction={pitPrediction}
               pitLossSeconds={circuit.pitLossSeconds}
             />
-          )}
-
-          {!isOfficialLive && (
-            <div style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'space-between', 
-              padding: '8px 16px', 
-              background: 'rgba(255, 215, 0, 0.08)',
-              borderTop: '1px solid rgba(255, 215, 0, 0.2)',
-              fontSize: '0.72rem',
-              color: 'var(--color-yellow)',
-              fontFamily: 'var(--font-mono)'
-            }}>
-              <span>MODO DE PRUEBA ACTIVO (SIN SESIÓN OFICIAL EN PISTA)</span>
-              <button 
-                onClick={() => setSimulationActive(false)}
-                style={{ 
-                  background: 'transparent', 
-                  border: 'none', 
-                  color: '#fff', 
-                  textDecoration: 'underline', 
-                  cursor: 'pointer',
-                  fontFamily: 'inherit'
-                }}
-              >
-                Volver al Modo Oficial En Espera
-              </button>
-            </div>
           )}
         </div>
       )}

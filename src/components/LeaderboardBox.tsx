@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Trophy, Users, Search, CheckCircle2, RotateCw, Sparkles } from 'lucide-react';
 import { standingsSyncService } from '../services/standingsSyncService';
 import type { StandingsSyncState } from '../services/standingsSyncService';
+import { useLanguage } from '../context/LanguageContext';
 
 interface LeaderboardBoxProps {
   selectedDriverId: string;
@@ -14,6 +15,7 @@ export const LeaderboardBox: React.FC<LeaderboardBoxProps> = ({
   onSelectDriver,
   isSessionActive,
 }) => {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<'drivers' | 'constructors'>('drivers');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [syncState, setSyncState] = useState<StandingsSyncState>(standingsSyncService.getState());
@@ -55,24 +57,24 @@ export const LeaderboardBox: React.FC<LeaderboardBoxProps> = ({
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Trophy size={18} color="#ffd700" />
-          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: '1.05rem', color: '#fff', letterSpacing: '0.06em' }}>
-            LED / LEADERBOARD OFICIAL
+          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: '1.05rem', color: '#fff', letterSpacing: '0.04em' }}>
+            {t('world_standings')}
           </span>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           {isSessionActive ? (
-            <span className="f1-badge badge-live">🔴 SIGNALR LIVE</span>
+            <span className="f1-badge badge-live">🔴 {t('live')}</span>
           ) : (
             <span className="f1-badge badge-green" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
               <CheckCircle2 size={11} />
-              <span>F1 SIGNALR 2026</span>
+              <span>{t('updated')}</span>
             </span>
           )}
 
           <button
             onClick={handleManualSync}
-            title="Sincronizar clasificación oficial ahora"
+            title={t('sync_now')}
             disabled={syncState.isSyncing}
             style={{
               background: 'rgba(255, 255, 255, 0.08)',
@@ -119,8 +121,8 @@ export const LeaderboardBox: React.FC<LeaderboardBoxProps> = ({
             boxShadow: '0 0 8px #00D7B6',
             display: 'inline-block' 
           }} />
-          <span style={{ fontWeight: 600, color: '#00D7B6' }}>AUTO-SYNC:</span>
-          <span>Actualización automática al terminar la carrera</span>
+          <span style={{ fontWeight: 600, color: '#00D7B6' }}>{t('realtime_auto_sync').split(':')[0]}:</span>
+          <span>{t('realtime_auto_sync').split(':')[1]}</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--text-muted)' }}>
           <Sparkles size={10} color="#ffd700" />
@@ -136,7 +138,7 @@ export const LeaderboardBox: React.FC<LeaderboardBoxProps> = ({
           style={{ justifyContent: 'center' }}
         >
           <Trophy size={14} style={{ display: 'inline', marginRight: '6px' }} />
-          <span>Mundial Pilotos ({drivers.length})</span>
+          <span>{t('drivers_tab')} ({drivers.length})</span>
         </button>
 
         <button
@@ -145,7 +147,7 @@ export const LeaderboardBox: React.FC<LeaderboardBoxProps> = ({
           style={{ justifyContent: 'center' }}
         >
           <Users size={14} style={{ display: 'inline', marginRight: '6px' }} />
-          <span>Constructores ({constructors.length})</span>
+          <span>{t('constructors_tab')} ({constructors.length})</span>
         </button>
       </div>
 
@@ -161,7 +163,7 @@ export const LeaderboardBox: React.FC<LeaderboardBoxProps> = ({
         <Search size={14} color="var(--text-muted)" />
         <input 
           type="text" 
-          placeholder={activeTab === 'drivers' ? "Buscar por piloto, número o escudería..." : "Buscar por escudería..."}
+          placeholder={t('search_driver_or_team')}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           style={{
@@ -219,14 +221,14 @@ export const LeaderboardBox: React.FC<LeaderboardBoxProps> = ({
                       {driver.flag} {driver.name} <strong style={{ color: 'var(--text-muted)', fontSize: '0.72rem' }}>#{driver.number}</strong>
                     </span>
                     <span className="standing-team-name">
-                      {driver.team} • {driver.wins} {driver.wins === 1 ? 'victoria' : 'victorias'} • {driver.podiums} podios
+                      {driver.team} • {driver.wins} {t('wins').toLowerCase()} • {driver.podiums} {t('podiums').toLowerCase()}
                     </span>
                   </div>
                 </div>
 
                 <div className="standing-points">
                   <span className="points-num">{driver.points}</span>
-                  <span className="points-label">PTS</span>
+                  <span className="points-label">{t('points')}</span>
                 </div>
               </div>
             );
@@ -261,13 +263,13 @@ export const LeaderboardBox: React.FC<LeaderboardBoxProps> = ({
                   />
                   <div className="standing-driver-info">
                     <span className="standing-driver-name">{c.team}</span>
-                    <span className="standing-team-name">{c.wins} victorias • {c.podiums} podios oficiales</span>
+                    <span className="standing-team-name">{c.wins} {t('wins').toLowerCase()} • {c.podiums} {t('podiums').toLowerCase()}</span>
                   </div>
                 </div>
 
                 <div className="standing-points">
                   <span className="points-num">{c.points}</span>
-                  <span className="points-label">PTS</span>
+                  <span className="points-label">{t('points')}</span>
                 </div>
               </div>
             );
@@ -287,8 +289,8 @@ export const LeaderboardBox: React.FC<LeaderboardBoxProps> = ({
         alignItems: 'center',
         fontFamily: 'var(--font-mono)'
       }}>
-        <span>Fuente: Feed Oficial F1 SignalR & FIA</span>
-        <span style={{ color: '#00D7B6', fontWeight: 700 }}>livetiming.formula1.com</span>
+        <span>{t('standings_footer')}</span>
+        <span style={{ color: '#00D7B6', fontWeight: 700 }}>{t('official_fia_data')}</span>
       </div>
     </div>
   );

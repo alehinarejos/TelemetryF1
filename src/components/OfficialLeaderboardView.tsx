@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Trophy, Users, Search, RotateCw, Sparkles, CheckCircle2 } from 'lucide-react';
 import { standingsSyncService } from '../services/standingsSyncService';
 import type { StandingsSyncState } from '../services/standingsSyncService';
+import { useLanguage } from '../context/LanguageContext';
 
 export const OfficialLeaderboardView: React.FC = () => {
+  const { t } = useLanguage();
   const [view, setView] = useState<'drivers' | 'constructors'>('drivers');
   const [search, setSearch] = useState<string>('');
   const [syncState, setSyncState] = useState<StandingsSyncState>(standingsSyncService.getState());
@@ -48,15 +50,15 @@ export const OfficialLeaderboardView: React.FC = () => {
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.4rem', fontWeight: 900, margin: 0 }}>
-                LEADERBOARD OFICIAL F1 - TEMPORADA 2026
+                {t('official_f1_standings_title')}
               </h2>
               <span className="f1-badge badge-green" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                 <CheckCircle2 size={11} />
-                <span>DATOS OFICIALES FIA</span>
+                <span>{t('official_fia_data')}</span>
               </span>
             </div>
             <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-              Clasificación oficial del Campeonato Mundial FIA de Fórmula 1 • Actualización automática al finalizar cada carrera
+              {t('standings_subtitle')}
             </span>
           </div>
         </div>
@@ -75,7 +77,7 @@ export const OfficialLeaderboardView: React.FC = () => {
                 animation: syncState.isSyncing ? 'spin 1s linear infinite' : 'none'
               }}
             />
-            <span>{syncState.isSyncing ? 'Sincronizando...' : 'Actualizar Ahora'}</span>
+            <span>{syncState.isSyncing ? t('syncing') : t('sync_now')}</span>
           </button>
 
           {/* Search bar */}
@@ -91,7 +93,7 @@ export const OfficialLeaderboardView: React.FC = () => {
             <Search size={14} color="var(--text-muted)" />
             <input 
               type="text" 
-              placeholder="Buscar piloto o escudería..."
+              placeholder={t('search_driver_or_team')}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               style={{

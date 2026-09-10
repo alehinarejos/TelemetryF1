@@ -1,0 +1,16 @@
+{
+  "name": "OVERCUT F1 - Live Timing & Telemetría",
+  "short_name": "OVERCUT F1",
+  "description": "Dashboard oficial de telemetría y tiempos en directo de Fórmula 1 en tiempo real.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0e16",
+  "theme_color": "#e10600",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}

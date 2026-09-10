@@ -94,7 +94,7 @@ class OfficialF1Service {
     } catch {
       return {
         isLive: false,
-        statusMessage: 'Conectado a OpenF1 API (Temporada Oficial 2026) - En espera',
+        statusMessage: 'Conectado a los datos oficiales • En espera',
         activeSession: null,
         latestCompletedSession: null,
         nextSession: {

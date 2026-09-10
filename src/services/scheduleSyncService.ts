@@ -10,8 +10,8 @@ export interface ScheduleSyncState {
   source: string;
 }
 
-const STORAGE_KEY_LAST_CHECK = 'f1_schedule_last_weekly_check';
-const STORAGE_KEY_CUSTOM_SCHEDULE = 'f1_schedule_synced_data';
+const STORAGE_KEY_LAST_CHECK = 'f1_schedule_last_weekly_check_v3';
+const STORAGE_KEY_CUSTOM_SCHEDULE = 'f1_schedule_synced_2026_v3';
 const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
 class ScheduleSyncService {
@@ -21,7 +21,7 @@ class ScheduleSyncService {
     nextWeeklyCheck: null,
     isChecking: false,
     statusMessage: 'Horarios oficiales cargados',
-    source: 'F1 SignalR & FIA Calendario',
+    source: 'F1 Oficial',
   };
 
   private listeners: Set<(state: ScheduleSyncState) => void> = new Set();
@@ -221,8 +221,8 @@ class ScheduleSyncService {
 
     if (updatedAny) {
       upcomingGp.sessions = updatedSessions;
-      this.state.source = 'F1 SignalR Stream en Directo';
-      this.state.statusMessage = `Horario oficial sincronizado vía F1 SignalR para ${sessionName}`;
+      this.state.source = 'F1 Oficial';
+      this.state.statusMessage = `Horario oficial confirmado para ${sessionName}`;
       this.notify();
     }
   }
@@ -283,4 +283,85 @@ export function formatSessionFull(session: SessionSchedule): { dateStr: string; 
   }
 
   return { dateStr, timeStr };
+}
+
+export type SessionStateKind = 'completed' | 'live' | 'next' | 'future';
+
+export interface SessionTimelineInfo {
+  session: SessionSchedule;
+  status: SessionStateKind;
+  startTime: number;
+  endTime: number;
+  formattedDate: string;
+  formattedTime: string;
+}
+
+export interface GrandPrixTimeline {
+  activeSession: SessionTimelineInfo | null;
+  lastCompletedSession: SessionTimelineInfo | null;
+  nextSession: SessionTimelineInfo | null;
+  sessions: SessionTimelineInfo[];
+  allCompleted: boolean;
+}
+
+/**
+ * Computes exact state for every session of a Grand Prix (completed, live, next upcoming, future)
+ */
+export function getGrandPrixTimeline(gp: GrandPrixEvent): GrandPrixTimeline {
+  const now = Date.now();
+  let activeSession: SessionTimelineInfo | null = null;
+  let lastCompletedSession: SessionTimelineInfo | null = null;
+  let nextSession: SessionTimelineInfo | null = null;
+
+  const sessionInfos: SessionTimelineInfo[] = gp.sessions.map((sess) => {
+    const startTime = new Date(sess.startTimeUtc).getTime();
+    // Typical session duration in ms: FP: 60m, Qualy: 60m, Sprint: 45m, Race: 120m
+    let durationMs = 60 * 60 * 1000;
+    if (sess.type === 'Race') durationMs = 120 * 60 * 1000;
+    if (sess.type === 'Sprint') durationMs = 45 * 60 * 1000;
+    const endTime = !isNaN(startTime) ? startTime + durationMs : NaN;
+
+    let status: SessionStateKind = 'future';
+    if (!isNaN(startTime) && !isNaN(endTime)) {
+      if (now >= startTime && now <= endTime) {
+        status = 'live';
+      } else if (now > endTime) {
+        status = 'completed';
+      } else {
+        status = 'future';
+      }
+    }
+
+    const { dateStr, timeStr } = formatSessionFull(sess);
+    return {
+      session: sess,
+      status,
+      startTime,
+      endTime,
+      formattedDate: dateStr,
+      formattedTime: timeStr,
+    };
+  });
+
+  // Identify active, last completed, and next upcoming
+  for (const s of sessionInfos) {
+    if (s.status === 'live') {
+      activeSession = s;
+    } else if (s.status === 'completed') {
+      lastCompletedSession = s;
+    } else if (s.status === 'future' && !nextSession) {
+      s.status = 'next';
+      nextSession = s;
+    }
+  }
+
+  const allCompleted = sessionInfos.length > 0 && sessionInfos.every(s => s.status === 'completed');
+
+  return {
+    activeSession,
+    lastCompletedSession,
+    nextSession,
+    sessions: sessionInfos,
+    allCompleted,
+  };
 }

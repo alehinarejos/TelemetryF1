@@ -74,7 +74,7 @@ export class F1SignalRClient {
       return;
     }
 
-    this.updateStatus('connecting', 'Negociando conexión con livetiming.formula1.com/signalrcore...');
+    this.updateStatus('connecting', 'Conectando...');
 
     try {
       // 1. Negotiate via proxy (configured in Vite to bypass browser CORS)
@@ -87,19 +87,19 @@ export class F1SignalRClient {
       });
 
       if (!res.ok) {
-        throw new Error(`Fallo en negociación SignalR: HTTP ${res.status}`);
+        throw new Error(`Fallo en negociación: HTTP ${res.status}`);
       }
 
       const negotiateData = await res.json();
       const token = negotiateData.connectionToken || negotiateData.connectionId;
 
       if (!token) {
-        throw new Error('Token de conexión SignalR no recibido del servidor');
+        throw new Error('Token de conexión no recibido');
       }
 
       // 2. Open WebSocket connection
       const wsUrl = `wss://livetiming.formula1.com/signalrcore?id=${encodeURIComponent(token)}`;
-      this.updateStatus('connecting', `Conectando WebSocket a ${wsUrl.slice(0, 45)}...`);
+      this.updateStatus('connecting', 'Conectando...');
 
       this.ws = new WebSocket(wsUrl);
 
@@ -115,22 +115,22 @@ export class F1SignalRClient {
       };
 
       this.ws.onerror = (err) => {
-        console.warn('F1 SignalR WebSocket error:', err);
-        this.updateStatus('error', 'Error en el socket de Live Timing F1');
+        console.warn('F1 WebSocket error:', err);
+        this.updateStatus('error', 'Reintentando...');
       };
 
       this.ws.onclose = (ev) => {
-        console.log('F1 SignalR WebSocket cerrado:', ev.code, ev.reason);
+        console.log('F1 WebSocket cerrado:', ev.code, ev.reason);
         this.cleanup();
-        this.updateStatus('disconnected', 'Conexión cerrada por el servidor');
+        this.updateStatus('disconnected', 'Desconectado');
         // Auto-reconnect after 8 seconds
         this.scheduleReconnect(8000);
       };
 
     } catch (err: any) {
-      console.warn('F1 SignalR Connection Error:', err);
+      console.warn('F1 Connection Error:', err);
       this.cleanup();
-      this.updateStatus('error', err.message || 'Error al conectar con el servidor oficial de F1');
+      this.updateStatus('error', 'Reintentando...');
       this.scheduleReconnect(15000);
     }
   }
@@ -173,7 +173,7 @@ export class F1SignalRClient {
    * Once handshake is accepted, subscribe to official streaming channels
    */
   private onHandshakeConfirmed() {
-    this.updateStatus('connected', 'Conectado al servidor de Live Timing de F1');
+    this.updateStatus('connected', 'Conectado');
 
     // Subscribe to all official streaming topics
     const subscribeMsg = JSON.stringify({

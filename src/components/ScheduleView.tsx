@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { scheduleSyncService, formatSessionFull } from '../services/scheduleSyncService';
 import type { ScheduleSyncState } from '../services/scheduleSyncService';
+import { useLanguage } from '../context/LanguageContext';
 import { RaceResultsModal } from './RaceResultsModal';
 import { Trophy, Clock, Flag, Calendar, Timer, ChevronRight, RotateCw, CheckCircle2 } from 'lucide-react';
 
 export const ScheduleView: React.FC = () => {
+  const { t } = useLanguage();
   const [filter, setFilter] = useState<'all' | 'upcoming' | 'completed'>('all');
   const [selectedRound, setSelectedRound] = useState<number | null>(null);
   const [syncState, setSyncState] = useState<ScheduleSyncState>(scheduleSyncService.getState());
@@ -30,8 +32,12 @@ export const ScheduleView: React.FC = () => {
   });
 
   useEffect(() => {
-    const raceSession = nextGp.sessions.find(s => s.type === 'Race');
-    const targetIso = raceSession?.startTimeUtc || `${nextGp.startDate}T13:00:00Z`;
+    const nextSession = nextGp.sessions.find(s => {
+      const t = new Date(s.startTimeUtc).getTime();
+      return !isNaN(t) && t > Date.now();
+    }) || nextGp.sessions[0];
+
+    const targetIso = nextSession?.startTimeUtc || `${nextGp.startDate}T11:30:00Z`;
     const targetDate = new Date(targetIso).getTime();
 
     const updateCountdown = () => {
@@ -40,7 +46,7 @@ export const ScheduleView: React.FC = () => {
 
       const days = Math.floor(diff / (1000 * 60 * 60 * 24));
       const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((diff % (1000 * 60)) / (1000 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
       setTimeLeft({ days, hours, minutes, seconds });
@@ -66,7 +72,7 @@ export const ScheduleView: React.FC = () => {
       {/* Countdown Hero Banner */}
       <div className="countdown-banner">
         <div className="countdown-info">
-          <span className="countdown-eyebrow">PRÓXIMO GRAN PREMIO</span>
+          <span className="countdown-eyebrow">{t('next_gp')}</span>
           <h2 className="countdown-gp-name">
             {nextGp.flag} {nextGp.name} 2026
           </h2>
@@ -76,23 +82,33 @@ export const ScheduleView: React.FC = () => {
         </div>
 
         <div className="countdown-timer-group">
-          <div className="timer-unit-box">
-            <span className="timer-number">{timeLeft.days}</span>
-            <span className="timer-label">DÍAS</span>
-          </div>
-          <div className="timer-unit-box">
-            <span className="timer-number">{String(timeLeft.hours).padStart(2, '0')}</span>
-            <span className="timer-label">HORAS</span>
-          </div>
-          <div className="timer-unit-box">
-            <span className="timer-number">{String(timeLeft.minutes).padStart(2, '0')}</span>
-            <span className="timer-label">MIN</span>
-          </div>
+          {timeLeft.days > 0 && (
+            <div className="timer-unit-box">
+              <span className="timer-number">{timeLeft.days}</span>
+              <span className="timer-label">{t('days')}</span>
+            </div>
+          )}
+          {(timeLeft.days > 0 || timeLeft.hours > 0) && (
+            <div className="timer-unit-box">
+              <span className="timer-number">
+                {timeLeft.days > 0 ? String(timeLeft.hours).padStart(2, '0') : timeLeft.hours}
+              </span>
+              <span className="timer-label">{t('hours')}</span>
+            </div>
+          )}
+          {(timeLeft.days > 0 || timeLeft.hours > 0 || timeLeft.minutes > 0) && (
+            <div className="timer-unit-box">
+              <span className="timer-number">
+                {(timeLeft.days > 0 || timeLeft.hours > 0) ? String(timeLeft.minutes).padStart(2, '0') : timeLeft.minutes}
+              </span>
+              <span className="timer-label">{t('min')}</span>
+            </div>
+          )}
           <div className="timer-unit-box">
             <span className="timer-number" style={{ color: 'var(--f1-red)' }}>
               {String(timeLeft.seconds).padStart(2, '0')}
             </span>
-            <span className="timer-label">SEG</span>
+            <span className="timer-label">{t('sec')}</span>
           </div>
         </div>
       </div>
@@ -121,22 +137,22 @@ export const ScheduleView: React.FC = () => {
           }} />
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <strong style={{ color: '#00D7B6' }}>Comprobación Semanal Automática de Horarios:</strong>
+              <strong style={{ color: '#00D7B6' }}>{t('official_hours')}:</strong>
               <span className="f1-badge badge-green" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                 <CheckCircle2 size={10} />
-                <span>F1 SIGNALR + FIA</span>
+                <span>{t('confirmed_by_fia')}</span>
               </span>
             </div>
             <span style={{ color: 'var(--text-muted)', fontSize: '0.74rem' }}>
-              Los horarios de las sesiones se extraen en tiempo real de SignalR. Si la FIA aún no ha fijado la hora oficial se indica <strong>«n/d»</strong> y se verifica semanalmente de forma automática.
+              {t('schedule_auto_sync_desc')}
             </span>
           </div>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--text-muted)' }}>
-            <span>Última comprobación: <strong style={{ color: '#fff' }}>{syncState.lastWeeklyCheck ? syncState.lastWeeklyCheck.toLocaleDateString() : 'Activa'}</strong></span>
-            <span>Próxima revisión: <strong style={{ color: '#00D7B6' }}>{syncState.nextWeeklyCheck ? syncState.nextWeeklyCheck.toLocaleDateString() : 'En 7 días'}</strong></span>
+            <span>{t('last_check')} <strong style={{ color: '#fff' }}>{syncState.lastWeeklyCheck ? syncState.lastWeeklyCheck.toLocaleDateString() : 'Activa'}</strong></span>
+            <span>{t('next_review')} <strong style={{ color: '#00D7B6' }}>{syncState.nextWeeklyCheck ? syncState.nextWeeklyCheck.toLocaleDateString() : 'En 7 días'}</strong></span>
           </div>
 
           <button
@@ -144,7 +160,7 @@ export const ScheduleView: React.FC = () => {
             disabled={syncState.isChecking}
             className="f1-btn"
             style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.74rem', padding: '6px 12px' }}
-            title="Comprobar horarios oficiales ahora"
+            title={t('check_hours')}
           >
             <RotateCw 
               size={13} 
@@ -152,7 +168,7 @@ export const ScheduleView: React.FC = () => {
                 animation: syncState.isChecking ? 'spin 1s linear infinite' : 'none'
               }}
             />
-            <span>{syncState.isChecking ? 'Comprobando...' : 'Comprobar Horarios'}</span>
+            <span>{syncState.isChecking ? t('checking') : t('check_hours')}</span>
           </button>
         </div>
       </div>
@@ -174,19 +190,19 @@ export const ScheduleView: React.FC = () => {
             className={`f1-btn ${filter === 'all' ? 'f1-btn-active' : ''}`}
             onClick={() => setFilter('all')}
           >
-            Todos ({schedule.length})
+            {t('filter_all', { count: schedule.length })}
           </button>
           <button 
             className={`f1-btn ${filter === 'completed' ? 'f1-btn-active' : ''}`}
             onClick={() => setFilter('completed')}
           >
-            Disputadas (15)
+            {t('filter_completed', { count: 15 })}
           </button>
           <button 
             className={`f1-btn ${filter === 'upcoming' ? 'f1-btn-active' : ''}`}
             onClick={() => setFilter('upcoming')}
           >
-            Próximas (9)
+            {t('filter_upcoming', { count: 9 })}
           </button>
         </div>
       </div>
@@ -208,11 +224,11 @@ export const ScheduleView: React.FC = () => {
               title={isCompleted ? `Ver resultados oficiales del ${gp.name}` : undefined}
             >
               <div className="gp-card-header">
-                <span className="gp-round">RONDA {gp.round}</span>
+                <span className="gp-round">{t('round').toUpperCase()} {gp.round}</span>
                 {isCompleted ? (
                   <span className="f1-badge badge-green">COMPLETADO</span>
                 ) : gp.round === nextGp.round ? (
-                  <span className="f1-badge badge-live">PRÓXIMO</span>
+                  <span className="f1-badge badge-live">{t('session_next')}</span>
                 ) : (
                   <span className="f1-badge">PROGRAMADO</span>
                 )}
