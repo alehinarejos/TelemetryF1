@@ -8,9 +8,9 @@
 
 .leaderboard-header-row {
   display: grid;
-  grid-template-columns: 34px 38px 80px 75px 65px 75px 60px 60px 60px 42px;
-  gap: 6px;
-  padding: 8px 12px;
+  grid-template-columns: 32px 38px 88px minmax(75px, 1fr) minmax(75px, 1fr) minmax(85px, 1.1fr) 68px 68px 68px minmax(130px, 1.3fr);
+  gap: 8px;
+  padding: 8px 16px;
   background: rgba(0, 0, 0, 0.3);
   border-bottom: 1px solid var(--f1-border);
   font-family: var(--font-mono);
@@ -31,9 +31,9 @@
 
 .leaderboard-row {
   display: grid;
-  grid-template-columns: 34px 38px 80px 75px 65px 75px 60px 60px 60px 42px;
-  gap: 6px;
-  padding: 7px 12px;
+  grid-template-columns: 32px 38px 88px minmax(75px, 1fr) minmax(75px, 1fr) minmax(85px, 1.1fr) 68px 68px 68px minmax(130px, 1.3fr);
+  gap: 8px;
+  padding: 7px 16px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
   align-items: center;
   font-family: var(--font-mono);
@@ -157,12 +157,69 @@
 .cell-tyre {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
+  min-width: 0;
 }
 
-.tyre-age-text {
+.tyre-pill {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1.5px solid currentColor;
+}
+
+.tyre-soft {
+  color: #ff3b30;
+  background: rgba(255, 59, 48, 0.15);
+}
+
+.tyre-medium {
+  color: #ffd60a;
+  background: rgba(255, 214, 10, 0.15);
+}
+
+.tyre-hard {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.tyre-inter {
+  color: #34c759;
+  background: rgba(52, 199, 89, 0.15);
+}
+
+.tyre-wet {
+  color: #007aff;
+  background: rgba(0, 122, 255, 0.15);
+}
+
+.tyre-age-badge {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #e2e8f0;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 2px 5px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.pit-stops-badge {
+  font-family: var(--font-mono);
   font-size: 0.68rem;
   color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
 }
 
 /* Pit Stop status */
@@ -177,11 +234,12 @@
 .pit-in-badge {
   background: var(--color-blue);
   color: #fff;
-  font-size: 0.62rem;
+  font-size: 0.65rem;
   font-weight: 900;
-  padding: 1px 4px;
-  border-radius: 2px;
+  padding: 2px 6px;
+  border-radius: 3px;
   text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 /* Elimination Cutoff Line */

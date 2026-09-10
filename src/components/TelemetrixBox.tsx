@@ -10,7 +10,8 @@ import { useLanguage } from '../context/LanguageContext';
 import { CircuitMap } from './CircuitMap';
 import { CarTelemetry } from './CarTelemetry';
 import { CircleOfDoom } from './CircleOfDoom';
-import { Radio, Gauge, MapPin, Eye } from 'lucide-react';
+import { Leaderboard } from './Leaderboard';
+import { Gauge, MapPin, Eye, Timer } from 'lucide-react';
 
 interface TelemetrixBoxProps {
   circuit: CircuitInfo;
@@ -23,7 +24,7 @@ interface TelemetrixBoxProps {
   trackStatus: string;
   isOfficialLive: boolean;
   statusMessage?: string;
-  nextSessionName: string;
+  nextSessionName?: string;
 }
 
 export const TelemetrixBox: React.FC<TelemetrixBoxProps> = ({
@@ -36,10 +37,9 @@ export const TelemetrixBox: React.FC<TelemetrixBoxProps> = ({
   pitPrediction,
   trackStatus,
   isOfficialLive,
-  nextSessionName,
 }) => {
   const { t } = useLanguage();
-  const [viewMode, setViewMode] = useState<'map' | 'gauges' | 'doom'>('map');
+  const [viewMode, setViewMode] = useState<'map' | 'gauges' | 'times' | 'doom'>('map');
 
   return (
     <div className="telemetrix-card">
@@ -51,102 +51,111 @@ export const TelemetrixBox: React.FC<TelemetrixBoxProps> = ({
           {isOfficialLive ? (
             <span className="f1-badge badge-live">{t('official_live')}</span>
           ) : (
-            <span className="f1-badge" style={{ background: 'rgba(255, 255, 255, 0.08)', color: 'var(--text-muted)' }}>
-              {t('official_fia')}
+            <span className="f1-badge" style={{ background: 'rgba(255, 215, 0, 0.15)', color: '#ffd700', border: '1px solid rgba(255, 215, 0, 0.3)' }}>
+              {circuit.name} (R15)
             </span>
           )}
         </div>
 
-        {/* View Switcher if telemetry is active */}
-        {isOfficialLive && (
-          <div style={{ display: 'flex', gap: '6px' }}>
-            <button
-              className={`f1-btn ${viewMode === 'map' ? 'f1-btn-active' : ''}`}
-              style={{ padding: '4px 10px', fontSize: '0.75rem' }}
-              onClick={() => setViewMode('map')}
-            >
-              <MapPin size={13} />
-              <span>{t('map')}</span>
-            </button>
+        {/* View Switcher: Mapa, Velocidad, Tiempos, Circle of Doom */}
+        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+          <button
+            className={`f1-btn ${viewMode === 'map' ? 'f1-btn-active' : ''}`}
+            style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+            onClick={() => setViewMode('map')}
+          >
+            <MapPin size={13} />
+            <span>{t('map')}</span>
+          </button>
 
-            <button
-              className={`f1-btn ${viewMode === 'gauges' ? 'f1-btn-active' : ''}`}
-              style={{ padding: '4px 10px', fontSize: '0.75rem' }}
-              onClick={() => setViewMode('gauges')}
-            >
-              <Gauge size={13} />
-              <span>{t('gauges')}</span>
-            </button>
+          <button
+            className={`f1-btn ${viewMode === 'gauges' ? 'f1-btn-active' : ''}`}
+            style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+            onClick={() => setViewMode('gauges')}
+          >
+            <Gauge size={13} />
+            <span>{t('gauges')}</span>
+          </button>
 
-            <button
-              className={`f1-btn ${viewMode === 'doom' ? 'f1-btn-active' : ''}`}
-              style={{ padding: '4px 10px', fontSize: '0.75rem' }}
-              onClick={() => setViewMode('doom')}
-            >
-              <Eye size={13} />
-              <span>{t('circle_of_doom')}</span>
-            </button>
-          </div>
-        )}
+          <button
+            className={`f1-btn ${viewMode === 'times' ? 'f1-btn-active' : ''}`}
+            style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+            onClick={() => setViewMode('times')}
+          >
+            <Timer size={13} />
+            <span>{t('times')}</span>
+          </button>
+
+          <button
+            className={`f1-btn ${viewMode === 'doom' ? 'f1-btn-active' : ''}`}
+            style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+            onClick={() => setViewMode('doom')}
+          >
+            <Eye size={13} />
+            <span>{t('circle_of_doom')}</span>
+          </button>
+        </div>
       </div>
 
-      {/* Main Content */}
-      {!isOfficialLive ? (
-        /* Standby State: No official race active right now */
-        <div className="standby-container">
-          <div className="standby-radar-icon">
-            <Radio size={38} />
-            <div className="standby-radar-pulse" />
-          </div>
-
-          <h3 className="standby-title">
-            {t('waiting_next_session')}
-          </h3>
-
-          <p className="standby-desc">
-            {t('waiting_desc')}
-          </p>
-
-          <div className="standby-status-pill">
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#00D7B6' }} />
-            <span>{t('waiting_activity')}</span>
-          </div>
-
-          <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-            {t('next_session')} <strong style={{ color: '#fff' }}>{nextSessionName}</strong>
-          </div>
-        </div>
-      ) : (
-        /* Active Telemetry: Map, Gauges or Circle of Doom */
-        <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-          {viewMode === 'map' && (
-            <CircuitMap
-              circuit={circuit}
-              entries={entries}
-              selectedDriverId={selectedDriverId}
-              onSelectDriver={onSelectDriver}
-              trackStatus={trackStatus}
-            />
-          )}
-
-          {viewMode === 'gauges' && (
-            <CarTelemetry
-              telemetry={telemetry}
-              driver={selectedDriver}
-            />
-          )}
-
-          {viewMode === 'doom' && (
-            <CircleOfDoom
-              entries={entries}
-              selectedDriverId={selectedDriverId}
-              onSelectDriver={onSelectDriver}
-              pitPrediction={pitPrediction}
-              pitLossSeconds={circuit.pitLossSeconds}
-            />
-          )}
+      {/* When offline, show brief top context banner */}
+      {!isOfficialLive && (
+        <div style={{
+          padding: '6px 12px',
+          background: 'rgba(0, 0, 0, 0.35)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          fontSize: '0.75rem',
+          color: 'var(--text-secondary)'
+        }}>
+          <span>🏁 <strong>{circuit.name}</strong> • {t('session_finished', { session: 'Sesión' })}</span>
+          <span style={{ color: '#00D7B6', display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#00D7B6' }} />
+            {t('auto_sync_ready')}
+          </span>
         </div>
       )}
+
+      {/* Main Content: Map, Gauges, Times or Circle of Doom */}
+      <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, overflow: 'hidden' }}>
+        {viewMode === 'map' && (
+          <CircuitMap
+            circuit={circuit}
+            entries={entries}
+            selectedDriverId={selectedDriverId}
+            onSelectDriver={onSelectDriver}
+            trackStatus={trackStatus}
+          />
+        )}
+
+        {viewMode === 'gauges' && (
+          <CarTelemetry
+            telemetry={telemetry}
+            driver={selectedDriver}
+          />
+        )}
+
+        {viewMode === 'times' && (
+          <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+            <Leaderboard
+              entries={entries}
+              selectedDriverId={selectedDriverId}
+              onSelectDriver={onSelectDriver}
+            />
+          </div>
+        )}
+
+        {viewMode === 'doom' && (
+          <CircleOfDoom
+            entries={entries}
+            selectedDriverId={selectedDriverId}
+            onSelectDriver={onSelectDriver}
+            pitPrediction={pitPrediction}
+            pitLossSeconds={circuit.pitLossSeconds}
+          />
+        )}
+      </div>
     </div>
   );
 };

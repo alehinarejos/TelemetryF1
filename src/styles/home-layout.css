@@ -2,30 +2,35 @@
 .home-layout-grid {
   display: grid;
   grid-template-columns: 1.65fr 1fr;
-  gap: 20px;
-  align-items: start;
+  gap: 16px;
+  align-items: stretch;
+  height: calc(100vh - 116px);
+  min-height: 700px;
 }
 
 /* Left Column: telemetrix on top, SCHEDULE below */
 .home-left-column {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
+  height: 100%;
+  min-height: 0;
 }
 
 /* Right Column: Led (Leaderboard) spanning full height */
 .home-right-column {
   display: flex;
   flex-direction: column;
-  position: sticky;
-  top: 80px;
+  height: 100%;
+  min-height: 0;
 }
 
 /* Telemetrix Card */
 .telemetrix-card {
   display: flex;
   flex-direction: column;
-  min-height: 520px;
+  flex: 1;
+  min-height: 0;
   background: var(--f1-surface-glass);
   border: 1px solid var(--f1-border);
   border-radius: 12px;
@@ -33,13 +38,47 @@
   box-shadow: var(--glass-shadow);
 }
 
+/* Embedded Leaderboard inside Telemetrix Card */
+.telemetrix-card .leaderboard-container {
+  min-height: 0 !important;
+  height: 100% !important;
+  flex: 1;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.telemetrix-card .leaderboard-container .card-header {
+  display: none !important;
+}
+
+.telemetrix-card .leaderboard-header-row {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: rgba(12, 16, 25, 0.98);
+  border-bottom: 1px solid var(--f1-border);
+}
+
+.telemetrix-card .leaderboard-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  max-height: none !important;
+}
+
 .telemetrix-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 18px;
+  padding: 10px 16px;
   background: rgba(0, 0, 0, 0.35);
   border-bottom: 1px solid var(--f1-border);
+  flex-shrink: 0;
 }
 
 .telemetrix-title {
@@ -238,8 +277,8 @@
   box-shadow: var(--glass-shadow);
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 120px);
-  min-height: 680px;
+  height: 100%;
+  min-height: 0;
 }
 
 .leaderboard-tabs {

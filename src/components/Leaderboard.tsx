@@ -28,14 +28,14 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
       <div className="leaderboard-header-row">
         <span>POS</span>
         <span>PILOTO</span>
-        <span style={{ paddingLeft: '8px' }}>NOMBRE</span>
+        <span style={{ paddingLeft: '6px' }}>NOMBRE</span>
         <span>LÍDER</span>
         <span>INT</span>
         <span>TIEMPO</span>
         <span style={{ textAlign: 'center' }}>S1</span>
         <span style={{ textAlign: 'center' }}>S2</span>
         <span style={{ textAlign: 'center' }}>S3</span>
-        <span style={{ textAlign: 'center' }}>BOX</span>
+        <span style={{ textAlign: 'left', paddingLeft: '4px' }}>NEUMÁTICOS</span>
       </div>
 
       {/* Table Body */}
@@ -93,7 +93,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
                 {/* Code & Flag */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <span className="driver-code">{entry.driver.code}</span>
-                  <span style={{ fontSize: '0.8rem' }}>{entry.driver.flag}</span>
+                  <span style={{ fontSize: '0.82rem' }}>{entry.driver.flag}</span>
                 </div>
 
                 {/* Gap to Leader */}
@@ -126,17 +126,19 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
                   {entry.s3Time}
                 </div>
 
-                {/* Tyre & Pit stops */}
+                {/* Tyre & Pit stops with spacious badges */}
                 <div className="cell-tyre">
-                  <div className={`tyre-pill ${tyreClass}`}>
+                  <div className={`tyre-pill ${tyreClass}`} title={`Compuesto: ${entry.tyre.compound}`}>
                     {tyreLetter}
                   </div>
-                  <span className="tyre-age-text">{entry.tyre.age}L</span>
+                  <span className="tyre-age-badge" title="Vueltas con este neumático">
+                    {entry.tyre.age}v
+                  </span>
                   {entry.inPit ? (
                     <span className="pit-in-badge">PIT</span>
                   ) : (
-                    <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginLeft: '2px' }}>
-                      {entry.pitStops}p
+                    <span className="pit-stops-badge" title="Paradas en boxes">
+                      {entry.pitStops} {entry.pitStops === 1 ? 'stop' : 'stops'}
                     </span>
                   )}
                 </div>

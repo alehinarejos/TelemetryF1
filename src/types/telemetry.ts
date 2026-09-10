@@ -1,5 +1,5 @@
 export type SessionType = 'PRACTICE' | 'QUALIFYING' | 'RACE' | 'SPRINT';
-export type TrackStatus = 'GREEN' | 'YELLOW' | 'SC' | 'VSC' | 'RED';
+export type TrackStatus = 'GREEN' | 'YELLOW' | 'SC' | 'VSC' | 'RED' | 'CHEQUERED';
 export type SectorStatus = 'purple' | 'green' | 'yellow' | 'pit' | 'none';
 export type TyreCompound = 'SOFT' | 'MEDIUM' | 'HARD' | 'INTERMEDIATE' | 'WET';
 

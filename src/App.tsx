@@ -23,7 +23,7 @@ import { OfficialLeaderboardView } from './components/OfficialLeaderboardView';
 import { DRIVER_MAP } from './data/drivers';
 import { F1_SCHEDULE } from './data/schedule';
 import { useLanguage } from './context/LanguageContext';
-import { CloudSun, Wind, Droplets, Thermometer, Radio, Clock, CheckCircle2 } from 'lucide-react';
+import { CloudSun, Wind, Droplets, Thermometer, Clock, CheckCircle2 } from 'lucide-react';
 
 import './styles/global.css';
 import './styles/dashboard.css';
@@ -50,7 +50,7 @@ export const App: React.FC = () => {
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>(() => engine.getLeaderboard());
   const [session, setSession] = useState<SessionState>(() => engine.getSession());
   const [selectedDriverId, setSelectedDriverId] = useState<string>(() => engine.getSelectedDriverId());
-  const [telemetry, setTelemetry] = useState<CarTelemetryType | null>(null);
+  const [telemetry, setTelemetry] = useState<CarTelemetryType | null>(() => engine.getSelectedTelemetry());
   const [pitPrediction, setPitPrediction] = useState<PitPrediction | null>(() => engine.calculatePitPrediction('ant'));
   const [raceControlMessages, setRaceControlMessages] = useState<RaceControlMessage[]>(() => engine.getRaceControlMessages());
   const [teamRadios, setTeamRadios] = useState<TeamRadio[]>(() => engine.getTeamRadios());
@@ -65,6 +65,11 @@ export const App: React.FC = () => {
 
   const nextGp = F1_SCHEDULE.find(gp => !gp.completed) || F1_SCHEDULE[15];
   const nextSessionName = `${nextGp.name} (${nextGp.circuitName})`;
+
+  // Synchronize live mode with engine
+  useEffect(() => {
+    engine.setLiveMode(isOfficialLive);
+  }, [isOfficialLive, engine]);
 
   // Connect to official F1 SignalR feed on mount
   useEffect(() => {
@@ -150,7 +155,8 @@ export const App: React.FC = () => {
       },
     });
 
-    engine.start();
+    // Initial state emit
+    engine.emitCurrentState();
 
     return () => {
       engine.stop();
@@ -200,93 +206,34 @@ export const App: React.FC = () => {
         {/* TAB: Full Live Timing & Telemetry Dashboard */}
         {activeTab === 'timing' && (
           <>
-            {/* If there is NO active session on track */}
+            {/* Top Status & Weather Conditions Strip */}
             {!isOfficialLive ? (
-              <div className="telemetry-standby-banner" style={{
-                background: 'linear-gradient(135deg, rgba(8, 12, 20, 0.95) 0%, rgba(19, 25, 38, 0.95) 100%)',
-                border: '1px solid var(--f1-border)',
-                borderRadius: '12px',
-                padding: '36px 24px',
-                textAlign: 'center',
+              <div className="weather-strip" style={{
+                background: 'linear-gradient(90deg, rgba(8, 14, 24, 0.95) 0%, rgba(18, 24, 38, 0.95) 100%)',
+                border: '1px solid rgba(0, 215, 182, 0.3)',
                 display: 'flex',
-                flexDirection: 'column',
                 alignItems: 'center',
-                gap: '16px',
-                maxWidth: '780px',
-                margin: '20px auto',
-                boxShadow: '0 10px 40px rgba(0,0,0,0.5)'
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: '12px',
+                padding: '10px 16px',
+                borderRadius: '8px',
+                marginBottom: '14px'
               }}>
-                <div style={{
-                  width: '64px',
-                  height: '64px',
-                  borderRadius: '50%',
-                  background: 'rgba(225, 6, 0, 0.12)',
-                  border: '2px solid rgba(225, 6, 0, 0.3)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'var(--f1-red)',
-                  animation: 'pulse 2s infinite'
-                }}>
-                  <Radio size={28} />
-                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                  <span className="f1-badge" style={{ background: 'rgba(255, 215, 0, 0.15)', color: '#ffd700', border: '1px solid rgba(255, 215, 0, 0.35)', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                    <Clock size={12} color="#ffd700" />
+                    <span>{t('last_session_banner_title', { circuit: session.circuit.name })}</span>
+                  </span>
 
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '8px' }}>
-                    <span className="f1-badge badge-green" style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                      <CheckCircle2 size={12} />
-                      <span>{t('connected')}</span>
-                    </span>
-                    <span className="f1-badge">{t('official_f1_data').toUpperCase()}</span>
-                  </div>
-
-                  <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.6rem', fontWeight: 900, color: '#fff', margin: '6px 0' }}>
-                    {t('telemetry_standby_title')}
-                  </h2>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', maxWidth: '620px', lineHeight: 1.6 }}>
-                    {t('telemetry_standby_desc')}
-                  </p>
-                </div>
-
-                {/* Connection Status Box */}
-                <div style={{
-                  background: 'rgba(0,0,0,0.4)',
-                  border: '1px solid var(--f1-border)',
-                  borderRadius: '8px',
-                  padding: '12px 20px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '14px',
-                  fontSize: '0.82rem',
-                  width: '100%',
-                  maxWidth: '560px',
-                  justifyContent: 'space-between'
-                }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Clock size={16} color="var(--f1-red)" />
-                    <span>{t('next_session_on_track')} <strong>{nextGp.flag} {nextGp.name} 2026</strong></span>
-                  </div>
-                  <span className="f1-badge badge-live" style={{ fontSize: '0.68rem' }}>
-                    {t('ready_to_broadcast')}
+                  <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
+                    {t('last_session_banner_desc', { nextSession: `${nextGp.flag} ${nextGp.name}` })}
                   </span>
                 </div>
 
-                <div style={{ display: 'flex', gap: '12px', marginTop: '8px', flexWrap: 'wrap', justifyContent: 'center' }}>
-                  <button
-                    onClick={() => setActiveTab('schedule')}
-                    className="f1-btn f1-btn-primary"
-                    style={{ padding: '10px 22px', fontSize: '0.85rem' }}
-                  >
-                    <span>{t('view_session_schedule')}</span>
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <>
-                {/* Live Weather & Track Conditions Strip */}
-                <div className="weather-strip">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
                   <div className="weather-item">
-                    <CloudSun size={15} color="var(--color-yellow)" />
+                    <CloudSun size={14} color="var(--color-yellow)" />
                     <span>{t('track')}: <strong>{session.circuit.name}</strong></span>
                   </div>
                   <div className="weather-item">
@@ -297,65 +244,84 @@ export const App: React.FC = () => {
                     <Thermometer size={14} color="#ff9900" />
                     <span>{t('asphalt')}: <strong>{session.trackTemp}°C</strong></span>
                   </div>
-                  <div className="weather-item">
-                    <Droplets size={14} color="#00a6ff" />
-                    <span>{t('humidity')}: <strong>{session.humidity}%</strong></span>
-                  </div>
-                  <div className="weather-item">
-                    <Wind size={14} color="#94a3b8" />
-                    <span>{t('wind')}: <strong>{session.windSpeed} km/h</strong></span>
-                  </div>
-                  <div className="weather-item" style={{ marginLeft: 'auto', display: 'flex', gap: '8px', alignItems: 'center' }}>
-                    <span className="f1-badge badge-live">🔴 {t('live')}</span>
-                  </div>
+                  <span className="f1-badge badge-green" style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                    <CheckCircle2 size={11} />
+                    <span>{t('auto_sync_ready')}</span>
+                  </span>
                 </div>
-
-                {/* Dashboard 3-Column Grid with 100% Real GPS Geometry and Real Telemetry */}
-                <div className="dashboard-grid">
-                  {/* Column 1: Live Timing Leaderboard */}
-                  <div className="grid-col-leaderboard">
-                    <Leaderboard
-                      entries={leaderboard}
-                      selectedDriverId={selectedDriverId}
-                      onSelectDriver={handleSelectDriver}
-                      isQualifying={session.type === 'QUALIFYING'}
-                    />
-                  </div>
-
-                  {/* Column 2: Live Real GPS Circuit Map & Circle of Doom */}
-                  <div className="grid-col-center">
-                    <CircuitMap
-                      circuit={session.circuit}
-                      entries={leaderboard}
-                      selectedDriverId={selectedDriverId}
-                      onSelectDriver={handleSelectDriver}
-                      trackStatus={session.trackStatus}
-                    />
-
-                    <CircleOfDoom
-                      entries={leaderboard}
-                      selectedDriverId={selectedDriverId}
-                      onSelectDriver={handleSelectDriver}
-                      pitPrediction={pitPrediction}
-                      pitLossSeconds={session.circuit.pitLossSeconds}
-                    />
-                  </div>
-
-                  {/* Column 3: Car Telemetry Gauges & Race Control Feed */}
-                  <div className="grid-col-right">
-                    <CarTelemetry
-                      telemetry={telemetry}
-                      driver={selectedDriver}
-                    />
-
-                    <RaceControl
-                      messages={raceControlMessages}
-                      radios={teamRadios}
-                    />
-                  </div>
+              </div>
+            ) : (
+              <div className="weather-strip">
+                <div className="weather-item">
+                  <CloudSun size={15} color="var(--color-yellow)" />
+                  <span>{t('track')}: <strong>{session.circuit.name}</strong></span>
                 </div>
-              </>
+                <div className="weather-item">
+                  <Thermometer size={14} color="#ff5555" />
+                  <span>{t('air')}: <strong>{session.airTemp}°C</strong></span>
+                </div>
+                <div className="weather-item">
+                  <Thermometer size={14} color="#ff9900" />
+                  <span>{t('asphalt')}: <strong>{session.trackTemp}°C</strong></span>
+                </div>
+                <div className="weather-item">
+                  <Droplets size={14} color="#00a6ff" />
+                  <span>{t('humidity')}: <strong>{session.humidity}%</strong></span>
+                </div>
+                <div className="weather-item">
+                  <Wind size={14} color="#94a3b8" />
+                  <span>{t('wind')}: <strong>{session.windSpeed} km/h</strong></span>
+                </div>
+                <div className="weather-item" style={{ marginLeft: 'auto', display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  <span className="f1-badge badge-live">🔴 {t('live')}</span>
+                </div>
+              </div>
             )}
+
+            {/* Dashboard 3-Column Grid with 100% Real GPS Geometry and Real Telemetry */}
+            <div className="dashboard-grid">
+              {/* Column 1: Live Timing Leaderboard */}
+              <div className="grid-col-leaderboard">
+                <Leaderboard
+                  entries={leaderboard}
+                  selectedDriverId={selectedDriverId}
+                  onSelectDriver={handleSelectDriver}
+                  isQualifying={session.type === 'QUALIFYING'}
+                />
+              </div>
+
+              {/* Column 2: Live Real GPS Circuit Map & Circle of Doom */}
+              <div className="grid-col-center">
+                <CircuitMap
+                  circuit={session.circuit}
+                  entries={leaderboard}
+                  selectedDriverId={selectedDriverId}
+                  onSelectDriver={handleSelectDriver}
+                  trackStatus={session.trackStatus}
+                />
+
+                <CircleOfDoom
+                  entries={leaderboard}
+                  selectedDriverId={selectedDriverId}
+                  onSelectDriver={handleSelectDriver}
+                  pitPrediction={pitPrediction}
+                  pitLossSeconds={session.circuit.pitLossSeconds}
+                />
+              </div>
+
+              {/* Column 3: Car Telemetry Gauges & Race Control Feed */}
+              <div className="grid-col-right">
+                <CarTelemetry
+                  telemetry={telemetry}
+                  driver={selectedDriver}
+                />
+
+                <RaceControl
+                  messages={raceControlMessages}
+                  radios={teamRadios}
+                />
+              </div>
+            </div>
           </>
         )}
 
