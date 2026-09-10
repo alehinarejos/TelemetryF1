@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import type { CircuitInfo, LeaderboardEntry } from '../types/telemetry';
 import { ZoomIn, ZoomOut, RotateCcw, Crosshair } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 interface CircuitMapProps {
   circuit: CircuitInfo;
@@ -17,6 +18,7 @@ export const CircuitMap: React.FC<CircuitMapProps> = ({
   onSelectDriver,
   trackStatus,
 }) => {
+  const { t } = useLanguage();
   const pathRef = useRef<SVGPathElement | null>(null);
   const [pathLength, setPathLength] = useState<number>(0);
   const [zoom, setZoom] = useState<number>(1);
@@ -60,7 +62,7 @@ export const CircuitMap: React.FC<CircuitMapProps> = ({
     <div className="f1-card map-container">
       <div className="map-controls-bar">
         <div className="map-track-name">
-          <span style={{ color: 'var(--f1-red)', fontWeight: 900 }}>CIRCUITO</span>
+          <span style={{ color: 'var(--f1-red)', fontWeight: 900 }}>{t('circuit')}</span>
           <span>{circuit.name}</span>
         </div>
 
@@ -68,28 +70,28 @@ export const CircuitMap: React.FC<CircuitMapProps> = ({
           <button 
             className={`map-icon-btn ${followDriver ? 'f1-btn-active' : ''}`}
             onClick={() => setFollowDriver(!followDriver)}
-            title="Seguir piloto seleccionado"
+            title={t('follow_driver')}
           >
             <Crosshair size={14} />
           </button>
           <button 
             className="map-icon-btn" 
             onClick={() => setZoom(Math.min(zoom + 0.25, 2.5))}
-            title="Acercar mapa"
+            title={t('zoom_in')}
           >
             <ZoomIn size={14} />
           </button>
           <button 
             className="map-icon-btn" 
             onClick={() => setZoom(Math.max(zoom - 0.25, 0.75))}
-            title="Alejar mapa"
+            title={t('zoom_out')}
           >
             <ZoomOut size={14} />
           </button>
           <button 
             className="map-icon-btn" 
             onClick={() => { setZoom(1); setFollowDriver(false); }}
-            title="Restablecer vista"
+            title={t('reset_view')}
           >
             <RotateCcw size={14} />
           </button>
@@ -180,15 +182,15 @@ export const CircuitMap: React.FC<CircuitMapProps> = ({
       <div className="map-legend">
         <div className="legend-item">
           <div className="legend-color-dot" style={{ background: 'var(--color-drs)' }} />
-          <span>Zona DRS</span>
+          <span>{t('drs_zone')}</span>
         </div>
         <div className="legend-item">
           <div className="legend-color-dot" style={{ background: '#ffffff' }} />
-          <span>Línea de Meta</span>
+          <span>{t('finish_line')}</span>
         </div>
         <div className="legend-item">
           <div className="legend-color-dot" style={{ background: 'var(--f1-red)' }} />
-          <span>Piloto Seleccionado</span>
+          <span>{t('selected_driver')}</span>
         </div>
       </div>
     </div>

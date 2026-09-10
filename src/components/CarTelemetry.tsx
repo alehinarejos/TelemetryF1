@@ -1,5 +1,6 @@
 import React from 'react';
 import type { CarTelemetry as CarTelemetryType, DriverInfo } from '../types/telemetry';
+import { useLanguage } from '../context/LanguageContext';
 
 interface CarTelemetryProps {
   telemetry: CarTelemetryType | null;
@@ -10,10 +11,12 @@ export const CarTelemetry: React.FC<CarTelemetryProps> = ({
   telemetry,
   driver,
 }) => {
+  const { t } = useLanguage();
+
   if (!telemetry || !driver) {
     return (
       <div className="f1-card telemetry-widget" style={{ alignItems: 'center', justifyContent: 'center' }}>
-        <span style={{ color: 'var(--text-muted)' }}>Cargando datos de telemetría...</span>
+        <span style={{ color: 'var(--text-muted)' }}>{t('loading_telemetry')}</span>
       </div>
     );
   }
@@ -27,14 +30,10 @@ export const CarTelemetry: React.FC<CarTelemetryProps> = ({
   const arcCircumference = 2 * Math.PI * 65; // radius = 65
   const strokeDashoffset = arcCircumference * (1 - speedRatio * 0.75);
 
-  // DRS status string
+  // DRS status string (simplified to 'DRS' as requested)
   const drsStatusClass = 
     telemetry.drs === 2 ? 'drs-active' :
     telemetry.drs === 1 ? 'drs-available' : 'drs-off';
-
-  const drsText = 
-    telemetry.drs === 2 ? 'DRS ACTIVO' :
-    telemetry.drs === 1 ? 'DRS DISPONIBLE' : 'DRS OFF';
 
   return (
     <div className="f1-card telemetry-widget">
@@ -54,7 +53,7 @@ export const CarTelemetry: React.FC<CarTelemetryProps> = ({
         </div>
 
         <div className={`drs-badge-large ${drsStatusClass}`}>
-          {drsText}
+          DRS
         </div>
       </div>
 
@@ -107,7 +106,7 @@ export const CarTelemetry: React.FC<CarTelemetryProps> = ({
             <span className="speed-number">{telemetry.speed}</span>
             <span className="speed-unit">KM / H</span>
             <div className="gear-display">
-              <span className="gear-label">MARCHA</span>
+              <span className="gear-label">{t('gear')}</span>
               <span className="gear-value">
                 {telemetry.gear === 0 ? 'N' : telemetry.gear}
               </span>
@@ -126,7 +125,7 @@ export const CarTelemetry: React.FC<CarTelemetryProps> = ({
                 style={{ height: `${telemetry.throttle}%` }} 
               />
             </div>
-            <span className="pedal-label">ACEL</span>
+            <span className="pedal-label">{t('throttle')}</span>
           </div>
 
           {/* Brake */}
@@ -138,7 +137,7 @@ export const CarTelemetry: React.FC<CarTelemetryProps> = ({
                 style={{ height: `${telemetry.brake}%` }} 
               />
             </div>
-            <span className="pedal-label">FRENO</span>
+            <span className="pedal-label">{t('brake')}</span>
           </div>
         </div>
       </div>
@@ -146,26 +145,26 @@ export const CarTelemetry: React.FC<CarTelemetryProps> = ({
       {/* Secondary Stats Grid: RPM, ERS, G-Force */}
       <div className="telemetry-stats-grid">
         <div className="stat-box">
-          <span className="stat-label">RPM</span>
+          <span className="stat-label">{t('rpm')}</span>
           <span className="stat-value">{telemetry.rpm.toLocaleString()}</span>
         </div>
 
         <div className="stat-box">
-          <span className="stat-label">BATERÍA ERS</span>
+          <span className="stat-label">{t('battery_ers')}</span>
           <span className="stat-value" style={{ color: '#00d2be' }}>
             {telemetry.ersBattery}%
           </span>
         </div>
 
         <div className="stat-box">
-          <span className="stat-label">G LATERAL</span>
+          <span className="stat-label">{t('g_lateral')}</span>
           <span className="stat-value">
             {telemetry.gForceLat > 0 ? `+${telemetry.gForceLat}G` : `${telemetry.gForceLat}G`}
           </span>
         </div>
 
         <div className="stat-box">
-          <span className="stat-label">G LONGITUDINAL</span>
+          <span className="stat-label">{t('g_longitudinal')}</span>
           <span className="stat-value" style={{ color: telemetry.gForceLong < 0 ? '#ff3333' : '#00ff88' }}>
             {telemetry.gForceLong > 0 ? `+${telemetry.gForceLong}G` : `${telemetry.gForceLong}G`}
           </span>

@@ -1,5 +1,6 @@
 import React from 'react';
 import type { LeaderboardEntry, PitPrediction } from '../types/telemetry';
+import { useLanguage } from '../context/LanguageContext';
 
 interface CircleOfDoomProps {
   entries: LeaderboardEntry[];
@@ -16,6 +17,7 @@ export const CircleOfDoom: React.FC<CircleOfDoomProps> = ({
   pitPrediction,
   pitLossSeconds,
 }) => {
+  const { t } = useLanguage();
   const selectedCar = entries.find(e => e.driver.id === selectedDriverId);
   const driverProgress = selectedCar ? selectedCar.trackProgress : 0;
 
@@ -45,16 +47,16 @@ export const CircleOfDoom: React.FC<CircleOfDoomProps> = ({
     <div className="f1-card circle-of-doom-container">
       <div className="card-header">
         <div className="card-title">
-          <span style={{ color: '#ff007f', fontWeight: 900 }}>RADAR</span>
-          <span>CIRCLE OF DOOM (VENTANA DE BOXES)</span>
+          <span style={{ color: '#ff007f', fontWeight: 900 }}>{t('radar')}</span>
+          <span>{t('pit_window_title')}</span>
         </div>
         <div className="f1-badge" style={{ background: 'rgba(255, 0, 127, 0.15)', color: '#ff007f', border: '1px solid rgba(255, 0, 127, 0.4)' }}>
-          UNDERCUT
+          {t('undercut')}
         </div>
       </div>
 
       <div className="doom-header-desc">
-        Predice la posición y tráfico al salir de boxes tras una parada de {pitLossSeconds}s.
+        {t('pit_prediction_desc', { loss: pitLossSeconds })}
       </div>
 
       <div className="doom-radar-wrapper">
@@ -125,20 +127,20 @@ export const CircleOfDoom: React.FC<CircleOfDoomProps> = ({
         {/* Center Projection Card */}
         {pitPrediction && (
           <div className="doom-center-info">
-            <span className="doom-rejoin-label">REINCORPORACIÓN</span>
+            <span className="doom-rejoin-label">{t('rejoin')}</span>
             <span className="doom-rejoin-pos">
               P{pitPrediction.rejoiningPosition}
             </span>
             <span className="doom-rejoin-target">
               {pitPrediction.rejoiningBehindDriver ? (
-                <>Detrás de <strong>{pitPrediction.rejoiningBehindDriver.code}</strong></>
+                t('behind_driver', { driver: pitPrediction.rejoiningBehindDriver.code })
               ) : (
-                <>Liderando tras parada</>
+                t('leading_after_stop')
               )}
             </span>
 
             <div className={`doom-traffic-status ${pitPrediction.isInTraffic ? 'doom-traffic-dense' : 'doom-traffic-clear'}`}>
-              {pitPrediction.isInTraffic ? 'TRÁFICO EN PISTA' : 'AIRE LIMPIO'}
+              {pitPrediction.isInTraffic ? t('traffic_dense') : t('traffic_clear')}
             </div>
           </div>
         )}
@@ -146,8 +148,8 @@ export const CircleOfDoom: React.FC<CircleOfDoomProps> = ({
 
       {/* Footer */}
       <div className="doom-footer">
-        <span>Tiempo medio en Pitlane: <strong className="pit-loss-value">+{pitLossSeconds}s</strong></span>
-        <span>Pos. actual: <strong>P{selectedCar?.position || 1}</strong></span>
+        <span>{t('avg_pitlane_loss')} <strong className="pit-loss-value">+{pitLossSeconds}s</strong></span>
+        <span>{t('current_pos')} <strong>P{selectedCar?.position || 1}</strong></span>
       </div>
     </div>
   );

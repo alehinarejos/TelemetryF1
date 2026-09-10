@@ -415,3 +415,43 @@
   border-color: var(--f1-red);
   color: #fff;
 }
+
+/* Responsive adjustment for Race Results Modal */
+@media (max-width: 640px) {
+  .race-modal-overlay {
+    padding: 8px;
+  }
+
+  .race-modal-container {
+    max-height: 94vh;
+    border-radius: 10px;
+  }
+
+  .race-modal-header {
+    padding: 12px 14px;
+  }
+
+  .race-modal-title {
+    font-size: 1.15rem;
+  }
+
+  .race-modal-nav-bar {
+    padding: 8px 12px;
+  }
+
+  .race-modal-summary-strip {
+    grid-template-columns: 1fr;
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .results-table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .results-table-header-row,
+  .results-table-body-row {
+    min-width: 520px;
+  }
+}

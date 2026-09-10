@@ -2,8 +2,9 @@
 .circle-of-doom-container {
   display: flex;
   flex-direction: column;
-  height: 380px;
+  height: 360px;
   position: relative;
+  box-sizing: border-box;
 }
 
 .doom-header-desc {

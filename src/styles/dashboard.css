@@ -148,6 +148,14 @@
   padding-bottom: 2px;
 }
 
+.tab-label-desktop {
+  display: inline;
+}
+
+.tab-label-mobile {
+  display: none;
+}
+
 .nav-tab-btn,
 .nav-tab {
   display: flex;
@@ -192,17 +200,17 @@
 /* Grid Layout for Live Timing Dashboard */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: 1.35fr 1fr 1fr;
-  grid-template-rows: auto auto;
-  gap: 18px;
+  grid-template-columns: 1.55fr 1fr 1fr;
+  align-items: stretch;
+  gap: 16px;
 }
 
-/* Column 1: Leaderboard */
+/* Column 1: Leaderboard (Predominant) */
 .grid-col-leaderboard {
   grid-column: 1;
-  grid-row: 1 / span 2;
   display: flex;
   flex-direction: column;
+  height: 100%;
 }
 
 /* Column 2: Map & Circle of Doom */
@@ -210,7 +218,8 @@
   grid-column: 2;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
+  height: 100%;
 }
 
 /* Column 3: Car Telemetry Gauges & Race Control */
@@ -218,7 +227,8 @@
   grid-column: 3;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
+  height: 100%;
 }
 
 /* Weather bar at top */
@@ -249,6 +259,85 @@
   font-weight: 700;
 }
 
+/* Comparison Controls Bar (Official Standings & Telemetry Views) */
+.comparison-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  background: var(--f1-surface-glass);
+  border: 1px solid var(--f1-border);
+  border-radius: 12px;
+  padding: 16px 20px;
+}
+
+.official-leaderboard-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.official-banner-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.official-trophy-icon {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(225, 6, 0, 0.1) 100%);
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.official-banner-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.official-banner-heading-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.official-banner-h2 {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 900;
+  margin: 0;
+  color: #fff;
+  letter-spacing: 0.02em;
+}
+
+.official-banner-subtitle {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.official-banner-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.official-view-toggles {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 /* Responsive adjustments */
 @media (max-width: 1350px) {
   .dashboard-grid {
@@ -259,21 +348,212 @@
   }
 }
 
-@media (max-width: 980px) {
+@media (max-width: 1120px) {
+  .f1-header {
+    padding: 8px 12px;
+    width: 100%;
+    max-width: 100vw;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+
+  .header-top {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .brand-section {
+    gap: 8px;
+  }
+
+  .session-pill {
+    order: 3;
+    width: 100% !important;
+    justify-content: space-between;
+    padding: 6px 10px;
+    flex-wrap: wrap;
+    gap: 8px;
+    border-radius: 12px;
+    box-sizing: border-box;
+  }
+
+  .session-divider {
+    display: none;
+  }
+
+  .header-actions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .nav-tabs,
+  .header-nav {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    width: 100% !important;
+    gap: 4px !important;
+    margin-top: 8px !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  .tab-label-desktop {
+    display: none !important;
+  }
+
+  .tab-label-mobile {
+    display: inline !important;
+  }
+
+  .nav-tab-btn,
+  .nav-tab {
+    padding: 8px 4px !important;
+    font-size: 0.72rem !important;
+    justify-content: center !important;
+    gap: 4px !important;
+    width: 100% !important;
+    white-space: nowrap !important;
+    box-sizing: border-box !important;
+  }
+
+  .main-content {
+    padding: 12px 14px;
+    max-width: 100vw;
+    overflow-x: hidden;
+    box-sizing: border-box;
+    width: 100%;
+  }
+
   .dashboard-grid {
     grid-template-columns: 1fr;
+    gap: 14px;
+    width: 100%;
+    box-sizing: border-box;
   }
+
   .grid-col-leaderboard,
   .grid-col-center,
   .grid-col-right {
     grid-column: 1;
-  }
-  .header-top {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .session-pill {
     width: 100%;
-    justify-content: space-between;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  /* Hide Wins and Podiums on screens <= 768px as requested */
+  .col-hide-mobile {
+    display: none !important;
+  }
+
+  .official-table {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+
+  .official-leaderboard-banner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+    padding: 14px 16px;
+  }
+
+  .official-banner-left {
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .official-banner-h2 {
+    font-size: 1.05rem;
+    line-height: 1.3;
+  }
+
+  .official-banner-subtitle {
+    font-size: 0.72rem;
+    margin-top: 2px;
+  }
+
+  .official-banner-actions {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .official-sync-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .official-search-box {
+    width: 100% !important;
+    box-sizing: border-box;
+  }
+
+  .official-view-toggles {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    gap: 8px;
+    margin: 0 auto;
+  }
+
+  .official-view-toggles .f1-btn {
+    flex: 1;
+    justify-content: center;
+    text-align: center;
+    font-size: 0.74rem;
+    padding: 8px 6px;
+  }
+}
+
+@media (max-width: 640px) {
+  .f1-header {
+    padding: 6px 10px;
+  }
+
+  .app-name {
+    font-size: 0.92rem;
+  }
+
+  .app-subtitle {
+    display: none;
+  }
+
+  .f1-logo-badge {
+    padding: 3px 6px;
+    font-size: 0.85rem;
+  }
+
+  .session-pill {
+    padding: 6px 8px;
+    gap: 6px;
+  }
+
+  .main-content {
+    padding: 8px 8px;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  .weather-strip {
+    padding: 6px 8px;
+    gap: 8px;
+    font-size: 0.7rem;
+  }
+
+  .comparison-controls {
+    padding: 10px;
+    gap: 8px;
+  }
+
+  .comparison-controls > div {
+    width: 100%;
   }
 }

@@ -37,36 +37,31 @@ export const OfficialLeaderboardView: React.FC = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       {/* Top Controls Banner */}
-      <div className="comparison-controls">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{ 
-            background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(225, 6, 0, 0.1) 100%)',
-            padding: '10px',
-            borderRadius: '8px',
-            border: '1px solid rgba(255, 215, 0, 0.3)'
-          }}>
+      <div className="comparison-controls official-leaderboard-banner">
+        <div className="official-banner-left">
+          <div className="official-trophy-icon">
             <Trophy size={26} color="#ffd700" />
           </div>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.4rem', fontWeight: 900, margin: 0 }}>
+          <div className="official-banner-title-group">
+            <div className="official-banner-heading-row">
+              <h2 className="official-banner-h2">
                 {t('official_f1_standings_title')}
               </h2>
-              <span className="f1-badge badge-green" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+              <span className="f1-badge badge-green" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}>
                 <CheckCircle2 size={11} />
                 <span>{t('official_fia_data')}</span>
               </span>
             </div>
-            <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+            <span className="official-banner-subtitle">
               {t('standings_subtitle')}
             </span>
           </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+        <div className="official-banner-actions">
           {/* Sync Button */}
           <button
-            className="f1-btn"
+            className="f1-btn official-sync-btn"
             onClick={handleManualSync}
             disabled={syncState.isSyncing}
             style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.78rem' }}
@@ -81,7 +76,7 @@ export const OfficialLeaderboardView: React.FC = () => {
           </button>
 
           {/* Search bar */}
-          <div style={{ 
+          <div className="official-search-box" style={{ 
             display: 'flex', 
             alignItems: 'center', 
             gap: '8px', 
@@ -102,26 +97,26 @@ export const OfficialLeaderboardView: React.FC = () => {
                 color: '#fff',
                 outline: 'none',
                 fontSize: '0.82rem',
-                width: '180px'
+                width: '100%'
               }}
             />
           </div>
 
           {/* View Toggles */}
-          <div style={{ display: 'flex', gap: '6px' }}>
+          <div className="official-view-toggles">
             <button 
               className={`f1-btn ${view === 'drivers' ? 'f1-btn-active' : ''}`}
               onClick={() => setView('drivers')}
             >
               <Trophy size={14} />
-              <span>Mundial Pilotos ({drivers.length})</span>
+              <span>{t('championship_drivers')} ({drivers.length})</span>
             </button>
             <button 
               className={`f1-btn ${view === 'constructors' ? 'f1-btn-active' : ''}`}
               onClick={() => setView('constructors')}
             >
               <Users size={14} />
-              <span>Constructores ({constructors.length})</span>
+              <span>{t('championship_constructors')} ({constructors.length})</span>
             </button>
           </div>
         </div>
@@ -148,28 +143,28 @@ export const OfficialLeaderboardView: React.FC = () => {
             boxShadow: '0 0 10px #00D7B6',
             display: 'inline-block'
           }} />
-          <strong style={{ color: '#00D7B6' }}>Sincronización Automática Activa:</strong>
-          <span>Los puntos y posiciones se actualizan de forma automática e inmediata al finalizar cada carrera y sesión oficial de F1.</span>
+          <strong style={{ color: '#00D7B6' }}>{t('auto_sync_active_title')}</strong>
+          <span>{t('auto_sync_active_desc')}</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
           <Sparkles size={12} color="#ffd700" />
-          <span>Última comprobación: {syncState.lastUpdated ? syncState.lastUpdated.toLocaleTimeString() : 'En directo'}</span>
+          <span>{t('last_check_label')} {syncState.lastUpdated ? syncState.lastUpdated.toLocaleTimeString() : '2026'}</span>
         </div>
       </div>
 
       {/* Table Section */}
       <div className="f1-card" style={{ padding: '0', overflow: 'hidden' }}>
         {view === 'drivers' ? (
-          <div style={{ width: '100%', overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem', tableLayout: 'fixed' }}>
+          <div className="official-table-wrapper" style={{ width: '100%', overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+            <table className="official-table" style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem' }}>
               <thead>
                 <tr style={{ background: 'rgba(0, 0, 0, 0.4)', borderBottom: '1px solid var(--f1-border)', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontSize: '0.72rem', textTransform: 'uppercase' }}>
-                  <th style={{ padding: '12px 16px', width: '60px', textAlign: 'center' }}>Pos</th>
-                  <th style={{ padding: '12px 16px', width: '32%' }}>Piloto</th>
-                  <th style={{ padding: '12px 16px', width: '24%' }}>Escudería</th>
-                  <th style={{ padding: '12px 16px', width: '12%', textAlign: 'center' }}>Victorias</th>
-                  <th style={{ padding: '12px 16px', width: '12%', textAlign: 'center' }}>Podios</th>
-                  <th style={{ padding: '12px 20px', width: '20%', textAlign: 'right' }}>Puntos</th>
+                  <th style={{ padding: '12px 14px', width: '48px', textAlign: 'center' }}>{t('pos')}</th>
+                  <th style={{ padding: '12px 14px' }}>{t('driver')}</th>
+                  <th style={{ padding: '12px 14px' }}>{t('team')}</th>
+                  <th className="col-hide-mobile" style={{ padding: '12px 14px', width: '10%', textAlign: 'center' }}>{t('wins')}</th>
+                  <th className="col-hide-mobile" style={{ padding: '12px 14px', width: '10%', textAlign: 'center' }}>{t('podiums')}</th>
+                  <th style={{ padding: '12px 16px', textAlign: 'right' }}>{t('points_label')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -184,7 +179,7 @@ export const OfficialLeaderboardView: React.FC = () => {
                       className="official-table-row"
                     >
                       <td style={{ 
-                        padding: '12px 16px', 
+                        padding: '12px 14px', 
                         textAlign: 'center', 
                         fontFamily: 'var(--font-display)', 
                         fontWeight: 900, 
@@ -193,27 +188,30 @@ export const OfficialLeaderboardView: React.FC = () => {
                       }}>
                         {driver.position}
                       </td>
-                      <td style={{ padding: '12px 16px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                          <div style={{ width: '4px', height: '26px', borderRadius: '2px', backgroundColor: driver.teamColor }} />
-                          <span style={{ fontSize: '1.1rem' }}>{driver.flag}</span>
+                      <td style={{ padding: '12px 14px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <div style={{ width: '4px', height: '24px', borderRadius: '2px', backgroundColor: driver.teamColor, flexShrink: 0 }} />
+                          <span style={{ fontSize: '1rem' }}>{driver.flag}</span>
                           <div style={{ display: 'flex', flexDirection: 'column' }}>
-                            <strong style={{ color: '#fff', fontSize: '0.95rem' }}>{driver.name}</strong>
-                            <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>#{driver.number} • {driver.code}</span>
+                            <strong style={{ color: '#fff', fontSize: '0.9rem' }}>{driver.name}</strong>
+                            <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>#{driver.number} • {driver.code}</span>
                           </div>
                         </div>
                       </td>
-                      <td style={{ padding: '12px 16px', color: 'var(--text-secondary)', fontWeight: 600 }}>
+                      <td style={{ padding: '12px 14px', color: 'var(--text-secondary)', fontWeight: 600, fontSize: '0.82rem' }}>
                         {driver.team}
                       </td>
-                      <td style={{ padding: '12px 16px', textAlign: 'center', fontFamily: 'var(--font-mono)' }}>
+                      <td className="col-hide-mobile" style={{ padding: '12px 14px', textAlign: 'center', fontFamily: 'var(--font-mono)' }}>
                         {driver.wins > 0 ? <span style={{ color: '#ffd700', fontWeight: 800 }}>{driver.wins}</span> : '0'}
                       </td>
-                      <td style={{ padding: '12px 16px', textAlign: 'center', fontFamily: 'var(--font-mono)' }}>
+                      <td className="col-hide-mobile" style={{ padding: '12px 14px', textAlign: 'center', fontFamily: 'var(--font-mono)' }}>
                         {driver.podiums}
                       </td>
-                      <td style={{ padding: '12px 20px', textAlign: 'right', fontFamily: 'var(--font-mono)', fontWeight: 900, fontSize: '1.2rem', color: '#fff' }}>
-                        {driver.points} <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>PTS</span>
+                      <td style={{ padding: '12px 14px', textAlign: 'right', whiteSpace: 'nowrap' }}>
+                        <div style={{ display: 'inline-flex', alignItems: 'baseline', justifyContent: 'flex-end', gap: '4px' }}>
+                          <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 900, fontSize: '1.1rem', color: '#fff', lineHeight: 1 }}>{driver.points}</span>
+                          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.68rem', color: 'var(--text-muted)', fontWeight: 700 }}>{t('points')}</span>
+                        </div>
                       </td>
                     </tr>
                   );
@@ -222,15 +220,15 @@ export const OfficialLeaderboardView: React.FC = () => {
             </table>
           </div>
         ) : (
-          <div style={{ width: '100%', overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem', tableLayout: 'fixed' }}>
+          <div className="official-table-wrapper" style={{ width: '100%', overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+            <table className="official-table" style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem' }}>
               <thead>
                 <tr style={{ background: 'rgba(0, 0, 0, 0.4)', borderBottom: '1px solid var(--f1-border)', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontSize: '0.72rem', textTransform: 'uppercase' }}>
-                  <th style={{ padding: '12px 16px', width: '60px', textAlign: 'center' }}>Pos</th>
-                  <th style={{ padding: '12px 16px', width: '42%' }}>Constructor</th>
-                  <th style={{ padding: '12px 16px', width: '15%', textAlign: 'center' }}>Victorias</th>
-                  <th style={{ padding: '12px 16px', width: '15%', textAlign: 'center' }}>Podios</th>
-                  <th style={{ padding: '12px 20px', width: '28%', textAlign: 'right' }}>Puntos</th>
+                  <th style={{ padding: '12px 14px', width: '48px', textAlign: 'center' }}>{t('pos')}</th>
+                  <th style={{ padding: '12px 14px' }}>{t('constructor')}</th>
+                  <th className="col-hide-mobile" style={{ padding: '12px 14px', width: '15%', textAlign: 'center' }}>{t('wins')}</th>
+                  <th className="col-hide-mobile" style={{ padding: '12px 14px', width: '15%', textAlign: 'center' }}>{t('podiums')}</th>
+                  <th style={{ padding: '12px 16px', textAlign: 'right' }}>{t('points_label')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -245,29 +243,32 @@ export const OfficialLeaderboardView: React.FC = () => {
                       className="official-table-row"
                     >
                       <td style={{ 
-                        padding: '14px 16px', 
+                        padding: '12px 14px', 
                         textAlign: 'center', 
                         fontFamily: 'var(--font-display)', 
                         fontWeight: 900, 
-                        fontSize: '1.1rem', 
+                        fontSize: '1.05rem', 
                         color: isP1 ? '#ffd700' : isP2 ? '#e0e0e0' : isP3 ? '#cd7f32' : 'var(--text-secondary)' 
                       }}>
                         {c.position}
                       </td>
-                      <td style={{ padding: '14px 16px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                          <div style={{ width: '4px', height: '26px', borderRadius: '2px', backgroundColor: c.teamColor }} />
-                          <strong style={{ color: '#fff', fontSize: '1rem' }}>{c.team}</strong>
+                      <td style={{ padding: '12px 14px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <div style={{ width: '4px', height: '24px', borderRadius: '2px', backgroundColor: c.teamColor, flexShrink: 0 }} />
+                          <strong style={{ color: '#fff', fontSize: '0.95rem' }}>{c.team}</strong>
                         </div>
                       </td>
-                      <td style={{ padding: '14px 16px', textAlign: 'center', fontFamily: 'var(--font-mono)', fontWeight: 700, color: c.wins > 0 ? '#ffd700' : 'inherit' }}>
+                      <td className="col-hide-mobile" style={{ padding: '12px 14px', textAlign: 'center', fontFamily: 'var(--font-mono)', fontWeight: 700, color: c.wins > 0 ? '#ffd700' : 'inherit' }}>
                         {c.wins}
                       </td>
-                      <td style={{ padding: '14px 16px', textAlign: 'center', fontFamily: 'var(--font-mono)' }}>
+                      <td className="col-hide-mobile" style={{ padding: '12px 14px', textAlign: 'center', fontFamily: 'var(--font-mono)' }}>
                         {c.podiums}
                       </td>
-                      <td style={{ padding: '14px 20px', textAlign: 'right', fontFamily: 'var(--font-mono)', fontWeight: 900, fontSize: '1.25rem', color: '#fff' }}>
-                        {c.points} <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>PTS</span>
+                      <td style={{ padding: '12px 14px', textAlign: 'right', whiteSpace: 'nowrap' }}>
+                        <div style={{ display: 'inline-flex', alignItems: 'baseline', justifyContent: 'flex-end', gap: '4px' }}>
+                          <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 900, fontSize: '1.15rem', color: '#fff', lineHeight: 1 }}>{c.points}</span>
+                          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.68rem', color: 'var(--text-muted)', fontWeight: 700 }}>PTS</span>
+                        </div>
                       </td>
                     </tr>
                   );

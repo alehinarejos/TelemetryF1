@@ -57,8 +57,8 @@ export const TelemetrixBox: React.FC<TelemetrixBoxProps> = ({
           )}
         </div>
 
-        {/* View Switcher: Mapa, Velocidad, Tiempos, Circle of Doom */}
-        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+        {/* Desktop View Switcher: Mapa, Velocidad, Tiempos, Circle of Doom */}
+        <div className="telemetrix-desktop-views">
           <button
             className={`f1-btn ${viewMode === 'map' ? 'f1-btn-active' : ''}`}
             style={{ padding: '4px 10px', fontSize: '0.75rem' }}
@@ -95,6 +95,20 @@ export const TelemetrixBox: React.FC<TelemetrixBoxProps> = ({
             <span>{t('circle_of_doom')}</span>
           </button>
         </div>
+
+        {/* Mobile Dropdown View Selector */}
+        <div className="telemetrix-mobile-dropdown">
+          <select
+            className="telemetrix-select-view"
+            value={viewMode}
+            onChange={(e) => setViewMode(e.target.value as 'map' | 'gauges' | 'times' | 'doom')}
+          >
+            <option value="map">📍 {t('map')}</option>
+            <option value="gauges">🏎️ {t('gauges')}</option>
+            <option value="times">⏱️ {t('times')}</option>
+            <option value="doom">👁️ {t('circle_of_doom')}</option>
+          </select>
+        </div>
       </div>
 
       {/* When offline, show brief top context banner */}
@@ -106,7 +120,9 @@ export const TelemetrixBox: React.FC<TelemetrixBoxProps> = ({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          fontSize: '0.75rem',
+          flexWrap: 'wrap',
+          gap: '4px',
+          fontSize: '0.72rem',
           color: 'var(--text-secondary)'
         }}>
           <span>🏁 <strong>{circuit.name}</strong> • {t('session_finished', { session: 'Sesión' })}</span>

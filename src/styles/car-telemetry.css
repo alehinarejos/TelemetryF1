@@ -3,7 +3,9 @@
   display: flex;
   flex-direction: column;
   padding: 16px;
-  gap: 16px;
+  gap: 14px;
+  height: 380px;
+  box-sizing: border-box;
 }
 
 /* Driver Header inside widget */
@@ -308,4 +310,53 @@
   font-size: 0.95rem;
   font-weight: 800;
   color: #fff;
+}
+
+/* Responsive adjustment for Car Telemetry */
+@media (max-width: 600px) {
+  .telemetry-widget {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .telemetry-driver-banner {
+    padding-bottom: 8px;
+  }
+
+  .driver-full-name {
+    font-size: 0.9rem;
+  }
+
+  .shift-lights-bar {
+    gap: 3px;
+    padding: 4px 8px;
+  }
+
+  .shift-light {
+    width: 9px;
+    height: 9px;
+  }
+
+  .speedometer-gauge {
+    width: 150px;
+    height: 150px;
+  }
+
+  .speed-number {
+    font-size: 2.2rem;
+  }
+
+  .pedals-column {
+    height: 110px;
+    gap: 8px;
+  }
+
+  .pedal-bar-track {
+    width: 18px;
+  }
+
+  .telemetry-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
 }

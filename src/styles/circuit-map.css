@@ -2,8 +2,9 @@
 .map-container {
   display: flex;
   flex-direction: column;
-  height: 440px;
+  height: 380px;
   position: relative;
+  box-sizing: border-box;
   background: radial-gradient(circle at 50% 50%, rgba(20, 27, 40, 0.9) 0%, rgba(10, 13, 18, 0.95) 100%);
 }
 
@@ -16,6 +17,8 @@
   background: rgba(0, 0, 0, 0.25);
   font-family: var(--font-mono);
   font-size: 0.75rem;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .map-track-name {
@@ -154,7 +157,8 @@
 .map-legend {
   display: flex;
   align-items: center;
-  gap: 16px;
+  flex-wrap: wrap;
+  gap: 8px 14px;
   padding: 6px 14px;
   background: rgba(0, 0, 0, 0.4);
   border-top: 1px solid var(--f1-border);

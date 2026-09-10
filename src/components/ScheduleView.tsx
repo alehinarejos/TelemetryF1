@@ -174,18 +174,18 @@ export const ScheduleView: React.FC = () => {
       </div>
 
       {/* Filter & Subheader Buttons */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
-        <div>
-          <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '8px', margin: 0 }}>
+      <div className="schedule-header-row">
+        <div className="schedule-header-text">
+          <h3 className="schedule-main-title" style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '8px', margin: 0 }}>
             <Calendar size={22} color="var(--f1-red)" />
-            <span>CALENDARIO OFICIAL F1 - TEMPORADA 2026</span>
+            <span>{t('calendar_header_title')}</span>
           </h3>
-          <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-            Haz click en cualquier carrera completada para ver los resultados oficiales de todos los pilotos
+          <span className="schedule-main-subtitle" style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+            {t('calendar_header_subtitle')}
           </span>
         </div>
 
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div className="schedule-filter-btn-group">
           <button 
             className={`f1-btn ${filter === 'all' ? 'f1-btn-active' : ''}`}
             onClick={() => setFilter('all')}
@@ -221,16 +221,16 @@ export const ScheduleView: React.FC = () => {
                   setSelectedRound(gp.round);
                 }
               }}
-              title={isCompleted ? `Ver resultados oficiales del ${gp.name}` : undefined}
+              title={isCompleted ? `${t('official_results')} - ${gp.name}` : undefined}
             >
               <div className="gp-card-header">
                 <span className="gp-round">{t('round').toUpperCase()} {gp.round}</span>
                 {isCompleted ? (
-                  <span className="f1-badge badge-green">COMPLETADO</span>
+                  <span className="f1-badge badge-green">{t('completed')}</span>
                 ) : gp.round === nextGp.round ? (
                   <span className="f1-badge badge-live">{t('session_next')}</span>
                 ) : (
-                  <span className="f1-badge">PROGRAMADO</span>
+                  <span className="f1-badge">{t('scheduled')}</span>
                 )}
               </div>
 
@@ -291,7 +291,7 @@ export const ScheduleView: React.FC = () => {
                   {gp.winner && (
                     <div className="gp-winner-box">
                       <Trophy size={15} color="#ffd700" />
-                      <span>Ganador: <strong>{gp.winner}</strong></span>
+                      <span>{t('winner')}: <strong>{gp.winner}</strong></span>
                     </div>
                   )}
 
@@ -306,14 +306,14 @@ export const ScheduleView: React.FC = () => {
                       fontFamily: 'var(--font-mono)'
                     }}>
                       <Timer size={13} color="var(--f1-red)" />
-                      <span>Pole: <strong style={{ color: '#fff' }}>{gp.polePosition}</strong></span>
+                      <span>{t('pole')}: <strong style={{ color: '#fff' }}>{gp.polePosition}</strong></span>
                     </div>
                   )}
 
                   {/* Click to view all drivers result button */}
                   <div className="gp-card-view-results-btn">
                     <Trophy size={13} />
-                    <span>Ver Resultados (22 Pilotos)</span>
+                    <span>{t('view_results_22')}</span>
                     <ChevronRight size={13} />
                   </div>
                 </div>

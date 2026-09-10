@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import type { RaceControlMessage, TeamRadio } from '../types/telemetry';
 import { AlertCircle, Radio, Volume2, VolumeX } from 'lucide-react';
 import { soundFx } from '../services/soundFx';
+import { useLanguage } from '../context/LanguageContext';
 
 interface RaceControlProps {
   messages: RaceControlMessage[];
@@ -12,6 +13,7 @@ export const RaceControl: React.FC<RaceControlProps> = ({
   messages,
   radios,
 }) => {
+  const { t, language } = useLanguage();
   const [activeTab, setActiveTab] = useState<'rc' | 'radio'>('rc');
   const [playingRadioId, setPlayingRadioId] = useState<string | null>(null);
 
@@ -32,7 +34,7 @@ export const RaceControl: React.FC<RaceControlProps> = ({
           onClick={() => setActiveTab('rc')}
         >
           <AlertCircle size={15} />
-          <span>Control de Carrera ({messages.length})</span>
+          <span>{t('race_control')} ({messages.length})</span>
         </button>
 
         <button
@@ -40,7 +42,7 @@ export const RaceControl: React.FC<RaceControlProps> = ({
           onClick={() => setActiveTab('radio')}
         >
           <Radio size={15} />
-          <span>Radios de Equipo ({radios.length})</span>
+          <span>{t('team_radios')} ({radios.length})</span>
         </button>
       </div>
 
@@ -62,9 +64,11 @@ export const RaceControl: React.FC<RaceControlProps> = ({
                 <div className="incident-message">
                   {msg.messageEn}
                 </div>
-                <div className="incident-message-es">
-                  {msg.messageEs}
-                </div>
+                {language !== 'en' && msg.messageEs && (
+                  <div className="incident-message-es">
+                    {msg.messageEs}
+                  </div>
+                )}
               </div>
             );
           })
@@ -90,7 +94,7 @@ export const RaceControl: React.FC<RaceControlProps> = ({
                     <button
                       className="radio-play-btn"
                       onClick={() => handlePlayRadio(radio.id)}
-                      title="Reproducir audio de radio"
+                      title={t('play_radio')}
                     >
                       {isPlaying ? <VolumeX size={13} /> : <Volume2 size={13} />}
                     </button>
@@ -101,9 +105,11 @@ export const RaceControl: React.FC<RaceControlProps> = ({
                   "{radio.messageEn}"
                 </div>
 
-                <div className="radio-text-es">
-                  "{radio.messageEs}"
-                </div>
+                {language !== 'en' && radio.messageEs && (
+                  <div className="radio-text-es">
+                    "{radio.messageEs}"
+                  </div>
+                )}
 
                 {isPlaying && (
                   <div className="radio-waveform">
@@ -115,7 +121,7 @@ export const RaceControl: React.FC<RaceControlProps> = ({
                       />
                     ))}
                     <span style={{ fontSize: '0.65rem', color: 'var(--f1-red)', marginLeft: '6px', fontWeight: 700 }}>
-                      AUDIO EN VIVO
+                      {t('live_audio')}
                     </span>
                   </div>
                 )}

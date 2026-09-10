@@ -103,7 +103,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇬🇧",
       "laps": 57,
       "points": 6,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -116,7 +116,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇬🇧",
       "laps": 57,
       "points": 4,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -129,7 +129,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇧🇷",
       "laps": 57,
       "points": 2,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -142,7 +142,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇫🇷",
       "laps": 57,
       "points": 1,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -155,7 +155,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇫🇷",
       "laps": 57,
       "points": 0,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -168,7 +168,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇹🇭",
       "laps": 57,
       "points": 0,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -181,7 +181,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇳🇿",
       "laps": 57,
       "points": 0,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -194,7 +194,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇦🇷",
       "laps": 56,
       "points": 0,
-      "gapToLeader": "++2 LAPSs",
+      "gapToLeader": "+2 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -207,7 +207,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇪🇸",
       "laps": 56,
       "points": 0,
-      "gapToLeader": "++2 LAPSs",
+      "gapToLeader": "+2 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -220,7 +220,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇲🇽",
       "laps": 55,
       "points": 0,
-      "gapToLeader": "++3 LAPSs",
+      "gapToLeader": "+3 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -233,7 +233,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇨🇦",
       "laps": 43,
       "points": 0,
-      "gapToLeader": "++15 LAPSs",
+      "gapToLeader": "+15 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -246,7 +246,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇪🇸",
       "laps": 21,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     },
     {
@@ -259,7 +259,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇫🇮",
       "laps": 15,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     },
     {
@@ -272,7 +272,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇫🇷",
       "laps": 10,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     },
     {
@@ -285,7 +285,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇦🇺",
       "laps": 0,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNS"
     },
     {
@@ -298,7 +298,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇩🇪",
       "laps": 0,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNS"
     }
   ],
@@ -417,7 +417,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇪🇸",
       "laps": 55,
       "points": 2,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -430,7 +430,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇦🇷",
       "laps": 55,
       "points": 1,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -443,7 +443,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇩🇪",
       "laps": 55,
       "points": 0,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -456,7 +456,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇬🇧",
       "laps": 55,
       "points": 0,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -469,7 +469,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇫🇮",
       "laps": 55,
       "points": 0,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -482,7 +482,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇫🇷",
       "laps": 55,
       "points": 0,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -495,7 +495,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇲🇽",
       "laps": 55,
       "points": 0,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -508,7 +508,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇳🇱",
       "laps": 45,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     },
     {
@@ -521,7 +521,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇪🇸",
       "laps": 32,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     },
     {
@@ -534,7 +534,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇨🇦",
       "laps": 9,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     },
     {
@@ -547,7 +547,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇦🇺",
       "laps": 0,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNS"
     },
     {
@@ -560,7 +560,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇬🇧",
       "laps": 0,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNS"
     },
     {
@@ -573,7 +573,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇧🇷",
       "laps": 0,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNS"
     },
     {
@@ -586,7 +586,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇹🇭",
       "laps": 0,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNS"
     }
   ],
@@ -822,7 +822,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇪🇸",
       "laps": 52,
       "points": 0,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -835,7 +835,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇫🇮",
       "laps": 52,
       "points": 0,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -848,7 +848,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇹🇭",
       "laps": 51,
       "points": 0,
-      "gapToLeader": "++2 LAPSs",
+      "gapToLeader": "+2 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -861,7 +861,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇨🇦",
       "laps": 30,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     },
     {
@@ -874,7 +874,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇬🇧",
       "laps": 20,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     }
   ],
@@ -1110,7 +1110,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇪🇸",
       "laps": 52,
       "points": 0,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -1123,7 +1123,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇫🇮",
       "laps": 52,
       "points": 0,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -1136,7 +1136,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇹🇭",
       "laps": 51,
       "points": 0,
-      "gapToLeader": "++2 LAPSs",
+      "gapToLeader": "+2 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -1398,7 +1398,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇪🇸",
       "laps": 52,
       "points": 0,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -1411,7 +1411,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇫🇮",
       "laps": 52,
       "points": 0,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -1424,7 +1424,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇹🇭",
       "laps": 51,
       "points": 0,
-      "gapToLeader": "++2 LAPSs",
+      "gapToLeader": "+2 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -1595,7 +1595,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇬🇧",
       "laps": 56,
       "points": 0,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -1608,7 +1608,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇧🇷",
       "laps": 56,
       "points": 0,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -1621,7 +1621,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇫🇷",
       "laps": 56,
       "points": 0,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -1634,7 +1634,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇬🇧",
       "laps": 56,
       "points": 0,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -1647,7 +1647,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇪🇸",
       "laps": 56,
       "points": 0,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -1660,7 +1660,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇲🇽",
       "laps": 56,
       "points": 0,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -1673,7 +1673,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇨🇦",
       "laps": 56,
       "points": 0,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -1686,7 +1686,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇫🇮",
       "laps": 55,
       "points": 0,
-      "gapToLeader": "++2 LAPSs",
+      "gapToLeader": "+2 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -1699,7 +1699,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇩🇪",
       "laps": 7,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     },
     {
@@ -1712,7 +1712,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇳🇿",
       "laps": 6,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     },
     {
@@ -1725,7 +1725,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇫🇷",
       "laps": 4,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     },
     {
@@ -1738,7 +1738,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇫🇷",
       "laps": 4,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     }
   ],
@@ -1805,7 +1805,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇫🇷",
       "laps": 67,
       "points": 10,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -1818,7 +1818,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇦🇷",
       "laps": 67,
       "points": 8,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -1831,7 +1831,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇳🇿",
       "laps": 67,
       "points": 6,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -1844,7 +1844,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇫🇷",
       "laps": 67,
       "points": 4,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -1857,7 +1857,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇪🇸",
       "laps": 67,
       "points": 2,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -1870,7 +1870,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇬🇧",
       "laps": 67,
       "points": 1,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -1883,7 +1883,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇦🇺",
       "laps": 66,
       "points": 0,
-      "gapToLeader": "++2 LAPSs",
+      "gapToLeader": "+2 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -1896,7 +1896,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇩🇪",
       "laps": 66,
       "points": 0,
-      "gapToLeader": "++2 LAPSs",
+      "gapToLeader": "+2 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -1909,7 +1909,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇧🇷",
       "laps": 66,
       "points": 0,
-      "gapToLeader": "++2 LAPSs",
+      "gapToLeader": "+2 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -1922,7 +1922,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇫🇷",
       "laps": 66,
       "points": 0,
-      "gapToLeader": "++2 LAPSs",
+      "gapToLeader": "+2 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -1935,7 +1935,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇨🇦",
       "laps": 64,
       "points": 0,
-      "gapToLeader": "++4 LAPSs",
+      "gapToLeader": "+4 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -1948,7 +1948,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇫🇮",
       "laps": 64,
       "points": 0,
-      "gapToLeader": "++4 LAPSs",
+      "gapToLeader": "+4 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -1961,7 +1961,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇲🇽",
       "laps": 39,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     },
     {
@@ -1974,7 +1974,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇬🇧",
       "laps": 38,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     },
     {
@@ -1987,7 +1987,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇬🇧",
       "laps": 29,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     },
     {
@@ -2000,7 +2000,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇪🇸",
       "laps": 23,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     },
     {
@@ -2013,7 +2013,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇹🇭",
       "laps": 11,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     },
     {
@@ -2026,7 +2026,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇬🇧",
       "laps": 0,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNS"
     }
   ],
@@ -2236,7 +2236,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇪🇸",
       "laps": 70,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     },
     {
@@ -2249,7 +2249,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇲🇨",
       "laps": 64,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     },
     {
@@ -2262,7 +2262,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇨🇦",
       "laps": 56,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     },
     {
@@ -2275,7 +2275,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇬🇧",
       "laps": 43,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     },
     {
@@ -2288,7 +2288,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇬🇧",
       "laps": 27,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     },
     {
@@ -2301,7 +2301,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇫🇮",
       "laps": 15,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     },
     {
@@ -2314,7 +2314,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇳🇱",
       "laps": 0,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     }
   ],
@@ -2394,7 +2394,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇫🇷",
       "laps": 65,
       "points": 8,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -2407,7 +2407,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇫🇷",
       "laps": 65,
       "points": 6,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -2420,7 +2420,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇳🇿",
       "laps": 65,
       "points": 4,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -2433,7 +2433,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇬🇧",
       "laps": 65,
       "points": 2,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -2446,7 +2446,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇦🇷",
       "laps": 65,
       "points": 1,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -2459,7 +2459,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇧🇷",
       "laps": 64,
       "points": 0,
-      "gapToLeader": "++2 LAPSs",
+      "gapToLeader": "+2 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -2472,7 +2472,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇪🇸",
       "laps": 64,
       "points": 0,
-      "gapToLeader": "++2 LAPSs",
+      "gapToLeader": "+2 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -2485,7 +2485,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇫🇷",
       "laps": 64,
       "points": 0,
-      "gapToLeader": "++2 LAPSs",
+      "gapToLeader": "+2 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -2498,7 +2498,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇲🇽",
       "laps": 63,
       "points": 0,
-      "gapToLeader": "++3 LAPSs",
+      "gapToLeader": "+3 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -2511,7 +2511,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇲🇨",
       "laps": 62,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     },
     {
@@ -2524,7 +2524,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇮🇹",
       "laps": 61,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     },
     {
@@ -2537,7 +2537,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇬🇧",
       "laps": 60,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     },
     {
@@ -2550,7 +2550,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇹🇭",
       "laps": 55,
       "points": 0,
-      "gapToLeader": "++11 LAPSs",
+      "gapToLeader": "+11 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -2563,7 +2563,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇪🇸",
       "laps": 37,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     },
     {
@@ -2576,7 +2576,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇩🇪",
       "laps": 29,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     },
     {
@@ -2589,7 +2589,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇫🇮",
       "laps": 15,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     },
     {
@@ -2602,7 +2602,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇨🇦",
       "laps": 5,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     }
   ],
@@ -2721,7 +2721,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇳🇿",
       "laps": 70,
       "points": 2,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -2734,7 +2734,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇬🇧",
       "laps": 70,
       "points": 1,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -2747,7 +2747,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇧🇷",
       "laps": 70,
       "points": 0,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -2760,7 +2760,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇩🇪",
       "laps": 70,
       "points": 0,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -2773,7 +2773,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇫🇷",
       "laps": 70,
       "points": 0,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -2786,7 +2786,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇬🇧",
       "laps": 70,
       "points": 0,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -2799,7 +2799,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇦🇷",
       "laps": 70,
       "points": 0,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -2812,7 +2812,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇫🇷",
       "laps": 69,
       "points": 0,
-      "gapToLeader": "++2 LAPSs",
+      "gapToLeader": "+2 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -2825,7 +2825,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇹🇭",
       "laps": 69,
       "points": 0,
-      "gapToLeader": "++2 LAPSs",
+      "gapToLeader": "+2 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -2838,7 +2838,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇪🇸",
       "laps": 68,
       "points": 0,
-      "gapToLeader": "++3 LAPSs",
+      "gapToLeader": "+3 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -2851,7 +2851,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇨🇦",
       "laps": 45,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     },
     {
@@ -2864,7 +2864,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇪🇸",
       "laps": 23,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     },
     {
@@ -2877,7 +2877,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇲🇽",
       "laps": 4,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     },
     {
@@ -2890,7 +2890,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇫🇮",
       "laps": 2,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     }
   ],
@@ -3113,7 +3113,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇪🇸",
       "laps": 51,
       "points": 0,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -3126,7 +3126,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇪🇸",
       "laps": 51,
       "points": 0,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -3139,7 +3139,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇨🇦",
       "laps": 51,
       "points": 0,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -3152,7 +3152,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇳🇱",
       "laps": 46,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     },
     {
@@ -3165,7 +3165,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇹🇭",
       "laps": 43,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     },
     {
@@ -3178,7 +3178,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇩🇪",
       "laps": 36,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     }
   ],
@@ -3414,7 +3414,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇫🇮",
       "laps": 43,
       "points": 0,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -3427,7 +3427,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇪🇸",
       "laps": 42,
       "points": 0,
-      "gapToLeader": "++2 LAPSs",
+      "gapToLeader": "+2 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -3440,7 +3440,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇨🇦",
       "laps": 25,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     },
     {
@@ -3453,7 +3453,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇲🇽",
       "laps": 13,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     },
     {
@@ -3466,7 +3466,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇬🇧",
       "laps": 0,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     }
   ],
@@ -3572,7 +3572,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇳🇿",
       "laps": 69,
       "points": 4,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -3585,7 +3585,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇩🇪",
       "laps": 69,
       "points": 2,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -3598,7 +3598,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇬🇧",
       "laps": 69,
       "points": 1,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -3611,7 +3611,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇧🇷",
       "laps": 69,
       "points": 0,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -3624,7 +3624,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇫🇷",
       "laps": 69,
       "points": 0,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -3637,7 +3637,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇨🇦",
       "laps": 69,
       "points": 0,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -3650,7 +3650,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇪🇸",
       "laps": 69,
       "points": 0,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -3663,7 +3663,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇦🇷",
       "laps": 68,
       "points": 0,
-      "gapToLeader": "++2 LAPSs",
+      "gapToLeader": "+2 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -3676,7 +3676,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇫🇷",
       "laps": 68,
       "points": 0,
-      "gapToLeader": "++2 LAPSs",
+      "gapToLeader": "+2 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -3689,7 +3689,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇹🇭",
       "laps": 68,
       "points": 0,
-      "gapToLeader": "++2 LAPSs",
+      "gapToLeader": "+2 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -3702,7 +3702,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇪🇸",
       "laps": 68,
       "points": 0,
-      "gapToLeader": "++2 LAPSs",
+      "gapToLeader": "+2 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -3715,7 +3715,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇬🇧",
       "laps": 68,
       "points": 0,
-      "gapToLeader": "++2 LAPSs",
+      "gapToLeader": "+2 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -3728,7 +3728,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇦🇺",
       "laps": 55,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     },
     {
@@ -3741,7 +3741,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇲🇽",
       "laps": 48,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     },
     {
@@ -3754,7 +3754,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇫🇮",
       "laps": 13,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     }
   ],
@@ -3860,7 +3860,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇩🇪",
       "laps": 71,
       "points": 4,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -3873,7 +3873,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇪🇸",
       "laps": 71,
       "points": 2,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -3886,7 +3886,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇫🇷",
       "laps": 71,
       "points": 1,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -3899,7 +3899,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇯🇵",
       "laps": 71,
       "points": 0,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -3912,7 +3912,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇬🇧",
       "laps": 71,
       "points": 0,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -3925,7 +3925,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇧🇷",
       "laps": 71,
       "points": 0,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -3938,7 +3938,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇦🇷",
       "laps": 70,
       "points": 0,
-      "gapToLeader": "++2 LAPSs",
+      "gapToLeader": "+2 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -3951,7 +3951,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇲🇽",
       "laps": 70,
       "points": 0,
-      "gapToLeader": "++2 LAPSs",
+      "gapToLeader": "+2 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -3964,7 +3964,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇪🇸",
       "laps": 70,
       "points": 0,
-      "gapToLeader": "++2 LAPSs",
+      "gapToLeader": "+2 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -3977,7 +3977,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇹🇭",
       "laps": 66,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     },
     {
@@ -3990,7 +3990,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇫🇮",
       "laps": 61,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     },
     {
@@ -4003,7 +4003,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇫🇷",
       "laps": 52,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     },
     {
@@ -4016,7 +4016,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇨🇦",
       "laps": 45,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     },
     {
@@ -4029,7 +4029,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇬🇧",
       "laps": 2,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     },
     {
@@ -4042,7 +4042,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇳🇱",
       "laps": 0,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     }
   ],
@@ -4252,7 +4252,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇫🇷",
       "laps": 52,
       "points": 0,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -4265,7 +4265,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇹🇭",
       "laps": 52,
       "points": 0,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -4278,7 +4278,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇲🇽",
       "laps": 52,
       "points": 0,
-      "gapToLeader": "++1 LAPs",
+      "gapToLeader": "+1 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -4291,7 +4291,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇫🇮",
       "laps": 51,
       "points": 0,
-      "gapToLeader": "++2 LAPSs",
+      "gapToLeader": "+2 LAPS",
       "status": "TERMINADO"
     },
     {
@@ -4304,7 +4304,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇨🇦",
       "laps": 26,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     },
     {
@@ -4317,7 +4317,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇪🇸",
       "laps": 23,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     },
     {
@@ -4330,7 +4330,7 @@ export const RACE_RESULTS_2026: Record<number, DriverRaceResult[]> = {
       "flag": "🇲🇨",
       "laps": 1,
       "points": 0,
-      "gapToLeader": "+1 Lap",
+      "gapToLeader": "+1 LAPS",
       "status": "DNF"
     }
   ]

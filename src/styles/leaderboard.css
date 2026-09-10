@@ -3,44 +3,55 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  min-height: 600px;
+  min-height: 756px;
+  overflow-x: hidden;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .leaderboard-header-row {
   display: grid;
-  grid-template-columns: 32px 38px 88px minmax(75px, 1fr) minmax(75px, 1fr) minmax(85px, 1.1fr) 68px 68px 68px minmax(130px, 1.3fr);
-  gap: 8px;
-  padding: 8px 16px;
+  grid-template-columns: 28px 32px 74px minmax(62px, 1fr) minmax(62px, 1fr) minmax(72px, 1.1fr) 46px 46px 46px minmax(95px, 1.2fr);
+  gap: 6px;
+  padding: 8px 12px;
   background: rgba(0, 0, 0, 0.3);
   border-bottom: 1px solid var(--f1-border);
   font-family: var(--font-mono);
-  font-size: 0.68rem;
+  font-size: 0.66rem;
   font-weight: 700;
   text-transform: uppercase;
   color: var(--text-muted);
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   align-items: center;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .leaderboard-body {
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  max-height: 720px;
+  overflow-x: hidden;
+  max-height: 695px;
+  width: 100%;
+  box-sizing: border-box;
+  flex: 1;
 }
 
 .leaderboard-row {
   display: grid;
-  grid-template-columns: 32px 38px 88px minmax(75px, 1fr) minmax(75px, 1fr) minmax(85px, 1.1fr) 68px 68px 68px minmax(130px, 1.3fr);
-  gap: 8px;
-  padding: 7px 16px;
+  grid-template-columns: 28px 32px 74px minmax(62px, 1fr) minmax(62px, 1fr) minmax(72px, 1.1fr) 46px 46px 46px minmax(95px, 1.2fr);
+  gap: 6px;
+  padding: 5.5px 12px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
   align-items: center;
   font-family: var(--font-mono);
-  font-size: 0.8rem;
+  font-size: 0.76rem;
   cursor: pointer;
   transition: var(--transition-smooth);
   position: relative;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .leaderboard-row:hover {
@@ -68,7 +79,7 @@
 .cell-pos {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 0.9rem;
+  font-size: 0.82rem;
   color: var(--text-highlight);
   text-align: center;
 }
@@ -77,35 +88,37 @@
 .cell-driver {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
 }
 
 .driver-team-bar {
   width: 3px;
-  height: 18px;
+  height: 16px;
   border-radius: 2px;
   flex-shrink: 0;
 }
 
 .driver-number {
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   color: var(--text-muted);
-  width: 16px;
+  width: 14px;
   text-align: right;
 }
 
 .driver-code {
   font-family: var(--font-display);
   font-weight: 800;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
+  font-size: 0.78rem;
   color: #fff;
 }
 
 /* Time & Gaps */
 .cell-gap, .cell-interval {
-  font-size: 0.78rem;
+  font-size: 0.73rem;
   color: var(--text-secondary);
+  white-space: nowrap;
 }
 
 .cell-gap.leader {
@@ -116,7 +129,8 @@
 .cell-laptime {
   font-weight: 700;
   color: #fff;
-  font-size: 0.78rem;
+  font-size: 0.74rem;
+  white-space: nowrap;
 }
 
 /* Sector Badges */
@@ -124,12 +138,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.72rem;
+  font-size: 0.67rem;
   font-weight: 700;
-  padding: 2px 4px;
+  padding: 1.5px 2px;
   border-radius: 3px;
   text-align: center;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
 }
 
 .cell-sector.purple {
@@ -157,16 +172,17 @@
 .cell-tyre {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   min-width: 0;
+  white-space: nowrap;
 }
 
 .tyre-pill {
-  width: 22px;
-  height: 22px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   font-family: var(--font-display);
-  font-size: 0.72rem;
+  font-size: 0.65rem;
   font-weight: 900;
   display: flex;
   align-items: center;
@@ -202,23 +218,23 @@
 
 .tyre-age-badge {
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: 0.66rem;
   font-weight: 700;
   color: #e2e8f0;
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  padding: 2px 5px;
-  border-radius: 4px;
+  padding: 1px 3.5px;
+  border-radius: 3px;
   white-space: nowrap;
 }
 
 .pit-stops-badge {
   font-family: var(--font-mono);
-  font-size: 0.68rem;
+  font-size: 0.63rem;
   color: var(--text-muted);
   background: rgba(255, 255, 255, 0.04);
-  padding: 2px 6px;
-  border-radius: 4px;
+  padding: 1px 4px;
+  border-radius: 3px;
   white-space: nowrap;
 }
 
@@ -257,4 +273,89 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
+}
+
+.show-desktop {
+  display: inline;
+}
+
+.show-mobile {
+  display: none;
+}
+
+/* Responsive adjustment for Mobile / Tablet */
+@media (max-width: 900px) {
+  .show-desktop {
+    display: none !important;
+  }
+
+  .show-mobile {
+    display: inline !important;
+  }
+
+  .leaderboard-container {
+    overflow-x: hidden !important;
+    min-height: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Suppress Sectors (S1, S2, S3) and Interval (INT) as requested */
+  .col-sector,
+  .cell-sector,
+  .col-int,
+  .cell-interval {
+    display: none !important;
+  }
+
+  /* 6 columns: POS, PILOTO (#), NOMBRE (PILOTO), LÍDER, TIEMPO, NEUMÁTICOS (NEUM) */
+  .leaderboard-header-row,
+  .leaderboard-row {
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    grid-template-columns: 22px 24px minmax(46px, 1fr) minmax(50px, 1fr) minmax(58px, 1.1fr) 56px !important;
+    padding: 6px 6px !important;
+    gap: 4px !important;
+    font-size: 0.72rem !important;
+    box-sizing: border-box !important;
+  }
+
+  .driver-number {
+    font-size: 0.65rem;
+    width: 14px;
+  }
+
+  .driver-code {
+    font-size: 0.74rem;
+  }
+
+  .cell-gap,
+  .cell-laptime {
+    font-size: 0.7rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .cell-tyre {
+    gap: 3px;
+    justify-content: flex-start;
+  }
+
+  .cell-tyre .pit-stops-badge {
+    display: none !important;
+  }
+
+  .tyre-pill {
+    width: 16px;
+    height: 16px;
+    font-size: 0.6rem;
+  }
+
+  .tyre-age-badge {
+    font-size: 0.6rem;
+    padding: 1px 2px;
+  }
 }

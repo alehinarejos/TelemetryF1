@@ -104,22 +104,25 @@ export const LeaderboardBox: React.FC<LeaderboardBoxProps> = ({
       <div style={{
         background: 'linear-gradient(90deg, rgba(0, 215, 182, 0.12) 0%, rgba(225, 6, 0, 0.08) 100%)',
         borderBottom: '1px solid rgba(0, 215, 182, 0.2)',
-        padding: '6px 14px',
+        padding: '6px 12px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
+        flexWrap: 'wrap',
+        gap: '6px',
         fontSize: '0.68rem',
         color: '#d0d8e0',
         fontFamily: 'var(--font-mono)'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
           <span style={{ 
             width: '6px', 
             height: '6px', 
             borderRadius: '50%', 
             backgroundColor: '#00D7B6',
             boxShadow: '0 0 8px #00D7B6',
-            display: 'inline-block' 
+            display: 'inline-block',
+            flexShrink: 0
           }} />
           <span style={{ fontWeight: 600, color: '#00D7B6' }}>{t('realtime_auto_sync').split(':')[0]}:</span>
           <span>{t('realtime_auto_sync').split(':')[1]}</span>
@@ -137,8 +140,9 @@ export const LeaderboardBox: React.FC<LeaderboardBoxProps> = ({
           onClick={() => setActiveTab('drivers')}
           style={{ justifyContent: 'center' }}
         >
-          <Trophy size={14} style={{ display: 'inline', marginRight: '6px' }} />
-          <span>{t('drivers_tab')} ({drivers.length})</span>
+          <Trophy size={14} style={{ display: 'inline', marginRight: '6px', flexShrink: 0 }} />
+          <span className="tab-label-desktop">{t('drivers_tab')} ({drivers.length})</span>
+          <span className="tab-label-mobile">Pilotos ({drivers.length})</span>
         </button>
 
         <button
@@ -146,8 +150,9 @@ export const LeaderboardBox: React.FC<LeaderboardBoxProps> = ({
           onClick={() => setActiveTab('constructors')}
           style={{ justifyContent: 'center' }}
         >
-          <Users size={14} style={{ display: 'inline', marginRight: '6px' }} />
-          <span>{t('constructors_tab')} ({constructors.length})</span>
+          <Users size={14} style={{ display: 'inline', marginRight: '6px', flexShrink: 0 }} />
+          <span className="tab-label-desktop">{t('constructors_tab')} ({constructors.length})</span>
+          <span className="tab-label-mobile">Constructores ({constructors.length})</span>
         </button>
       </div>
 
@@ -221,7 +226,8 @@ export const LeaderboardBox: React.FC<LeaderboardBoxProps> = ({
                       {driver.flag} {driver.name} <strong style={{ color: 'var(--text-muted)', fontSize: '0.72rem' }}>#{driver.number}</strong>
                     </span>
                     <span className="standing-team-name">
-                      {driver.team} • {driver.wins} {t('wins').toLowerCase()} • {driver.podiums} {t('podiums').toLowerCase()}
+                      <span>{driver.team}</span>
+                      <span className="hide-on-mobile-stats"> • {driver.wins} {t('wins').toLowerCase()} • {driver.podiums} {t('podiums').toLowerCase()}</span>
                     </span>
                   </div>
                 </div>
@@ -263,7 +269,10 @@ export const LeaderboardBox: React.FC<LeaderboardBoxProps> = ({
                   />
                   <div className="standing-driver-info">
                     <span className="standing-driver-name">{c.team}</span>
-                    <span className="standing-team-name">{c.wins} {t('wins').toLowerCase()} • {c.podiums} {t('podiums').toLowerCase()}</span>
+                    <span className="standing-team-name">
+                      <span>{c.team}</span>
+                      <span className="hide-on-mobile-stats"> • {c.wins} {t('wins').toLowerCase()} • {c.podiums} {t('podiums').toLowerCase()}</span>
+                    </span>
                   </div>
                 </div>
 

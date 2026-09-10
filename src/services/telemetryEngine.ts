@@ -166,6 +166,7 @@ export class TelemetryEngine {
 
     // Load authentic recorded data from the last completed session (Round 15 Monza)
     this.loadOfficialRecordedSession(15);
+    this.start();
   }
 
   /**
@@ -249,16 +250,57 @@ export class TelemetryEngine {
       const s2 = (27.530 + (idx * 0.05)).toFixed(3);
       const s3 = (27.661 + (idx * 0.03)).toFixed(3);
 
-      const isDnf = result.status === 'DNF';
-      const gapLeader = isDnf ? 'DNF' : result.gapToLeader;
+      const isDnf = result.status === 'DNF' || result.gapToLeader === 'DNF';
+      const isLapped = !isDnf && result.gapToLeader.toUpperCase().includes('LAP');
+      
+      let gapLeaderStr = result.gapToLeader;
+      let gapLeaderNum = 0;
+
+      if (idx === 0) {
+        gapLeaderStr = 'GANADOR';
+        gapLeaderNum = 0;
+      } else if (isDnf) {
+        gapLeaderStr = 'DNF';
+      } else if (isLapped) {
+        const cleanLap = result.gapToLeader.replace(/^\++/, '').trim();
+        gapLeaderStr = `+${cleanLap}`;
+        gapLeaderNum = 90 + idx;
+      } else {
+        const parsed = parseFloat(result.gapToLeader.replace(/^\++/, '').replace('s', '').trim());
+        gapLeaderNum = isNaN(parsed) ? idx * 2.1 : parsed;
+        gapLeaderStr = `+${gapLeaderNum.toFixed(3)}s`;
+      }
+
+      let intervalNum = 0;
+      let gapAheadStr = 'LEADER';
+      if (idx > 0 && !isDnf) {
+        const prevResult = roundResults[idx - 1];
+        const prevIsDnf = prevResult?.status === 'DNF' || prevResult?.gapToLeader === 'DNF';
+        const prevIsLapped = !prevIsDnf && (prevResult?.gapToLeader.toUpperCase().includes('LAP') || false);
+
+        if (isLapped) {
+          gapAheadStr = gapLeaderStr;
+          intervalNum = gapLeaderNum;
+        } else if (prevIsLapped) {
+          gapAheadStr = gapLeaderStr;
+          intervalNum = gapLeaderNum;
+        } else {
+          const prevParsed = prevResult ? parseFloat(prevResult.gapToLeader.replace(/^\++/, '').replace('s', '').trim()) : 0;
+          const prevGap = isNaN(prevParsed) ? (idx - 1) * 2.1 : prevParsed;
+          intervalNum = Math.max(0.08, gapLeaderNum - prevGap);
+          gapAheadStr = `+${intervalNum.toFixed(3)}s`;
+        }
+      } else if (isDnf) {
+        gapAheadStr = 'DNF';
+      }
 
       return {
         position: result.position || (idx + 1),
         previousPosition: result.position || (idx + 1),
         driver: driverObj,
-        gapToLeader: gapLeader,
-        gapToAhead: idx === 0 ? 'LEADER' : isDnf ? 'DNF' : result.gapToLeader,
-        intervalNum: idx === 0 ? 0 : isDnf ? 999 : parseFloat(result.gapToLeader.replace('+', '').replace('s', '')) || (idx * 2.1),
+        gapToLeader: gapLeaderStr,
+        gapToAhead: gapAheadStr,
+        intervalNum: intervalNum,
         currentLapTime: isDnf ? 'DNF' : this.formatLapTime(baseSec),
         bestLapTime: this.formatLapTime(baseSec),
         s1Time: s1,
@@ -372,14 +414,16 @@ export class TelemetryEngine {
     }
   }
 
+  public getLiveMode(): boolean {
+    return this.isLiveMode;
+  }
+
   public start() {
     if (this.timerId !== null) return;
     this.isRunning = true;
     const intervalMs = 60; // ~16.6 Hz update rate
     this.timerId = window.setInterval(() => {
-      if (this.isLiveMode) {
-        this.tick();
-      }
+      this.tick();
     }, intervalMs);
   }
 
@@ -514,20 +558,30 @@ export class TelemetryEngine {
       return a.position - b.position;
     });
 
-    // Update gaps relative to leader
+    // Update gaps relative to leader with realistic live micro-variations
+    let cumulativeGap = 0;
     this.leaderboard.forEach((entry, i) => {
+      if (entry.gapToLeader === 'DNF' || entry.gapToAhead === 'DNF') {
+        entry.gapToAhead = 'DNF';
+        return;
+      }
+      if (entry.gapToLeader.toUpperCase().includes('LAP')) {
+        return;
+      }
       if (i === 0) {
-        entry.gapToLeader = 'LEADER';
+        entry.gapToLeader = this.session.trackStatus === 'CHEQUERED' ? 'GANADOR' : 'LÍDER';
         entry.gapToAhead = 'LEADER';
+        cumulativeGap = 0;
       } else {
-        // Calculate dynamic gap
-        const currentInterval = Math.max(0.2, entry.intervalNum + (Math.random() * 0.04 - 0.02) * dt);
+        // Calculate dynamic live interval with realistic telemetry drift
+        const delta = (Math.sin(Date.now() / 1500 + i * 1.7) * 0.003 + (Math.random() * 0.004 - 0.002)) * dt * this.playbackSpeed;
+        const currentInterval = Math.max(0.08, entry.intervalNum + delta);
         entry.intervalNum = currentInterval;
         entry.gapToAhead = `+${currentInterval.toFixed(3)}s`;
 
         // Cumulative gap to leader
-        const totalGap = (i * 1.5) + (currentInterval - 1.5);
-        entry.gapToLeader = `+${Math.max(0.4, totalGap).toFixed(3)}s`;
+        cumulativeGap += currentInterval;
+        entry.gapToLeader = `+${cumulativeGap.toFixed(3)}s`;
       }
     });
 

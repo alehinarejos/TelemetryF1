@@ -189,3 +189,89 @@
   color: #ffd700;
   font-family: var(--font-mono);
 }
+
+.schedule-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  width: 100%;
+}
+
+.schedule-filter-btn-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Responsive adjustments for Schedule */
+@media (max-width: 768px) {
+  .countdown-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .countdown-gp-name {
+    font-size: 1.35rem;
+  }
+
+  .countdown-timer-group {
+    width: 100%;
+    justify-content: space-between;
+    gap: 6px;
+  }
+
+  .timer-unit-box {
+    flex: 1;
+    min-width: 0;
+    padding: 8px 4px;
+  }
+
+  .timer-number {
+    font-size: 1.35rem;
+  }
+
+  .schedule-header-row {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 12px;
+  }
+
+  .schedule-main-title {
+    justify-content: center;
+    font-size: 1.05rem !important;
+    text-align: center;
+  }
+
+  .schedule-main-subtitle {
+    text-align: center;
+    display: block;
+    font-size: 0.72rem !important;
+  }
+
+  .schedule-filter-btn-group {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin: 0 auto;
+    gap: 6px;
+  }
+
+  .schedule-filter-btn-group .f1-btn {
+    flex: 1;
+    font-size: 0.72rem;
+    padding: 7px 4px;
+    justify-content: center;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .calendar-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}

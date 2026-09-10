@@ -110,7 +110,7 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* Center Session Pill: Displays current GP and active session, or time remaining until next session */}
-        <div className="session-pill" style={{ padding: '6px 14px', minWidth: '380px' }}>
+        <div className="session-pill" style={{ padding: '6px 14px' }}>
           {isStreaming || activeTimelineSession ? (
             // Active Live Session Running
             <>
@@ -202,13 +202,14 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* Live Status Indicator & Language Selector */}
-        <div className="header-actions" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div className="header-actions">
           <div 
+            className="header-status-pill"
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '8px',
-              padding: '6px 14px',
+              gap: '7px',
+              padding: '6px 12px',
               borderRadius: '20px',
               background: isStreaming 
                 ? 'rgba(225, 6, 0, 0.16)' 
@@ -227,17 +228,18 @@ export const Header: React.FC<HeaderProps> = ({
               <Radio 
                 size={14} 
                 color="var(--f1-red)" 
-                style={{ animation: 'pulse 1.2s infinite' }}
+                style={{ animation: 'pulse 1.2s infinite', flexShrink: 0 }}
               />
             ) : (
               <Wifi 
                 size={14} 
                 color={isConnected ? '#00D7B6' : '#ffd700'} 
+                style={{ flexShrink: 0 }}
               />
             )}
             
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span style={{ 
+              <span className="status-pill-text-main" style={{ 
                 fontFamily: 'var(--font-mono)', 
                 fontSize: '0.72rem', 
                 fontWeight: 800, 
@@ -250,7 +252,7 @@ export const Header: React.FC<HeaderProps> = ({
                   ? t('connected')
                   : t('updating')}
               </span>
-              <span style={{ fontSize: '0.64rem', color: 'var(--text-muted)' }}>
+              <span className="status-pill-text-sub" style={{ fontSize: '0.62rem', color: 'var(--text-muted)' }}>
                 {t('official_f1_data')}
               </span>
             </div>
@@ -262,10 +264,10 @@ export const Header: React.FC<HeaderProps> = ({
                   onRefreshLive();
                 }}
                 className="f1-btn"
-                style={{ padding: '4px', marginLeft: '4px', background: 'transparent', border: 'none' }}
+                style={{ padding: '3px', marginLeft: '2px', background: 'transparent', border: 'none' }}
                 title={t('update_data')}
               >
-                <RotateCw size={13} color="var(--text-secondary)" />
+                <RotateCw size={12} color="var(--text-secondary)" />
               </button>
             )}
           </div>
@@ -281,32 +283,36 @@ export const Header: React.FC<HeaderProps> = ({
           className={`nav-tab-btn ${activeTab === 'home' ? 'active' : ''}`}
           onClick={() => setActiveTab('home')}
         >
-          <LayoutDashboard size={15} />
-          <span>{t('tab_dashboard')}</span>
+          <LayoutDashboard size={14} />
+          <span className="tab-label-desktop">{t('tab_dashboard')}</span>
+          <span className="tab-label-mobile">Inicio</span>
         </button>
 
         <button 
           className={`nav-tab-btn ${activeTab === 'timing' ? 'active' : ''}`}
           onClick={() => setActiveTab('timing')}
         >
-          <Gauge size={15} />
-          <span>{t('tab_telemetry')}</span>
+          <Gauge size={14} />
+          <span className="tab-label-desktop">{t('tab_telemetry')}</span>
+          <span className="tab-label-mobile">Telemetría</span>
         </button>
 
         <button 
           className={`nav-tab-btn ${activeTab === 'leaderboard' ? 'active' : ''}`}
           onClick={() => setActiveTab('leaderboard')}
         >
-          <Trophy size={15} />
-          <span>{t('tab_leaderboard')}</span>
+          <Trophy size={14} />
+          <span className="tab-label-desktop">{t('tab_leaderboard')}</span>
+          <span className="tab-label-mobile">Mundial</span>
         </button>
 
         <button 
           className={`nav-tab-btn ${activeTab === 'schedule' ? 'active' : ''}`}
           onClick={() => setActiveTab('schedule')}
         >
-          <Calendar size={15} />
-          <span>{t('tab_schedule')}</span>
+          <Calendar size={14} />
+          <span className="tab-label-desktop">{t('tab_schedule')}</span>
+          <span className="tab-label-mobile">Calendario</span>
         </button>
       </nav>
     </header>

@@ -74,6 +74,13 @@ export const translations = {
     checking: 'Comprobando...',
     view_results: 'Ver Resultados',
     official_results: 'Resultados Oficiales',
+    scheduled: 'PROGRAMADO',
+    completed: 'COMPLETADO',
+    winner: 'Ganador',
+    pole: 'Pole',
+    view_results_22: 'Ver Resultados (22 Pilotos)',
+    calendar_header_title: 'CALENDARIO OFICIAL F1 - TEMPORADA 2026',
+    calendar_header_subtitle: 'Haz click en cualquier carrera completada para ver los resultados oficiales de todos los pilotos',
 
     // Leaderboard
     world_standings: 'CLASIFICACIÓN DEL MUNDIAL',
@@ -84,7 +91,9 @@ export const translations = {
     pos: 'POS',
     driver: 'PILOTO',
     team: 'ESCUDERÍA',
+    constructor: 'Constructor',
     points: 'PTS',
+    points_label: 'Puntos',
     podiums: 'PODIOS',
     wins: 'VICTORIAS',
     official_f1_standings_title: 'LEADERBOARD OFICIAL F1 - TEMPORADA 2026',
@@ -95,6 +104,11 @@ export const translations = {
     no_results_found: 'No se encontraron resultados para la búsqueda',
     standings_footer: 'Fórmula 1 • Temporada 2026 • Datos Oficiales FIA',
     realtime_auto_sync: 'EN TIEMPO REAL: Actualización automática tras cada carrera',
+    championship_drivers: 'Mundial Pilotos',
+    championship_constructors: 'Constructores',
+    auto_sync_active_title: 'Sincronización Automática Activa:',
+    auto_sync_active_desc: 'Los puntos y posiciones se actualizan de forma automática e inmediata al finalizar cada carrera y sesión oficial de F1.',
+    last_check_label: 'Última comprobación:',
 
     // Telemetry Full Tab
     ready_to_broadcast: 'LISTO PARA EMITIR',
@@ -111,9 +125,93 @@ export const translations = {
     humidity: 'Humedad',
     wind: 'Viento',
 
+    // Car Telemetry
+    loading_telemetry: 'Cargando datos de telemetría...',
+    gear: 'MARCHA',
+    throttle: 'ACEL',
+    brake: 'FRENO',
+    drs: 'DRS',
+    rpm: 'RPM',
+    battery_ers: 'BATERÍA ERS',
+    g_lateral: 'G LATERAL',
+    g_longitudinal: 'G LONGITUDINAL',
+
+    // Circuit Map
+    circuit: 'CIRCUITO',
+    follow_driver: 'Seguir piloto seleccionado',
+    zoom_in: 'Acercar mapa',
+    zoom_out: 'Alejar mapa',
+    reset_view: 'Restablecer vista',
+    drs_zone: 'Zona DRS',
+    finish_line: 'Línea de Meta',
+    selected_driver: 'Piloto Seleccionado',
+
+    // Circle of Doom
+    radar: 'RADAR',
+    pit_window_title: 'CIRCLE OF DOOM (VENTANA DE BOXES)',
+    undercut: 'UNDERCUT',
+    pit_prediction_desc: 'Predice la posición y tráfico al salir de boxes tras una parada de {loss}s.',
+    rejoin: 'REINCORPORACIÓN',
+    behind_driver: 'Detrás de {driver}',
+    leading_after_stop: 'Liderando tras parada',
+    traffic_dense: 'TRÁFICO EN PISTA',
+    traffic_clear: 'AIRE LIMPIO',
+    avg_pitlane_loss: 'Tiempo medio en Pitlane:',
+    current_pos: 'Pos. actual:',
+
+    // Race Control & Team Radios
+    race_control: 'Control de Carrera',
+    team_radios: 'Radios de Equipo',
+    live_audio: 'AUDIO EN VIVO',
+    play_radio: 'Reproducir audio de radio',
+
+    // Live Timing Table
+    timing: 'TIMING',
+    live_timing_title: 'TABLA DE TIEMPOS EN VIVO',
+    gap_leader: 'LÍDER',
+    interval: 'INT',
+    lap_time: 'TIEMPO',
+    tyres: 'NEUMÁTICOS',
+    tyres_short: 'NEUM',
+    laps: 'Vueltas',
+    pit_stops: 'Paradas',
+    stop: 'stop',
+    stops: 'stops',
+    q2_cutoff_banner: 'ZONA DE CORTE Q2 (TOP 10 AVANZA A Q3)',
+    q1_cutoff_banner: 'ZONA DE CORTE Q1 (TOP 15 AVANZA A Q2)',
+    elimination: 'ELIMINACIÓN',
+    winner_upper: 'GANADOR',
+
+    // Race Results Modal
+    round_of_total: 'RONDA {round} DE {total}',
+    season_2026: 'TEMPORADA 2026',
+    official_openf1: 'OFICIAL OPENF1',
+    prev_gp: 'GP Anterior',
+    next_gp_btn: 'GP Siguiente',
+    search_standings: 'Buscar en clasificación...',
+    race_winner: 'Ganador de Carrera',
+    pole_position: 'Pole Position',
+    race_distance: 'Distancia de Carrera',
+    laps_completed: '{count} Vueltas Completadas',
+    no_race_results: 'No se encontraron resultados para esta carrera o búsqueda.',
+    time_diff: 'Tiempo / Diferencia',
+    modal_footer_data: 'Datos oficiales de carrera provistos por FIA Formula One & OpenF1 API',
+    total_drivers_registered: 'Total: {count} pilotos registrados',
+    close_esc: 'Cerrar (Esc)',
+
     // Footer
     footer_text: 'OVERCUT F1 • Tiempos, telemetría y clasificaciones oficiales de la temporada 2026.',
     footer_subtext: 'Todos los datos se sincronizan automáticamente con las sesiones oficiales de Fórmula 1.',
+
+    // Additional UI & Mobile Tab Labels
+    tab_home_mobile: 'Inicio',
+    tab_telemetry_mobile: 'Telemetría',
+    tab_leaderboard_mobile: 'Mundial',
+    tab_schedule_mobile: 'Calendario',
+    lap_upper: 'VUELTA',
+    remaining_upper: 'RESTANTE',
+    track_clear_green: 'PISTA VERDE',
+    connection_status_title: 'Estado de conexión oficial',
   },
 
   en: {
@@ -175,6 +273,13 @@ export const translations = {
     checking: 'Checking...',
     view_results: 'View Results',
     official_results: 'Official Results',
+    scheduled: 'SCHEDULED',
+    completed: 'COMPLETED',
+    winner: 'Winner',
+    pole: 'Pole',
+    view_results_22: 'View Results (22 Drivers)',
+    calendar_header_title: 'OFFICIAL F1 SCHEDULE - 2026 SEASON',
+    calendar_header_subtitle: 'Click on any completed race to view official results for all drivers',
 
     // Leaderboard
     world_standings: 'WORLD CHAMPIONSHIP STANDINGS',
@@ -185,7 +290,9 @@ export const translations = {
     pos: 'POS',
     driver: 'DRIVER',
     team: 'TEAM',
+    constructor: 'Constructor',
     points: 'PTS',
+    points_label: 'Points',
     podiums: 'PODIUMS',
     wins: 'WINS',
     official_f1_standings_title: 'OFFICIAL F1 LEADERBOARD - 2026 SEASON',
@@ -193,8 +300,14 @@ export const translations = {
     standings_subtitle: 'Official FIA Formula 1 World Championship Standings • Automatic updates upon race completion',
     sync_now: 'Update Now',
     syncing: 'Syncing...',
+    no_results_found: 'No results found for your search',
     standings_footer: 'Formula 1 • 2026 Season • Official FIA Data',
     realtime_auto_sync: 'REAL-TIME: Automatic update after every race',
+    championship_drivers: 'Drivers Championship',
+    championship_constructors: 'Constructors',
+    auto_sync_active_title: 'Live Auto-Sync Active:',
+    auto_sync_active_desc: 'Points and standings update automatically and immediately upon the conclusion of every official F1 session.',
+    last_check_label: 'Last checked:',
 
     // Telemetry Full Tab
     ready_to_broadcast: 'READY TO STREAM',
@@ -211,9 +324,93 @@ export const translations = {
     humidity: 'Humidity',
     wind: 'Wind',
 
+    // Car Telemetry
+    loading_telemetry: 'Loading telemetry data...',
+    gear: 'GEAR',
+    throttle: 'THR',
+    brake: 'BRK',
+    drs: 'DRS',
+    rpm: 'RPM',
+    battery_ers: 'ERS BATTERY',
+    g_lateral: 'LAT G-FORCE',
+    g_longitudinal: 'LONG G-FORCE',
+
+    // Circuit Map
+    circuit: 'CIRCUIT',
+    follow_driver: 'Follow selected driver',
+    zoom_in: 'Zoom in',
+    zoom_out: 'Zoom out',
+    reset_view: 'Reset view',
+    drs_zone: 'DRS Zone',
+    finish_line: 'Finish Line',
+    selected_driver: 'Selected Driver',
+
+    // Circle of Doom
+    radar: 'RADAR',
+    pit_window_title: 'CIRCLE OF DOOM (PIT WINDOW)',
+    undercut: 'UNDERCUT',
+    pit_prediction_desc: 'Predicts track position and traffic upon pit exit after a {loss}s stop.',
+    rejoin: 'REJOIN',
+    behind_driver: 'Behind {driver}',
+    leading_after_stop: 'Leading after stop',
+    traffic_dense: 'TRAFFIC ON TRACK',
+    traffic_clear: 'CLEAN AIR',
+    avg_pitlane_loss: 'Avg Pitlane Loss:',
+    current_pos: 'Current Pos:',
+
+    // Race Control & Team Radios
+    race_control: 'Race Control',
+    team_radios: 'Team Radio',
+    live_audio: 'LIVE AUDIO',
+    play_radio: 'Play radio audio',
+
+    // Live Timing Table
+    timing: 'TIMING',
+    live_timing_title: 'LIVE TIMING TABLE',
+    gap_leader: 'LEADER',
+    interval: 'INT',
+    lap_time: 'TIME',
+    tyres: 'TYRES',
+    tyres_short: 'TYR',
+    laps: 'Laps',
+    pit_stops: 'Pit Stops',
+    stop: 'stop',
+    stops: 'stops',
+    q2_cutoff_banner: 'Q2 CUTOFF ZONE (TOP 10 ADVANCES TO Q3)',
+    q1_cutoff_banner: 'Q1 CUTOFF ZONE (TOP 15 ADVANCES TO Q2)',
+    elimination: 'ELIMINATION',
+    winner_upper: 'WINNER',
+
+    // Race Results Modal
+    round_of_total: 'ROUND {round} OF {total}',
+    season_2026: '2026 SEASON',
+    official_openf1: 'OFFICIAL OPENF1',
+    prev_gp: 'Previous GP',
+    next_gp_btn: 'Next GP',
+    search_standings: 'Search standings...',
+    race_winner: 'Race Winner',
+    pole_position: 'Pole Position',
+    race_distance: 'Race Distance',
+    laps_completed: '{count} Laps Completed',
+    no_race_results: 'No results found for this race or search query.',
+    time_diff: 'Time / Gap',
+    modal_footer_data: 'Official race data provided by FIA Formula One & OpenF1 API',
+    total_drivers_registered: 'Total: {count} registered drivers',
+    close_esc: 'Close (Esc)',
+
     // Footer
     footer_text: 'OVERCUT F1 • Official timing, telemetry and standings for the 2026 season.',
     footer_subtext: 'All data is automatically synchronized with official Formula 1 sessions.',
+
+    // Additional UI & Mobile Tab Labels
+    tab_home_mobile: 'Home',
+    tab_telemetry_mobile: 'Telemetry',
+    tab_leaderboard_mobile: 'Standings',
+    tab_schedule_mobile: 'Schedule',
+    lap_upper: 'LAP',
+    remaining_upper: 'REMAINING',
+    track_clear_green: 'TRACK CLEAR',
+    connection_status_title: 'Official connection status',
   },
 
   fr: {
@@ -275,6 +472,13 @@ export const translations = {
     checking: 'Vérification...',
     view_results: 'Voir Résultats',
     official_results: 'Résultats Officiels',
+    scheduled: 'PROGRAMMÉ',
+    completed: 'TERMINÉ',
+    winner: 'Vainqueur',
+    pole: 'Pole',
+    view_results_22: 'Voir les Résultats (22 Pilotes)',
+    calendar_header_title: 'CALENDRIER OFFICIEL F1 - SAISON 2026',
+    calendar_header_subtitle: 'Cliquez sur une course terminée pour afficher les résultats officiels de tous les pilotes',
 
     // Leaderboard
     world_standings: 'CLASSEMENT DU CHAMPIONNAT',
@@ -285,7 +489,9 @@ export const translations = {
     pos: 'POS',
     driver: 'PILOTE',
     team: 'ÉCURIE',
+    constructor: 'Constructeur',
     points: 'PTS',
+    points_label: 'Points',
     podiums: 'PODIUMS',
     wins: 'VICTOIRES',
     official_f1_standings_title: 'CLASSEMENT OFFICIEL F1 - SAISON 2026',
@@ -296,6 +502,11 @@ export const translations = {
     no_results_found: 'Aucun résultat trouvé pour votre recherche',
     standings_footer: 'Formule 1 • Saison 2026 • Données Officielles FIA',
     realtime_auto_sync: 'EN TEMPS RÉEL : Mise à jour automatique après chaque course',
+    championship_drivers: 'Championnat Pilotes',
+    championship_constructors: 'Constructeurs',
+    auto_sync_active_title: 'Synchronisation Automatique Active :',
+    auto_sync_active_desc: 'Les points et classements sont mis à jour automatiquement et immédiatement à la fin de chaque course et séance officielle de F1.',
+    last_check_label: 'Dernière vérification :',
 
     // Telemetry Full Tab
     ready_to_broadcast: 'PRÊT À DIFFUSER',
@@ -312,9 +523,93 @@ export const translations = {
     humidity: 'Humidité',
     wind: 'Vent',
 
+    // Car Telemetry
+    loading_telemetry: 'Chargement des données de télémétrie...',
+    gear: 'RAPPORT',
+    throttle: 'ACC',
+    brake: 'FREIN',
+    drs: 'DRS',
+    rpm: 'TR/MIN',
+    battery_ers: 'BATTERIE ERS',
+    g_lateral: 'G LATÉRAL',
+    g_longitudinal: 'G LONGITUDINAL',
+
+    // Circuit Map
+    circuit: 'CIRCUIT',
+    follow_driver: 'Suivre le pilote sélectionné',
+    zoom_in: 'Zoom avant',
+    zoom_out: 'Zoom arrière',
+    reset_view: 'Réinitialiser la vue',
+    drs_zone: 'Zone DRS',
+    finish_line: 'Ligne d’Arrivée',
+    selected_driver: 'Pilote Sélectionné',
+
+    // Circle of Doom
+    radar: 'RADAR',
+    pit_window_title: 'CIRCLE OF DOOM (FENÊTRE DES STANDS)',
+    undercut: 'UNDERCUT',
+    pit_prediction_desc: 'Prédit la position en piste et le trafic à la sortie des stands après un arrêt de {loss}s.',
+    rejoin: 'SORTIE DES STANDS',
+    behind_driver: 'Derrière {driver}',
+    leading_after_stop: 'En tête après l’arrêt',
+    traffic_dense: 'TRAFIC EN PISTE',
+    traffic_clear: 'AIR PROPRE',
+    avg_pitlane_loss: 'Temps moyen dans les stands :',
+    current_pos: 'Pos. actuelle :',
+
+    // Race Control & Team Radios
+    race_control: 'Direction de Course',
+    team_radios: 'Radios d’Équipe',
+    live_audio: 'AUDIO EN DIRECT',
+    play_radio: 'Écouter la radio',
+
+    // Live Timing Table
+    timing: 'CHRONO',
+    live_timing_title: 'TABLEAU DES TEMPS EN DIRECT',
+    gap_leader: 'LEADER',
+    interval: 'INT',
+    lap_time: 'TEMPS',
+    tyres: 'PNEUS',
+    tyres_short: 'PNEU',
+    laps: 'Tours',
+    pit_stops: 'Arrêts',
+    stop: 'arrêt',
+    stops: 'arrêts',
+    q2_cutoff_banner: 'ZONE D’ÉLIMINATION Q2 (TOP 10 ACCÈDE À LA Q3)',
+    q1_cutoff_banner: 'ZONE D’ÉLIMINATION Q1 (TOP 15 ACCÈDE À LA Q2)',
+    elimination: 'ÉLIMINATION',
+    winner_upper: 'VAINQUEUR',
+
+    // Race Results Modal
+    round_of_total: 'MANCHE {round} SUR {total}',
+    season_2026: 'SAISON 2026',
+    official_openf1: 'OFFICIEL OPENF1',
+    prev_gp: 'GP Précédent',
+    next_gp_btn: 'GP Suivant',
+    search_standings: 'Rechercher dans le classement...',
+    race_winner: 'Vainqueur de la Course',
+    pole_position: 'Pole Position',
+    race_distance: 'Distance de Course',
+    laps_completed: '{count} Tours Complétés',
+    no_race_results: 'Aucun résultat trouvé pour cette course ou recherche.',
+    time_diff: 'Temps / Écart',
+    modal_footer_data: 'Données officielles fournies par FIA Formula One & OpenF1 API',
+    total_drivers_registered: 'Total : {count} pilotes enregistrés',
+    close_esc: 'Fermer (Échap)',
+
     // Footer
     footer_text: 'OVERCUT F1 • Chronométrage, télémétrie et classements officiels de la saison 2026.',
     footer_subtext: 'Toutes les données sont automatiquement synchronisées avec les séances officielles de Formule 1.',
+
+    // Additional UI & Mobile Tab Labels
+    tab_home_mobile: 'Accueil',
+    tab_telemetry_mobile: 'Télémétrie',
+    tab_leaderboard_mobile: 'Mondial',
+    tab_schedule_mobile: 'Calendrier',
+    lap_upper: 'TOUR',
+    remaining_upper: 'RESTANT',
+    track_clear_green: 'PISTE VERTE',
+    connection_status_title: 'Statut de connexion officiel',
   },
 
   it: {
@@ -376,6 +671,13 @@ export const translations = {
     checking: 'Controllo in corso...',
     view_results: 'Vedi Risultati',
     official_results: 'Risultati Ufficiali',
+    scheduled: 'PROGRAMMATO',
+    completed: 'COMPLETATO',
+    winner: 'Vincitore',
+    pole: 'Pole',
+    view_results_22: 'Vedi Risultati (22 Piloti)',
+    calendar_header_title: 'CALENDARIO UFFICIALE F1 - STAGIONE 2026',
+    calendar_header_subtitle: 'Fai clic su qualsiasi gara completata per visualizzare i risultati ufficiali di tutti i piloti',
 
     // Leaderboard
     world_standings: 'CLASSIFICA MONDIALE',
@@ -386,7 +688,9 @@ export const translations = {
     pos: 'POS',
     driver: 'PILOTA',
     team: 'SCUDERIA',
+    constructor: 'Costruttore',
     points: 'PTS',
+    points_label: 'Punti',
     podiums: 'PODI',
     wins: 'VITTORIE',
     official_f1_standings_title: 'CLASSIFICA UFFICIALE F1 - STAGIONE 2026',
@@ -397,6 +701,11 @@ export const translations = {
     no_results_found: 'Nessun risultato trovato per la ricerca',
     standings_footer: 'Formula 1 • Stagione 2026 • Dati Ufficiali FIA',
     realtime_auto_sync: 'IN TEMPO REALE: Aggiornamento automatico dopo ogni gara',
+    championship_drivers: 'Mondiale Piloti',
+    championship_constructors: 'Costruttori',
+    auto_sync_active_title: 'Sincronizzazione Automatica Attiva:',
+    auto_sync_active_desc: 'Punti e posizioni si aggiornano automaticamente e immediatamente al termine di ogni gara e sessione ufficiale di F1.',
+    last_check_label: 'Ultimo controllo:',
 
     // Telemetry Full Tab
     ready_to_broadcast: 'PRONTO PER LA DIRETTA',
@@ -413,9 +722,93 @@ export const translations = {
     humidity: 'Umidità',
     wind: 'Vento',
 
+    // Car Telemetry
+    loading_telemetry: 'Caricamento dati telemetria...',
+    gear: 'MARCIA',
+    throttle: 'ACC',
+    brake: 'FRENO',
+    drs: 'DRS',
+    rpm: 'GIRI/MIN',
+    battery_ers: 'BATTERIA ERS',
+    g_lateral: 'G LATERALE',
+    g_longitudinal: 'G LONGITUDINALE',
+
+    // Circuit Map
+    circuit: 'CIRCUITO',
+    follow_driver: 'Segui pilota selezionato',
+    zoom_in: 'Ingrandisci mappa',
+    zoom_out: 'Riduci mappa',
+    reset_view: 'Ripristina vista',
+    drs_zone: 'Zona DRS',
+    finish_line: 'Traguardo',
+    selected_driver: 'Pilota Selezionato',
+
+    // Circle of Doom
+    radar: 'RADAR',
+    pit_window_title: 'CIRCLE OF DOOM (FINESTRA DEI BOX)',
+    undercut: 'UNDERCUT',
+    pit_prediction_desc: 'Prevede la posizione in pista e il traffico all’uscita dai box dopo una sosta di {loss}s.',
+    rejoin: 'RIENTRO',
+    behind_driver: 'Dietro a {driver}',
+    leading_after_stop: 'In testa dopo la sosta',
+    traffic_dense: 'TRAFFICO IN PISTA',
+    traffic_clear: 'ARIA PULITA',
+    avg_pitlane_loss: 'Tempo medio in pitlane:',
+    current_pos: 'Pos. attuale:',
+
+    // Race Control & Team Radios
+    race_control: 'Direzione Gara',
+    team_radios: 'Radio di Squadra',
+    live_audio: 'AUDIO IN DIRETTA',
+    play_radio: 'Riproduci audio radio',
+
+    // Live Timing Table
+    timing: 'TEMPI',
+    live_timing_title: 'TABELLA TEMPI IN DIRETTA',
+    gap_leader: 'LEADER',
+    interval: 'INT',
+    lap_time: 'TEMPO',
+    tyres: 'PNEUMATICI',
+    tyres_short: 'PNEU',
+    laps: 'Giri',
+    pit_stops: 'Soste',
+    stop: 'sosta',
+    stops: 'soste',
+    q2_cutoff_banner: 'ZONA DI TAGLIO Q2 (I PRIMI 10 PASSANO AL Q3)',
+    q1_cutoff_banner: 'ZONA DI TAGLIO Q1 (I PRIMI 15 PASSANO AL Q2)',
+    elimination: 'ELIMINAZIONE',
+    winner_upper: 'VINCITORE',
+
+    // Race Results Modal
+    round_of_total: 'GARA {round} DI {total}',
+    season_2026: 'STAGIONE 2026',
+    official_openf1: 'UFFICIALE OPENF1',
+    prev_gp: 'GP Precedente',
+    next_gp_btn: 'GP Successivo',
+    search_standings: 'Cerca nella classifica...',
+    race_winner: 'Vincitore della Gara',
+    pole_position: 'Pole Position',
+    race_distance: 'Distanza di Gara',
+    laps_completed: '{count} Giri Completati',
+    no_race_results: 'Nessun risultato trovato per questa gara o ricerca.',
+    time_diff: 'Tempo / Distacco',
+    modal_footer_data: 'Dati ufficiali forniti da FIA Formula One & OpenF1 API',
+    total_drivers_registered: 'Totale: {count} piloti registrati',
+    close_esc: 'Chiudi (Esc)',
+
     // Footer
     footer_text: 'OVERCUT F1 • Tempi sul giro, telemetria e classifiche ufficiali della stagione 2026.',
     footer_subtext: 'Tutti i dati sono sincronizzati automaticamente con le sessioni ufficiali di Formula 1.',
+
+    // Additional UI & Mobile Tab Labels
+    tab_home_mobile: 'Home',
+    tab_telemetry_mobile: 'Telemetria',
+    tab_leaderboard_mobile: 'Mondiale',
+    tab_schedule_mobile: 'Calendario',
+    lap_upper: 'GIRO',
+    remaining_upper: 'RIMANENTE',
+    track_clear_green: 'PISTA VERDE',
+    connection_status_title: 'Stato di connessione ufficiale',
   },
 };
 

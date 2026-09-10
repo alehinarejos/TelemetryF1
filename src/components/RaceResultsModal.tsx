@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { F1_SCHEDULE } from '../data/schedule';
 import { RACE_RESULTS_2026 } from '../data/raceResults2026';
 import type { DriverRaceResult } from '../data/raceResults2026';
@@ -53,7 +54,7 @@ export const RaceResultsModal: React.FC<RaceResultsModalProps> = ({
   const winner = results.find((r) => r.position === 1);
   const totalLaps = winner ? winner.laps : 0;
 
-  return (
+  return createPortal(
     <div className="race-modal-overlay" onClick={onClose}>
       <div 
         className="race-modal-container" 
@@ -323,6 +324,7 @@ export const RaceResultsModal: React.FC<RaceResultsModalProps> = ({
           <span>Total: {results.length} pilotos registrados</span>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

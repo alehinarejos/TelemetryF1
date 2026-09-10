@@ -184,20 +184,98 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
   margin-bottom: 14px;
   padding-bottom: 10px;
   border-bottom: 1px solid var(--f1-border);
 }
 
+.schedule-header-actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+  flex-shrink: 0;
+}
+
+.schedule-header-actions .f1-btn {
+  white-space: nowrap;
+  font-size: 0.78rem;
+  padding: 6px 12px;
+}
+
+.schedule-gp-hero {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  width: 100%;
+}
+
+.schedule-gp-details {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  flex: 1;
+}
+
+.schedule-gp-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+
+.schedule-countdown-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--f1-border);
+  padding: 4px 10px;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
 .schedule-title {
   font-family: var(--font-display);
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 900;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.05em;
   color: #fff;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  flex-wrap: nowrap;
+  min-width: 0;
+}
+
+.schedule-title-main {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.schedule-badge-hours {
+  font-size: 0.62rem;
+  color: #00D7B6;
+  background: rgba(0, 215, 182, 0.12);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.schedule-action-btn-results {
+  border-color: rgba(255, 215, 0, 0.3) !important;
+  color: #ffd700 !important;
 }
 
 .schedule-strip-content {
@@ -279,28 +357,45 @@
   flex-direction: column;
   height: 100%;
   min-height: 0;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .leaderboard-tabs {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   background: rgba(0, 0, 0, 0.4);
   border-bottom: 1px solid var(--f1-border);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .led-tab-btn {
-  flex: 1;
-  padding: 10px 8px;
+  padding: 10px 6px;
   background: transparent;
   border: none;
   color: var(--text-secondary);
   font-family: var(--font-display);
   font-size: 0.78rem;
   font-weight: 700;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.02em;
   cursor: pointer;
   transition: var(--transition-smooth);
   text-align: center;
   border-bottom: 2px solid transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.led-tab-btn span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .led-tab-btn:hover {
@@ -320,15 +415,22 @@
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .standing-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 14px;
+  padding: 9px 12px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
   transition: var(--transition-smooth);
+  min-width: 0;
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .standing-row:hover {
@@ -343,19 +445,27 @@
   background: rgba(255, 255, 255, 0.04);
 }
 
+.hide-on-mobile-stats {
+  display: inline;
+}
+
 .standing-left {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
 }
 
 .standing-pos {
   font-family: var(--font-display);
   font-weight: 900;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   color: var(--text-muted);
-  width: 22px;
+  width: 20px;
   text-align: center;
+  flex-shrink: 0;
 }
 
 .standing-pos.top-3 {
@@ -365,50 +475,470 @@
 .standing-driver-info {
   display: flex;
   flex-direction: column;
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
 }
 
 .standing-driver-name {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 0.88rem;
+  font-size: 0.85rem;
   color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .standing-team-name {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .standing-points {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  justify-content: center;
+  flex-shrink: 0;
+  width: auto;
+  min-width: 46px;
+  text-align: right;
+  line-height: 1;
 }
 
 .points-num {
   font-family: var(--font-mono);
   font-weight: 900;
-  font-size: 1.05rem;
+  font-size: 0.98rem;
   color: #fff;
+  line-height: 1;
 }
 
 .points-label {
   font-family: var(--font-mono);
-  font-size: 0.62rem;
+  font-size: 0.6rem;
   color: var(--text-muted);
   text-transform: uppercase;
+  font-weight: 700;
+  margin-top: 1px;
+}
+
+.telemetrix-desktop-views {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.telemetrix-mobile-dropdown {
+  display: none;
+}
+
+.telemetrix-select-view {
+  background: rgba(18, 24, 38, 0.95);
+  border: 1px solid var(--f1-border);
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  outline: none;
+  width: 100%;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.telemetrix-select-view:focus {
+  border-color: var(--f1-red);
+}
+
+/* Schedule Sessions Strip & Cards */
+.schedule-sessions-strip {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.schedule-session-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.2s ease;
+  min-width: 0;
+}
+
+.schedule-session-card.is-live {
+  background: linear-gradient(180deg, rgba(225, 6, 0, 0.25) 0%, rgba(0, 0, 0, 0.6) 100%);
+  border-color: #ff4d4d;
+}
+
+.schedule-session-card.is-next {
+  background: linear-gradient(180deg, rgba(0, 215, 182, 0.12) 0%, rgba(0, 0, 0, 0.45) 100%);
+  border-color: rgba(0, 215, 182, 0.45);
+}
+
+.schedule-session-card.is-race {
+  background: linear-gradient(180deg, rgba(225, 6, 0, 0.14) 0%, rgba(0, 0, 0, 0.45) 100%);
+  border-color: rgba(225, 6, 0, 0.35);
+}
+
+.schedule-session-card.is-completed {
+  background: rgba(0, 0, 0, 0.2);
+  border-color: rgba(255, 255, 255, 0.04);
+  opacity: 0.75;
+}
+
+.session-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  min-width: 0;
+}
+
+.session-card-name-group {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.74rem;
+  color: #fff;
+  font-weight: 600;
+  min-width: 0;
+  flex: 1;
+}
+
+.schedule-session-card.is-race .session-card-name-group,
+.schedule-session-card.is-next .session-card-name-group,
+.schedule-session-card.is-live .session-card-name-group {
+  font-weight: 800;
+}
+
+.session-card-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.live-pulse-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ff4d4d;
+  animation: pulse 1s infinite;
+  flex-shrink: 0;
+}
+
+.session-badge-live {
+  font-size: 0.58rem;
+  color: #fff;
+  background: #ff4d4d;
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-weight: 800;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.session-badge-fin {
+  font-size: 0.58rem;
+  color: #00D7B6;
+  background: rgba(0, 215, 182, 0.12);
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.session-badge-next {
+  font-size: 0.58rem;
+  color: #00D7B6;
+  background: rgba(0, 215, 182, 0.2);
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.session-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  font-size: 0.7rem;
+  font-family: var(--font-mono);
+  min-width: 0;
+}
+
+.session-card-date {
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.session-card-time {
+  padding: 1px 5px;
+  border-radius: 3px;
+  white-space: nowrap;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.session-card-time.time-active {
+  color: #00D7B6;
+  background: rgba(0, 215, 182, 0.12);
+  border: 1px solid rgba(0, 215, 182, 0.25);
+}
+
+.session-card-time.time-race {
+  color: #ff4d4d;
+  background: rgba(225, 6, 0, 0.2);
+  border: 1px solid rgba(225, 6, 0, 0.3);
+}
+
+.session-card-time.time-completed {
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.session-card-time.time-notime {
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* Responsive adjustment for sketch layout */
-@media (max-width: 1080px) {
+@media (max-width: 1120px), (max-height: 640px) {
   .home-layout-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
+    height: auto !important;
+    min-height: auto !important;
+    gap: 16px;
+    width: 100% !important;
+    max-width: 100% !important;
   }
+
+  .home-left-column,
   .home-right-column {
+    height: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
     position: static;
   }
-  .leaderboard-tall-card {
+
+  .telemetrix-card {
+    height: 500px;
+    min-height: 420px;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .schedule-card {
     height: auto;
-    min-height: 520px;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .leaderboard-tall-card {
+    height: 540px;
+    min-height: 440px;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .schedule-sessions-strip {
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    padding-bottom: 4px;
+    gap: 8px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .schedule-session-card {
+    min-width: 125px;
+    flex-shrink: 0;
+  }
+
+  .hide-on-mobile-stats {
+    display: none !important;
+  }
+
+  .telemetrix-desktop-views {
+    display: none !important;
+  }
+
+  .telemetrix-mobile-dropdown {
+    display: flex;
+    width: 100%;
+    margin-top: 4px;
+  }
+
+  .telemetrix-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .schedule-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .schedule-title {
+    font-size: 0.88rem;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .schedule-header-actions {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 6px;
+  }
+
+  .schedule-header-actions .f1-btn {
+    width: 100%;
+    flex: none;
+    padding: 7px 10px !important;
+    font-size: 0.75rem !important;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .schedule-gp-hero {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .schedule-gp-details {
+    width: 100%;
+    gap: 10px;
+  }
+
+  .schedule-gp-title-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .schedule-countdown-box {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    padding: 6px 10px;
+  }
+}
+
+@media (max-width: 640px) {
+  .home-layout-grid {
+    gap: 12px;
+  }
+
+  .telemetrix-card {
+    height: 480px;
+    min-height: 420px;
+  }
+
+  .telemetrix-header {
+    padding: 8px 12px;
+  }
+
+  .telemetrix-title {
+    font-size: 0.95rem;
+    justify-content: space-between;
+  }
+
+  .schedule-card {
+    padding: 12px;
+  }
+
+  .schedule-strip-content {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .next-gp-details {
+    gap: 10px;
+  }
+
+  .next-gp-flag {
+    font-size: 1.8rem;
+  }
+
+  .next-gp-name {
+    font-size: 1rem;
+  }
+
+  .schedule-countdown-mini {
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .mini-timer-box {
+    flex: 1;
+    min-width: 0;
+    padding: 4px 6px;
+  }
+
+  .mini-timer-val {
+    font-size: 1.05rem;
+  }
+
+  .leaderboard-tall-card {
+    height: 500px;
+    min-height: 400px;
+  }
+
+  .standing-row {
+    padding: 8px 10px;
+  }
+
+  .standing-driver-name {
+    font-size: 0.8rem;
+  }
+
+  .points-num {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .schedule-header-actions {
+    flex-direction: column;
+    width: 100%;
+    gap: 6px;
+  }
+
+  .schedule-header-actions .f1-btn {
+    width: 100%;
+    flex: none;
+    padding: 7px 10px !important;
+    font-size: 0.74rem !important;
   }
 }

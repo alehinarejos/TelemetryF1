@@ -1,5 +1,6 @@
 import React from 'react';
 import type { LeaderboardEntry } from '../types/telemetry';
+import { useLanguage } from '../context/LanguageContext';
 
 interface LeaderboardProps {
   entries: LeaderboardEntry[];
@@ -14,28 +15,33 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
   onSelectDriver,
   isQualifying = false,
 }) => {
+  const { t } = useLanguage();
+
   return (
     <div className="f1-card leaderboard-container">
       <div className="card-header">
         <div className="card-title">
-          <span style={{ color: 'var(--f1-red)', fontWeight: 900 }}>TIMING</span>
-          <span>TABLA DE TIEMPOS EN VIVO</span>
+          <span style={{ color: 'var(--f1-red)', fontWeight: 900 }}>{t('timing')}</span>
+          <span>{t('live_timing_title')}</span>
         </div>
-        <div className="f1-badge badge-green">OFICIAL FIA</div>
+        <div className="f1-badge badge-green">{t('official_fia')}</div>
       </div>
 
       {/* Table Header */}
       <div className="leaderboard-header-row">
-        <span>POS</span>
-        <span>PILOTO</span>
-        <span style={{ paddingLeft: '6px' }}>NOMBRE</span>
-        <span>LÍDER</span>
-        <span>INT</span>
-        <span>TIEMPO</span>
-        <span style={{ textAlign: 'center' }}>S1</span>
-        <span style={{ textAlign: 'center' }}>S2</span>
-        <span style={{ textAlign: 'center' }}>S3</span>
-        <span style={{ textAlign: 'left', paddingLeft: '4px' }}>NEUMÁTICOS</span>
+        <span>{t('pos')}</span>
+        <span>#</span>
+        <span style={{ paddingLeft: '2px' }}>{t('driver')}</span>
+        <span>{t('gap_leader')}</span>
+        <span className="col-int">{t('interval')}</span>
+        <span>{t('lap_time')}</span>
+        <span className="col-sector" style={{ textAlign: 'center' }}>S1</span>
+        <span className="col-sector" style={{ textAlign: 'center' }}>S2</span>
+        <span className="col-sector" style={{ textAlign: 'center' }}>S3</span>
+        <span style={{ textAlign: 'left', paddingLeft: '2px' }}>
+          <span className="show-desktop">{t('tyres')}</span>
+          <span className="show-mobile">{t('tyres_short')}</span>
+        </span>
       </div>
 
       {/* Table Body */}
@@ -59,16 +65,16 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
               {/* Qualy Q2 Cutoff */}
               {showQ2Divider && (
                 <div className="cutoff-divider">
-                  <span>ZONA DE CORTE Q2 (TOP 10 AVANZA A Q3)</span>
-                  <span>ELIMINACIÓN</span>
+                  <span>{t('q2_cutoff_banner')}</span>
+                  <span>{t('elimination')}</span>
                 </div>
               )}
 
               {/* Qualy Q1 Cutoff */}
               {showQ1Divider && (
                 <div className="cutoff-divider">
-                  <span>ZONA DE CORTE Q1 (TOP 15 AVANZA A Q2)</span>
-                  <span>ELIMINACIÓN</span>
+                  <span>{t('q1_cutoff_banner')}</span>
+                  <span>{t('elimination')}</span>
                 </div>
               )}
 
@@ -91,18 +97,18 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
                 </div>
 
                 {/* Code & Flag */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0 }}>
                   <span className="driver-code">{entry.driver.code}</span>
                   <span style={{ fontSize: '0.82rem' }}>{entry.driver.flag}</span>
                 </div>
 
                 {/* Gap to Leader */}
                 <div className={`cell-gap ${index === 0 ? 'leader' : ''}`}>
-                  {entry.gapToLeader}
+                  {index === 0 && entry.gapToLeader === 'GANADOR' ? t('winner_upper') : entry.gapToLeader}
                 </div>
 
                 {/* Interval to car ahead */}
-                <div className="cell-interval">
+                <div className="cell-interval col-int">
                   {entry.gapToAhead}
                 </div>
 
@@ -112,17 +118,17 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
                 </div>
 
                 {/* Sector 1 */}
-                <div className={`cell-sector ${entry.s1Status}`}>
+                <div className={`cell-sector col-sector ${entry.s1Status}`}>
                   {entry.s1Time}
                 </div>
 
                 {/* Sector 2 */}
-                <div className={`cell-sector ${entry.s2Status}`}>
+                <div className={`cell-sector col-sector ${entry.s2Status}`}>
                   {entry.s2Time}
                 </div>
 
                 {/* Sector 3 */}
-                <div className={`cell-sector ${entry.s3Status}`}>
+                <div className={`cell-sector col-sector ${entry.s3Status}`}>
                   {entry.s3Time}
                 </div>
 
@@ -138,7 +144,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
                     <span className="pit-in-badge">PIT</span>
                   ) : (
                     <span className="pit-stops-badge" title="Paradas en boxes">
-                      {entry.pitStops} {entry.pitStops === 1 ? 'stop' : 'stops'}
+                      {entry.pitStops} {entry.pitStops === 1 ? t('stop') : t('stops')}
                     </span>
                   )}
                 </div>
