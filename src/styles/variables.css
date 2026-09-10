@@ -1,0 +1,56 @@
+:root {
+  /* F1 Official Brand & Core Palette */
+  --f1-red: #e10600;
+  --f1-red-glow: rgba(225, 6, 0, 0.35);
+  --f1-black: #080a0f;
+  --f1-dark: #0d111a;
+  --f1-surface: #131926;
+  --f1-surface-glass: rgba(19, 25, 38, 0.75);
+  --f1-surface-light: #1b2336;
+  --f1-border: rgba(255, 255, 255, 0.07);
+  --f1-border-highlight: rgba(255, 255, 255, 0.18);
+
+  /* FIA Official Sector & Timing Delimiters */
+  --color-purple: #bd34d1;
+  --color-purple-bg: rgba(189, 52, 209, 0.16);
+  --color-purple-glow: rgba(189, 52, 209, 0.45);
+  
+  --color-green: #00d86c;
+  --color-green-bg: rgba(0, 216, 108, 0.16);
+  --color-green-glow: rgba(0, 216, 108, 0.4);
+
+  --color-yellow: #fbbd08;
+  --color-yellow-bg: rgba(251, 189, 8, 0.14);
+  --color-yellow-glow: rgba(251, 189, 8, 0.35);
+
+  --color-blue: #0095ff;
+  --color-blue-bg: rgba(0, 149, 255, 0.16);
+  --color-blue-glow: rgba(0, 149, 255, 0.35);
+
+  --color-drs: #00ffaa;
+  --color-drs-glow: rgba(0, 255, 170, 0.5);
+
+  /* Tyre Compounds */
+  --tyre-soft: #e10600;
+  --tyre-medium: #ffd200;
+  --tyre-hard: #f0f0f0;
+  --tyre-inter: #39b54a;
+  --tyre-wet: #00a6ff;
+
+  /* Typography */
+  --font-display: 'Outfit', -apple-system, sans-serif;
+  --font-mono: 'Chakra Petch', monospace;
+  --font-body: 'Inter', -apple-system, sans-serif;
+
+  /* Text colors */
+  --text-primary: #ffffff;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --text-highlight: #f8fafc;
+
+  /* Shadows and Effects */
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+  --card-glow: 0 0 20px rgba(0, 0, 0, 0.6);
+  --f1-red-shadow: 0 4px 20px rgba(225, 6, 0, 0.3);
+  --transition-smooth: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}

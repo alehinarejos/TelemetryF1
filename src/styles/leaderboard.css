@@ -1,0 +1,202 @@
+/* Leaderboard / Live Timing Table */
+.leaderboard-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 600px;
+}
+
+.leaderboard-header-row {
+  display: grid;
+  grid-template-columns: 34px 38px 80px 75px 65px 75px 60px 60px 60px 42px;
+  gap: 6px;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid var(--f1-border);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  align-items: center;
+}
+
+.leaderboard-body {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  max-height: 720px;
+}
+
+.leaderboard-row {
+  display: grid;
+  grid-template-columns: 34px 38px 80px 75px 65px 75px 60px 60px 60px 42px;
+  gap: 6px;
+  padding: 7px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  position: relative;
+}
+
+.leaderboard-row:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.leaderboard-row.selected {
+  background: rgba(225, 6, 0, 0.12);
+  border-left: 3px solid var(--f1-red);
+}
+
+.leaderboard-row.in-pit {
+  background: rgba(0, 149, 255, 0.07);
+}
+
+.leaderboard-row.elimination-danger {
+  background: rgba(225, 6, 0, 0.08);
+}
+
+.leaderboard-row.knocked-out {
+  opacity: 0.45;
+}
+
+/* Position cell */
+.cell-pos {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.9rem;
+  color: var(--text-highlight);
+  text-align: center;
+}
+
+/* Driver cell with number and team color */
+.cell-driver {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.driver-team-bar {
+  width: 3px;
+  height: 18px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.driver-number {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  width: 16px;
+  text-align: right;
+}
+
+.driver-code {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: #fff;
+}
+
+/* Time & Gaps */
+.cell-gap, .cell-interval {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+.cell-gap.leader {
+  color: var(--color-yellow);
+  font-weight: 700;
+}
+
+.cell-laptime {
+  font-weight: 700;
+  color: #fff;
+  font-size: 0.78rem;
+}
+
+/* Sector Badges */
+.cell-sector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 4px;
+  border-radius: 3px;
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+.cell-sector.purple {
+  background: var(--color-purple-bg);
+  color: var(--color-purple);
+  box-shadow: 0 0 6px rgba(189, 52, 209, 0.3);
+}
+
+.cell-sector.green {
+  background: var(--color-green-bg);
+  color: var(--color-green);
+}
+
+.cell-sector.yellow {
+  background: var(--color-yellow-bg);
+  color: var(--color-yellow);
+}
+
+.cell-sector.pit {
+  background: var(--color-blue-bg);
+  color: var(--color-blue);
+}
+
+/* Tyre cell */
+.cell-tyre {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tyre-age-text {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
+/* Pit Stop status */
+.cell-pit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+}
+
+.pit-in-badge {
+  background: var(--color-blue);
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 900;
+  padding: 1px 4px;
+  border-radius: 2px;
+  text-transform: uppercase;
+}
+
+/* Elimination Cutoff Line */
+.cutoff-divider {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 12px;
+  background: rgba(225, 6, 0, 0.15);
+  border-top: 1px dashed var(--f1-red);
+  border-bottom: 1px dashed var(--f1-red);
+  color: #ff5555;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}

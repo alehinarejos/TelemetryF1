@@ -1,0 +1,286 @@
+  import { F1_SCHEDULE } from '../data/schedule';
+import type { GrandPrixEvent, SessionSchedule } from '../data/schedule';
+
+export interface ScheduleSyncState {
+  schedule: GrandPrixEvent[];
+  lastWeeklyCheck: Date | null;
+  nextWeeklyCheck: Date | null;
+  isChecking: boolean;
+  statusMessage: string;
+  source: string;
+}
+
+const STORAGE_KEY_LAST_CHECK = 'f1_schedule_last_weekly_check';
+const STORAGE_KEY_CUSTOM_SCHEDULE = 'f1_schedule_synced_data';
+const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+
+class ScheduleSyncService {
+  private state: ScheduleSyncState = {
+    schedule: F1_SCHEDULE,
+    lastWeeklyCheck: null,
+    nextWeeklyCheck: null,
+    isChecking: false,
+    statusMessage: 'Horarios oficiales cargados',
+    source: 'F1 SignalR & FIA Calendario',
+  };
+
+  private listeners: Set<(state: ScheduleSyncState) => void> = new Set();
+  private checkInterval: number | null = null;
+
+  constructor() {
+    this.initFromStorage();
+    // Check if a weekly check is due
+    this.checkWeeklyScheduleIfNeeded();
+    // Periodic interval to check if a week has elapsed
+    this.checkInterval = window.setInterval(() => {
+      this.checkWeeklyScheduleIfNeeded();
+    }, 60 * 60 * 1000); // check hourly
+  }
+
+  private initFromStorage() {
+    try {
+      const savedDate = localStorage.getItem(STORAGE_KEY_LAST_CHECK);
+      if (savedDate) {
+        const lastCheck = new Date(savedDate);
+        this.state.lastWeeklyCheck = lastCheck;
+        this.state.nextWeeklyCheck = new Date(lastCheck.getTime() + ONE_WEEK_MS);
+      } else {
+        const now = new Date();
+        this.state.lastWeeklyCheck = now;
+        this.state.nextWeeklyCheck = new Date(now.getTime() + ONE_WEEK_MS);
+        localStorage.setItem(STORAGE_KEY_LAST_CHECK, now.toISOString());
+      }
+
+      const savedSchedule = localStorage.getItem(STORAGE_KEY_CUSTOM_SCHEDULE);
+      if (savedSchedule) {
+        const parsed = JSON.parse(savedSchedule);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          this.state.schedule = parsed;
+        }
+      }
+    } catch (err) {
+      console.warn('Error reading schedule from storage:', err);
+    }
+  }
+
+  public getState(): ScheduleSyncState {
+    return this.state;
+  }
+
+  public subscribe(listener: (state: ScheduleSyncState) => void): () => void {
+    this.listeners.add(listener);
+    listener(this.state);
+    return () => {
+      this.listeners.delete(listener);
+    };
+  }
+
+  private notify() {
+    this.listeners.forEach(l => l(this.state));
+  }
+
+  public checkWeeklyScheduleIfNeeded(): void {
+    const lastCheckTime = this.state.lastWeeklyCheck?.getTime() || 0;
+    const now = Date.now();
+
+    if (now - lastCheckTime >= ONE_WEEK_MS) {
+      console.log('Comprobación semanal de horarios F1 activada...');
+      this.fetchOfficialSchedule(false);
+    }
+  }
+
+  /**
+   * Manual or automatic fetch from official FIA / Jolpica calendar endpoint
+   */
+  public async fetchOfficialSchedule(isManual: boolean = false): Promise<void> {
+    if (this.state.isChecking) return;
+
+    this.state.isChecking = true;
+    this.state.statusMessage = 'Comprobando horarios oficiales con la FIA...';
+    this.notify();
+
+    try {
+      const res = await fetch('https://api.jolpi.ca/ergast/f1/current.json', { cache: 'no-cache' });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      const races = data?.MRData?.RaceTable?.Races;
+
+      if (Array.isArray(races) && races.length > 0) {
+        const updated = this.state.schedule.map((gp) => {
+          const apiRace = races.find((r: any) => parseInt(r.round, 10) === gp.round);
+          if (!apiRace) return gp;
+
+          const updatedSessions: SessionSchedule[] = gp.sessions.map((sess) => {
+            let apiTime: string | undefined = undefined;
+            let apiDate: string | undefined = undefined;
+
+            if (sess.type === 'Race') {
+              apiTime = apiRace.time;
+              apiDate = apiRace.date;
+            } else if (sess.type === 'FP1' && apiRace.FirstPractice) {
+              apiTime = apiRace.FirstPractice.time;
+              apiDate = apiRace.FirstPractice.date;
+            } else if (sess.type === 'FP2' && apiRace.SecondPractice) {
+              apiTime = apiRace.SecondPractice.time;
+              apiDate = apiRace.SecondPractice.date;
+            } else if (sess.type === 'FP3' && apiRace.ThirdPractice) {
+              apiTime = apiRace.ThirdPractice.time;
+              apiDate = apiRace.ThirdPractice.date;
+            } else if (sess.type === 'Qualifying' && apiRace.Qualifying) {
+              apiTime = apiRace.Qualifying.time;
+              apiDate = apiRace.Qualifying.date;
+            } else if (sess.type === 'Sprint' && apiRace.Sprint) {
+              apiTime = apiRace.Sprint.time;
+              apiDate = apiRace.Sprint.date;
+            } else if (sess.type === 'Sprint Qualifying' && apiRace.SprintQualifying) {
+              apiTime = apiRace.SprintQualifying.time;
+              apiDate = apiRace.SprintQualifying.date;
+            }
+
+            // If the official feed confirmed a specific time
+            if (apiTime && apiDate) {
+              const fullUtc = `${apiDate}T${apiTime}`;
+              return {
+                ...sess,
+                startTimeUtc: fullUtc,
+                hasOfficialTime: true,
+              };
+            }
+
+            // If time is missing or not yet determined, mark as n/d
+            return {
+              ...sess,
+              hasOfficialTime: sess.startTimeUtc ? !sess.startTimeUtc.endsWith('T00:00:00Z') : false,
+            };
+          });
+
+          return {
+            ...gp,
+            sessions: updatedSessions,
+          };
+        });
+
+        this.state.schedule = updated;
+        try {
+          localStorage.setItem(STORAGE_KEY_CUSTOM_SCHEDULE, JSON.stringify(updated));
+        } catch (e) {
+          // ignore
+        }
+      }
+
+      const now = new Date();
+      this.state.lastWeeklyCheck = now;
+      this.state.nextWeeklyCheck = new Date(now.getTime() + ONE_WEEK_MS);
+      localStorage.setItem(STORAGE_KEY_LAST_CHECK, now.toISOString());
+
+      this.state.statusMessage = isManual 
+        ? `Horarios comprobados ahora mismo (${now.toLocaleTimeString()})`
+        : `Comprobación semanal completada (${now.toLocaleDateString()})`;
+    } catch (err: any) {
+      console.warn('Error fetching official schedule:', err);
+      this.state.statusMessage = 'Última comprobación semanal activa (datos en caché)';
+    } finally {
+      this.state.isChecking = false;
+      this.notify();
+    }
+  }
+
+  /**
+   * Update session time directly from live SignalR SessionInfo feed
+   */
+  public updateFromSignalRSessionInfo(sessionInfo: any): void {
+    if (!sessionInfo) return;
+    const sessionName = sessionInfo.Name || sessionInfo.Type;
+    const startDate = sessionInfo.StartDate; // e.g. "2026-09-11T11:30:00"
+
+    if (!startDate || !sessionName) return;
+
+    // Find next upcoming race (e.g. Madrid R16)
+    const upcomingGp = this.state.schedule.find(g => !g.completed);
+    if (!upcomingGp) return;
+
+    let updatedAny = false;
+    const updatedSessions = upcomingGp.sessions.map((sess) => {
+      const match = 
+        (sess.type === 'FP1' && sessionName.toLowerCase().includes('practice 1')) ||
+        (sess.type === 'FP2' && sessionName.toLowerCase().includes('practice 2')) ||
+        (sess.type === 'FP3' && sessionName.toLowerCase().includes('practice 3')) ||
+        (sess.type === 'Qualifying' && sessionName.toLowerCase().includes('qualifying')) ||
+        (sess.type === 'Race' && sessionName.toLowerCase().includes('race'));
+
+      if (match) {
+        updatedAny = true;
+        return {
+          ...sess,
+          startTimeUtc: startDate.endsWith('Z') ? startDate : `${startDate}Z`,
+          hasOfficialTime: true,
+        };
+      }
+      return sess;
+    });
+
+    if (updatedAny) {
+      upcomingGp.sessions = updatedSessions;
+      this.state.source = 'F1 SignalR Stream en Directo';
+      this.state.statusMessage = `Horario oficial sincronizado vía F1 SignalR para ${sessionName}`;
+      this.notify();
+    }
+  }
+
+  public destroy() {
+    if (this.checkInterval) {
+      clearInterval(this.checkInterval);
+      this.checkInterval = null;
+    }
+  }
+}
+
+export const scheduleSyncService = new ScheduleSyncService();
+
+/**
+ * Format session hour. If hasOfficialTime is false or time is missing, returns "n/d"
+ */
+export function formatOfficialHour(session: SessionSchedule): string {
+  if (session.hasOfficialTime === false || !session.startTimeUtc) {
+    return 'n/d';
+  }
+
+  try {
+    const date = new Date(session.startTimeUtc);
+    if (isNaN(date.getTime())) return 'n/d';
+
+    // If starts at 00:00:00 without explicit official confirmation
+    if (session.startTimeUtc.includes('T00:00:00') && !session.hasOfficialTime) {
+      return 'n/d';
+    }
+
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + 'h';
+  } catch {
+    return 'n/d';
+  }
+}
+
+/**
+ * Format session date and hour combined: e.g. "vie, 11 sep • 13:30h" or "vie, 11 sep • n/d"
+ */
+export function formatSessionFull(session: SessionSchedule): { dateStr: string; timeStr: string } {
+  const timeStr = formatOfficialHour(session);
+  let dateStr = 'TBD';
+
+  if (session.startTimeUtc) {
+    try {
+      const date = new Date(session.startTimeUtc);
+      if (!isNaN(date.getTime())) {
+        dateStr = date.toLocaleDateString(undefined, {
+          weekday: 'short',
+          day: 'numeric',
+          month: 'short',
+        });
+      }
+    } catch {
+      dateStr = 'TBD';
+    }
+  }
+
+  return { dateStr, timeStr };
+}

@@ -1,0 +1,231 @@
+@import './variables.css';
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100%;
+  background-color: var(--f1-black);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+body {
+  background-image: 
+    radial-gradient(circle at 15% 10%, rgba(225, 6, 0, 0.08) 0%, transparent 45%),
+    radial-gradient(circle at 85% 80%, rgba(39, 244, 210, 0.04) 0%, transparent 50%),
+    linear-gradient(180deg, #090c12 0%, #06070a 100%);
+  background-attachment: fixed;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(13, 17, 26, 0.8);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--f1-red);
+}
+
+/* Base Glass Card */
+.f1-card {
+  background: var(--f1-surface-glass);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--f1-border);
+  border-radius: 12px;
+  box-shadow: var(--glass-shadow);
+  position: relative;
+  overflow: hidden;
+  transition: var(--transition-smooth);
+}
+
+.f1-card:hover {
+  border-color: var(--f1-border-highlight);
+}
+
+/* Card Header */
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--f1-border);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-highlight);
+}
+
+.card-title svg {
+  color: var(--f1-red);
+}
+
+/* Badges */
+.f1-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.badge-live {
+  background: rgba(225, 6, 0, 0.2);
+  color: #ff3333;
+  border: 1px solid rgba(225, 6, 0, 0.4);
+  box-shadow: 0 0 10px rgba(225, 6, 0, 0.4);
+  animation: pulse-live 1.8s infinite;
+}
+
+.badge-green {
+  background: var(--color-green-bg);
+  color: var(--color-green);
+  border: 1px solid rgba(0, 216, 108, 0.35);
+}
+
+.badge-yellow {
+  background: var(--color-yellow-bg);
+  color: var(--color-yellow);
+  border: 1px solid rgba(251, 189, 8, 0.4);
+}
+
+.badge-purple {
+  background: var(--color-purple-bg);
+  color: var(--color-purple);
+  border: 1px solid rgba(189, 52, 209, 0.4);
+}
+
+.badge-sc {
+  background: #fbbd08;
+  color: #000;
+  font-weight: 900;
+}
+
+.badge-vsc {
+  background: #fbbd08;
+  color: #000;
+  font-weight: 900;
+}
+
+@keyframes pulse-live {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 8px rgba(225, 6, 0, 0.4);
+  }
+  50% {
+    opacity: 0.65;
+    box-shadow: 0 0 2px rgba(225, 6, 0, 0.1);
+  }
+}
+
+/* Buttons */
+.f1-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: var(--f1-surface-light);
+  border: 1px solid var(--f1-border);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  outline: none;
+}
+
+.f1-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--f1-border-highlight);
+  transform: translateY(-1px);
+}
+
+.f1-btn-primary {
+  background: var(--f1-red);
+  border-color: var(--f1-red);
+  color: #fff;
+  box-shadow: var(--f1-red-shadow);
+}
+
+.f1-btn-primary:hover {
+  background: #ff1812;
+  box-shadow: 0 4px 24px rgba(225, 6, 0, 0.5);
+}
+
+.f1-btn-active {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: var(--f1-red);
+  color: #fff;
+}
+
+/* Tyre Compound Indicator */
+.tyre-pill {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 900;
+  border: 2px solid currentColor;
+}
+
+.tyre-soft {
+  color: var(--tyre-soft);
+  box-shadow: 0 0 6px rgba(225, 6, 0, 0.4);
+}
+
+.tyre-medium {
+  color: var(--tyre-medium);
+  box-shadow: 0 0 6px rgba(255, 210, 0, 0.4);
+}
+
+.tyre-hard {
+  color: var(--tyre-hard);
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.3);
+}
+
+.tyre-inter {
+  color: var(--tyre-inter);
+  box-shadow: 0 0 6px rgba(57, 181, 74, 0.4);
+}
+
+.tyre-wet {
+  color: var(--tyre-wet);
+  box-shadow: 0 0 6px rgba(0, 166, 255, 0.4);
+}

@@ -1,0 +1,375 @@
+/* Home Page Layout matching the user's sketch */
+.home-layout-grid {
+  display: grid;
+  grid-template-columns: 1.65fr 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+/* Left Column: telemetrix on top, SCHEDULE below */
+.home-left-column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Right Column: Led (Leaderboard) spanning full height */
+.home-right-column {
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 80px;
+}
+
+/* Telemetrix Card */
+.telemetrix-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 520px;
+  background: var(--f1-surface-glass);
+  border: 1px solid var(--f1-border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--glass-shadow);
+}
+
+.telemetrix-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  background: rgba(0, 0, 0, 0.35);
+  border-bottom: 1px solid var(--f1-border);
+}
+
+.telemetrix-title {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Standby Empty State (when no race/session is active) */
+.standby-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  text-align: center;
+  gap: 20px;
+  flex: 1;
+}
+
+.standby-radar-icon {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  background: rgba(225, 6, 0, 0.08);
+  border: 2px dashed rgba(225, 6, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--f1-red);
+  position: relative;
+}
+
+.standby-radar-pulse {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 1px solid var(--f1-red);
+  animation: radar-ping 2s infinite ease-out;
+}
+
+@keyframes radar-ping {
+  0% { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+.standby-title {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.standby-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  max-width: 520px;
+  line-height: 1.5;
+}
+
+.standby-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--f1-border);
+  border-radius: 20px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.standby-demo-toggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+  padding: 10px 18px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--f1-border);
+  border-radius: 8px;
+  font-size: 0.8rem;
+}
+
+/* Schedule Card (bottom left) */
+.schedule-card {
+  background: var(--f1-surface-glass);
+  border: 1px solid var(--f1-border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--glass-shadow);
+  padding: 16px 20px;
+}
+
+.schedule-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--f1-border);
+}
+
+.schedule-title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.schedule-strip-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.next-gp-details {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.next-gp-flag {
+  font-size: 2.2rem;
+}
+
+.next-gp-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.next-gp-name {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.15rem;
+  color: #fff;
+}
+
+.next-gp-circuit {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.schedule-countdown-mini {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mini-timer-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--f1-border);
+  padding: 6px 10px;
+  border-radius: 6px;
+  min-width: 48px;
+}
+
+.mini-timer-val {
+  font-family: var(--font-mono);
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: #fff;
+  line-height: 1;
+}
+
+.mini-timer-lbl {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: var(--text-muted);
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+/* Leaderboard Card (right column - Led) */
+.leaderboard-tall-card {
+  background: var(--f1-surface-glass);
+  border: 1px solid var(--f1-border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--glass-shadow);
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 120px);
+  min-height: 680px;
+}
+
+.leaderboard-tabs {
+  display: flex;
+  background: rgba(0, 0, 0, 0.4);
+  border-bottom: 1px solid var(--f1-border);
+}
+
+.led-tab-btn {
+  flex: 1;
+  padding: 10px 8px;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  text-align: center;
+  border-bottom: 2px solid transparent;
+}
+
+.led-tab-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.led-tab-btn.active {
+  color: #fff;
+  background: var(--f1-surface);
+  border-bottom-color: var(--f1-red);
+}
+
+/* Standings Rows in Leaderboard */
+.standings-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.standing-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  transition: var(--transition-smooth);
+}
+
+.standing-row:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.official-table-row {
+  transition: background 0.15s ease;
+}
+
+.official-table-row:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.standing-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.standing-pos {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  width: 22px;
+  text-align: center;
+}
+
+.standing-pos.top-3 {
+  color: #ffd700;
+}
+
+.standing-driver-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.standing-driver-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: #fff;
+}
+
+.standing-team-name {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.standing-points {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.points-num {
+  font-family: var(--font-mono);
+  font-weight: 900;
+  font-size: 1.05rem;
+  color: #fff;
+}
+
+.points-label {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+/* Responsive adjustment for sketch layout */
+@media (max-width: 1080px) {
+  .home-layout-grid {
+    grid-template-columns: 1fr;
+  }
+  .home-right-column {
+    position: static;
+  }
+  .leaderboard-tall-card {
+    height: auto;
+    min-height: 520px;
+  }
+}

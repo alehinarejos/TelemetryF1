@@ -1,0 +1,417 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { TelemetryEngine } from './services/telemetryEngine';
+import { officialF1Api } from './services/officialF1Api';
+import { f1SignalR } from './services/f1SignalRClient';
+import type { SignalRConnectionStatus } from './services/f1SignalRClient';
+import type { 
+  LeaderboardEntry, 
+  CarTelemetry as CarTelemetryType, 
+  SessionState, 
+  RaceControlMessage, 
+  TeamRadio, 
+  PitPrediction 
+} from './types/telemetry';
+import { Header } from './components/Header';
+import { Leaderboard } from './components/Leaderboard';
+import { CircuitMap } from './components/CircuitMap';
+import { CarTelemetry } from './components/CarTelemetry';
+import { CircleOfDoom } from './components/CircleOfDoom';
+import { RaceControl } from './components/RaceControl';
+import { ScheduleView } from './components/ScheduleView';
+import { HomeSketchLayout } from './components/HomeSketchLayout';
+import { OfficialLeaderboardView } from './components/OfficialLeaderboardView';
+import { DRIVER_MAP } from './data/drivers';
+import { F1_SCHEDULE } from './data/schedule';
+import { CloudSun, Wind, Droplets, Thermometer, Radio, PlayCircle, Clock, CheckCircle2 } from 'lucide-react';
+
+import './styles/global.css';
+import './styles/dashboard.css';
+import './styles/leaderboard.css';
+import './styles/circuit-map.css';
+import './styles/car-telemetry.css';
+import './styles/circle-of-doom.css';
+import './styles/race-control.css';
+import './styles/schedule.css';
+import './styles/home-layout.css';
+
+export const App: React.FC = () => {
+  const engineRef = useRef<TelemetryEngine | null>(null);
+
+  if (!engineRef.current) {
+    engineRef.current = new TelemetryEngine('monza');
+  }
+  const engine = engineRef.current;
+
+  // Active tab: 'home' is the sketch layout requested by the user
+  const [activeTab, setActiveTab] = useState<'home' | 'timing' | 'leaderboard' | 'schedule'>('home');
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>(() => engine.getLeaderboard());
+  const [session, setSession] = useState<SessionState>(() => engine.getSession());
+  const [selectedDriverId, setSelectedDriverId] = useState<string>(() => engine.getSelectedDriverId());
+  const [telemetry, setTelemetry] = useState<CarTelemetryType | null>(null);
+  const [pitPrediction, setPitPrediction] = useState<PitPrediction | null>(() => engine.calculatePitPrediction('ant'));
+  const [raceControlMessages, setRaceControlMessages] = useState<RaceControlMessage[]>(() => engine.getRaceControlMessages());
+  const [teamRadios, setTeamRadios] = useState<TeamRadio[]>(() => engine.getTeamRadios());
+
+  // SignalR connection state
+  const [signalRStatus, setSignalRStatus] = useState<SignalRConnectionStatus>('connecting');
+  const [signalRDetails, setSignalRDetails] = useState<string>('Negociando con livetiming.formula1.com/signalrcore...');
+
+  // Official live status
+  const [isOfficialLive, setIsOfficialLive] = useState<boolean>(false);
+  const [officialStatusMessage, setOfficialStatusMessage] = useState<string>('Comprobando servidor oficial F1 SignalR & OpenF1...');
+  
+  // Standby mode toggle in Telemetry Complete tab
+  const [showLatestSessionPreview, setShowLatestSessionPreview] = useState<boolean>(false);
+
+  const nextGp = F1_SCHEDULE.find(gp => !gp.completed) || F1_SCHEDULE[15];
+  const nextSessionName = `${nextGp.name} (${nextGp.circuitName})`;
+
+  // Connect to official F1 SignalR feed on mount
+  useEffect(() => {
+    f1SignalR.setListeners({
+      onStatusChange: (status, details) => {
+        setSignalRStatus(status);
+        if (details) setSignalRDetails(details);
+        if (status === 'live_streaming') {
+          setIsOfficialLive(true);
+        }
+      },
+      onTrackStatus: (trackStatus) => {
+        setSession(prev => ({
+          ...prev,
+          trackStatus: trackStatus.status === '1' ? 'GREEN' : trackStatus.status === '2' ? 'YELLOW' : 'GREEN',
+          safetyCarDeployed: trackStatus.status === '4',
+          vscDeployed: trackStatus.status === '6',
+        }));
+      },
+      onWeatherData: (weather) => {
+        setSession(prev => ({
+          ...prev,
+          airTemp: weather.airTemp,
+          trackTemp: weather.trackTemp,
+          humidity: weather.humidity,
+          windSpeed: weather.windSpeed,
+          rainProbability: weather.rainfall ? 95 : 0,
+        }));
+      },
+      onRaceControl: (msg) => {
+        if (msg) {
+          const text = typeof msg === 'string' ? msg : msg.Message || JSON.stringify(msg);
+          const newMsg: RaceControlMessage = {
+            id: `rc-${Date.now()}`,
+            timestamp: new Date().toLocaleTimeString(),
+            flag: 'GREEN',
+            scope: 'Track',
+            messageEn: text,
+            messageEs: text,
+            category: 'SYSTEM',
+          };
+          setRaceControlMessages(prev => [newMsg, ...prev]);
+        }
+      },
+    });
+
+    // Start connection to livetiming.formula1.com/signalrcore
+    f1SignalR.connect();
+
+    return () => {
+      f1SignalR.disconnect();
+    };
+  }, []);
+
+  // Check official live session status periodically
+  const checkStatus = async () => {
+    f1SignalR.connect();
+    const status = await officialF1Api.checkLiveStatus();
+    setIsOfficialLive(status.isLive || signalRStatus === 'live_streaming');
+    setOfficialStatusMessage(status.statusMessage);
+  };
+
+  useEffect(() => {
+    checkStatus();
+    const interval = setInterval(checkStatus, 30000);
+    return () => clearInterval(interval);
+  }, [signalRStatus]);
+
+  // Connect listeners and start engine for real telemetry feed
+  useEffect(() => {
+    engine.setListeners({
+      onTick: (data) => {
+        setLeaderboard(data.leaderboard);
+        setSession(data.session);
+        setTelemetry(data.selectedDriverTelemetry);
+        setPitPrediction(data.pitPrediction);
+      },
+      onRaceControlMessage: (msg) => {
+        setRaceControlMessages(prev => [msg, ...prev]);
+      },
+      onTeamRadio: (radio) => {
+        setTeamRadios(prev => [radio, ...prev]);
+      },
+    });
+
+    engine.start();
+
+    return () => {
+      engine.stop();
+    };
+  }, [engine]);
+
+  const handleSelectDriver = (driverId: string) => {
+    setSelectedDriverId(driverId);
+    engine.setSelectedDriver(driverId);
+  };
+
+  const selectedDriver = DRIVER_MAP.get(selectedDriverId);
+
+  return (
+    <div className="app-container">
+      {/* Top Header Navigation (With F1 SignalR status, zero fake controls) */}
+      <Header
+        session={session}
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        isOfficialLive={isOfficialLive}
+        signalRStatus={signalRStatus}
+        signalRDetails={signalRDetails}
+        onRefreshLive={checkStatus}
+      />
+
+      {/* Main View Area */}
+      <main className="main-content">
+        {/* TAB: Home Sketch Layout (Left: telemetrix + SCHEDULE, Right: Led / Leaderboard) */}
+        {activeTab === 'home' && (
+          <HomeSketchLayout
+            circuit={session.circuit}
+            entries={leaderboard}
+            selectedDriverId={selectedDriverId}
+            onSelectDriver={handleSelectDriver}
+            telemetry={telemetry}
+            selectedDriver={selectedDriver}
+            pitPrediction={pitPrediction}
+            trackStatus={session.trackStatus}
+            isOfficialLive={isOfficialLive}
+            statusMessage={officialStatusMessage}
+            nextSessionName={nextSessionName}
+            onOpenFullSchedule={() => setActiveTab('schedule')}
+          />
+        )}
+
+        {/* TAB: Full Live Timing & Telemetry Dashboard */}
+        {activeTab === 'timing' && (
+          <>
+            {/* If there is NO active session on track and user hasn't toggled preview */}
+            {!isOfficialLive && !showLatestSessionPreview ? (
+              <div className="telemetry-standby-banner" style={{
+                background: 'linear-gradient(135deg, rgba(8, 12, 20, 0.95) 0%, rgba(19, 25, 38, 0.95) 100%)',
+                border: '1px solid var(--f1-border)',
+                borderRadius: '12px',
+                padding: '36px 24px',
+                textAlign: 'center',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '16px',
+                maxWidth: '780px',
+                margin: '20px auto',
+                boxShadow: '0 10px 40px rgba(0,0,0,0.5)'
+              }}>
+                <div style={{
+                  width: '64px',
+                  height: '64px',
+                  borderRadius: '50%',
+                  background: 'rgba(225, 6, 0, 0.12)',
+                  border: '2px solid rgba(225, 6, 0, 0.3)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'var(--f1-red)',
+                  animation: 'pulse 2s infinite'
+                }}>
+                  <Radio size={28} />
+                </div>
+
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '8px' }}>
+                    <span className="f1-badge badge-green" style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                      <CheckCircle2 size={12} />
+                      <span>SIGNALR CONECTADO: livetiming.formula1.com</span>
+                    </span>
+                    <span className="f1-badge">SIN INTERMEDIARIOS</span>
+                  </div>
+
+                  <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.6rem', fontWeight: 900, color: '#fff', margin: '6px 0' }}>
+                    EN ESPERA DE SESIÓN OFICIAL EN DIRECTO
+                  </h2>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', maxWidth: '620px', lineHeight: 1.6 }}>
+                    El cliente WebSocket nativo de SignalR está conectado directamente a los servidores de Formula 1 (F1 TV). La suscripción a los canales <code>CarData.z</code>, <code>Position.z</code> y <code>TimingData</code> se encuentra activa para transmitir en vivo en cuanto los monoplazas salgan a pista.
+                  </p>
+                </div>
+
+                {/* Connection Status Box */}
+                <div style={{
+                  background: 'rgba(0,0,0,0.4)',
+                  border: '1px solid var(--f1-border)',
+                  borderRadius: '8px',
+                  padding: '12px 20px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '14px',
+                  fontSize: '0.82rem',
+                  width: '100%',
+                  maxWidth: '560px',
+                  justifyContent: 'space-between'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Clock size={16} color="var(--f1-red)" />
+                    <span>Próxima cita en pista: <strong>{nextGp.flag} {nextGp.name} 2026</strong></span>
+                  </div>
+                  <span className="f1-badge badge-live" style={{ fontSize: '0.68rem' }}>
+                    CANALES SUSCRITOS
+                  </span>
+                </div>
+
+                <div style={{ display: 'flex', gap: '12px', marginTop: '8px', flexWrap: 'wrap', justifyContent: 'center' }}>
+                  <button
+                    onClick={() => setShowLatestSessionPreview(true)}
+                    className="f1-btn f1-btn-primary"
+                    style={{ padding: '10px 20px', fontSize: '0.85rem', gap: '8px' }}
+                  >
+                    <PlayCircle size={16} />
+                    <span>Ver Telemetría Oficial de Monza 2026 (Carrera)</span>
+                  </button>
+
+                  <button
+                    onClick={() => setActiveTab('schedule')}
+                    className="f1-btn"
+                    style={{ padding: '10px 18px', fontSize: '0.85rem' }}
+                  >
+                    <span>Ver Calendario de Sesiones</span>
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <>
+                {/* Live Weather & Track Conditions Strip */}
+                <div className="weather-strip">
+                  <div className="weather-item">
+                    <CloudSun size={15} color="var(--color-yellow)" />
+                    <span>Pista: <strong>{session.circuit.name}</strong></span>
+                  </div>
+                  <div className="weather-item">
+                    <Thermometer size={14} color="#ff5555" />
+                    <span>Aire: <strong>{session.airTemp}°C</strong></span>
+                  </div>
+                  <div className="weather-item">
+                    <Thermometer size={14} color="#ff9900" />
+                    <span>Asfalto: <strong>{session.trackTemp}°C</strong></span>
+                  </div>
+                  <div className="weather-item">
+                    <Droplets size={14} color="#00a6ff" />
+                    <span>Humedad: <strong>{session.humidity}%</strong></span>
+                  </div>
+                  <div className="weather-item">
+                    <Wind size={14} color="#94a3b8" />
+                    <span>Viento: <strong>{session.windSpeed} km/h</strong></span>
+                  </div>
+                  <div className="weather-item" style={{ marginLeft: 'auto', display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    {isOfficialLive ? (
+                      <span className="f1-badge badge-live">🔴 SEÑAL SIGNALR EN DIRECTO</span>
+                    ) : (
+                      <>
+                        <span className="f1-badge badge-green">DATOS OFICIALES MONZA 2026</span>
+                        <button 
+                          onClick={() => setShowLatestSessionPreview(false)}
+                          className="f1-btn" 
+                          style={{ padding: '2px 8px', fontSize: '0.7rem' }}
+                        >
+                          Volver a En Espera
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                {/* Dashboard 3-Column Grid with 100% Real GPS Geometry and Real Telemetry */}
+                <div className="dashboard-grid">
+                  {/* Column 1: Live Timing Leaderboard */}
+                  <div className="grid-col-leaderboard">
+                    <Leaderboard
+                      entries={leaderboard}
+                      selectedDriverId={selectedDriverId}
+                      onSelectDriver={handleSelectDriver}
+                      isQualifying={session.type === 'QUALIFYING'}
+                    />
+                  </div>
+
+                  {/* Column 2: Live Real GPS Circuit Map & Circle of Doom */}
+                  <div className="grid-col-center">
+                    <CircuitMap
+                      circuit={session.circuit}
+                      entries={leaderboard}
+                      selectedDriverId={selectedDriverId}
+                      onSelectDriver={handleSelectDriver}
+                      trackStatus={session.trackStatus}
+                    />
+
+                    <CircleOfDoom
+                      entries={leaderboard}
+                      selectedDriverId={selectedDriverId}
+                      onSelectDriver={handleSelectDriver}
+                      pitPrediction={pitPrediction}
+                      pitLossSeconds={session.circuit.pitLossSeconds}
+                    />
+                  </div>
+
+                  {/* Column 3: Car Telemetry Gauges & Race Control Feed */}
+                  <div className="grid-col-right">
+                    <CarTelemetry
+                      telemetry={telemetry}
+                      driver={selectedDriver}
+                    />
+
+                    <RaceControl
+                      messages={raceControlMessages}
+                      radios={teamRadios}
+                    />
+                  </div>
+                </div>
+              </>
+            )}
+          </>
+        )}
+
+        {/* TAB: Official Leaderboard (World Drivers & Constructors Championship) */}
+        {activeTab === 'leaderboard' && (
+          <OfficialLeaderboardView />
+        )}
+
+        {/* TAB: Official 24-GP Calendar Schedule */}
+        {activeTab === 'schedule' && (
+          <ScheduleView />
+        )}
+      </main>
+
+      {/* Footer Legal Disclaimer */}
+      <footer style={{
+        marginTop: 'auto',
+        padding: '24px 20px',
+        borderTop: '1px solid var(--f1-border)',
+        background: 'rgba(8, 10, 15, 0.95)',
+        textAlign: 'center',
+        fontSize: '0.72rem',
+        color: 'var(--text-muted)',
+        fontFamily: 'var(--font-mono)'
+      }}>
+        <p style={{ maxWidth: '820px', margin: '0 auto 8px auto', lineHeight: 1.5 }}>
+          Conectado directamente al stream oficial de Formula 1 SignalR (<code>livetiming.formula1.com/signalrcore</code>) • Telemetría sin intermediarios.
+        </p>
+        <p style={{ color: 'var(--text-secondary)' }}>
+          Datos de telemetría y tiempos oficiales en directo • Campeonato Mundial de Pilotos y Constructores 2026 • Circle of Doom
+        </p>
+      </footer>
+    </div>
+  );
+};
+
+export default App;

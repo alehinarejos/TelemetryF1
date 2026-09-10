@@ -1,0 +1,191 @@
+/* Schedule & Calendar View */
+.schedule-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Countdown Banner */
+.countdown-banner {
+  background: linear-gradient(135deg, rgba(225, 6, 0, 0.15) 0%, rgba(19, 25, 38, 0.8) 100%);
+  border: 1px solid rgba(225, 6, 0, 0.3);
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.countdown-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.countdown-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--f1-red);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.countdown-gp-name {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: #fff;
+}
+
+.countdown-track {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.countdown-timer-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.timer-unit-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--f1-border);
+  padding: 10px 14px;
+  border-radius: 8px;
+  min-width: 68px;
+}
+
+.timer-number {
+  font-family: var(--font-mono);
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: #fff;
+  line-height: 1;
+}
+
+.timer-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+/* Calendar Grid */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 18px;
+}
+
+.gp-card {
+  background: var(--f1-surface-glass);
+  border: 1px solid var(--f1-border);
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: var(--transition-smooth);
+}
+
+.gp-card:hover {
+  border-color: var(--f1-border-highlight);
+  transform: translateY(-2px);
+}
+
+.gp-card.next-up {
+  border-color: var(--f1-red);
+  box-shadow: 0 0 16px rgba(225, 6, 0, 0.2);
+}
+
+.gp-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.gp-round {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--f1-red);
+  text-transform: uppercase;
+}
+
+.gp-title-area {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.gp-flag {
+  font-size: 1.6rem;
+}
+
+.gp-names {
+  display: flex;
+  flex-direction: column;
+}
+
+.gp-main-title {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.gp-circuit-name {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.gp-sessions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 10px 12px;
+  border-radius: 6px;
+}
+
+.session-schedule-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.session-schedule-row.race {
+  color: #fff;
+  font-weight: 700;
+}
+
+.session-name-tag {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.gp-winner-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: rgba(255, 215, 0, 0.08);
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  border-radius: 6px;
+  font-size: 0.78rem;
+  color: #ffd700;
+  font-family: var(--font-mono);
+}

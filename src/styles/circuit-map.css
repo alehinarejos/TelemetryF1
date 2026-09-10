@@ -1,0 +1,176 @@
+/* Circuit Map Component */
+.map-container {
+  display: flex;
+  flex-direction: column;
+  height: 440px;
+  position: relative;
+  background: radial-gradient(circle at 50% 50%, rgba(20, 27, 40, 0.9) 0%, rgba(10, 13, 18, 0.95) 100%);
+}
+
+.map-controls-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--f1-border);
+  background: rgba(0, 0, 0, 0.25);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+.map-track-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+  font-weight: 700;
+}
+
+.map-btn-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.map-icon-btn {
+  background: var(--f1-surface);
+  border: 1px solid var(--f1-border);
+  color: var(--text-secondary);
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.map-icon-btn:hover {
+  color: #fff;
+  border-color: var(--f1-border-highlight);
+  background: var(--f1-surface-light);
+}
+
+.map-canvas-wrapper {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.circuit-svg {
+  width: 100%;
+  height: 100%;
+  max-height: 380px;
+}
+
+/* Track Paths */
+.track-bg {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.05);
+  stroke-width: 22;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.track-main {
+  fill: none;
+  stroke: #1f2738;
+  stroke-width: 16;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.8));
+}
+
+.track-centerline {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.2);
+  stroke-width: 1;
+  stroke-dasharray: 4 6;
+}
+
+.track-drs-zone {
+  fill: none;
+  stroke: var(--color-drs);
+  stroke-width: 6;
+  stroke-linecap: round;
+  opacity: 0.65;
+  filter: drop-shadow(0 0 8px var(--color-drs-glow));
+}
+
+.track-yellow-sector {
+  fill: none;
+  stroke: var(--color-yellow);
+  stroke-width: 16;
+  stroke-linecap: round;
+  animation: pulse-yellow 1.2s infinite;
+}
+
+@keyframes pulse-yellow {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 0.3; }
+}
+
+/* Start/Finish Line */
+.start-finish-marker {
+  stroke: #ffffff;
+  stroke-width: 3;
+  stroke-dasharray: 3 3;
+}
+
+/* Car Dots along Track */
+.car-marker {
+  cursor: pointer;
+  transition: transform 0.05s linear;
+}
+
+.car-marker-circle {
+  transition: r 0.2s ease, stroke-width 0.2s ease;
+  filter: drop-shadow(0 0 4px rgba(0,0,0,0.9));
+}
+
+.car-marker.selected .car-marker-circle {
+  r: 10;
+  stroke: #ffffff;
+  stroke-width: 3;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
+}
+
+.car-marker-text {
+  font-family: var(--font-mono);
+  font-size: 7px;
+  font-weight: 800;
+  fill: #ffffff;
+  text-anchor: middle;
+  dominant-baseline: central;
+  pointer-events: none;
+  text-shadow: 0 1px 2px #000;
+}
+
+/* Map Legend */
+.map-legend {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 6px 14px;
+  background: rgba(0, 0, 0, 0.4);
+  border-top: 1px solid var(--f1-border);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-color-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
