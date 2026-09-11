@@ -1,23 +1,30 @@
 /* Leaderboard / Live Timing Table */
+
+/* Flash animation used when sector time updates */
+@keyframes sector-flash {
+  0%   { background-color: rgba(255, 255, 255, 0.2); }
+  100% { background-color: transparent; }
+}
+
 .leaderboard-container {
   display: flex;
   flex-direction: column;
   height: 100%;
-  min-height: 756px;
-  overflow-x: hidden;
+  min-height: 0;
+  overflow: hidden;
   width: 100%;
   box-sizing: border-box;
 }
 
 .leaderboard-header-row {
   display: grid;
-  grid-template-columns: 28px 34px 76px minmax(76px, 1.15fr) minmax(86px, 1.25fr) 48px 48px 48px minmax(102px, 1.35fr);
-  gap: 8px;
-  padding: 8px 12px;
-  background: rgba(0, 0, 0, 0.3);
+  grid-template-columns: 24px 30px 68px minmax(68px, 1.15fr) minmax(78px, 1.25fr) 44px 44px 44px minmax(90px, 1.35fr);
+  gap: 6px;
+  padding: 5px 10px;
+  background: rgba(0, 0, 0, 0.4);
   border-bottom: 1px solid var(--f1-border);
   font-family: var(--font-mono);
-  font-size: 0.66rem;
+  font-size: 0.62rem;
   font-weight: 700;
   text-transform: uppercase;
   color: var(--text-muted);
@@ -25,22 +32,24 @@
   align-items: center;
   box-sizing: border-box;
   width: 100%;
+  flex-shrink: 0;
+  height: 28px;
 }
 
 .leaderboard-gap-toggle-header {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 4px;
-  padding: 2px 6px;
+  border-radius: 3px;
+  padding: 1px 5px;
   color: #fff;
   font-family: var(--font-mono);
-  font-size: 0.65rem;
+  font-size: 0.62rem;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
   cursor: pointer;
   transition: var(--transition-smooth);
   width: fit-content;
@@ -68,26 +77,32 @@
   flex-direction: column;
   overflow-y: auto;
   overflow-x: hidden;
-  max-height: 695px;
   width: 100%;
   box-sizing: border-box;
   flex: 1;
+  min-height: 0;
 }
 
 .leaderboard-row {
   display: grid;
-  grid-template-columns: 28px 34px 76px minmax(76px, 1.15fr) minmax(86px, 1.25fr) 48px 48px 48px minmax(102px, 1.35fr);
-  gap: 8px;
-  padding: 5.5px 12px;
+  grid-template-columns: 24px 30px 68px minmax(68px, 1.15fr) minmax(78px, 1.25fr) 44px 44px 44px minmax(90px, 1.35fr);
+  gap: 6px;
+  padding: 0 10px;
+  height: 35px;
+  min-height: 35px;
+  max-height: 35px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
   align-items: center;
   font-family: var(--font-mono);
-  font-size: 0.77rem;
+  font-size: 0.72rem;
   cursor: pointer;
-  transition: var(--transition-smooth);
+  transition: background-color 0.15s ease;
   position: relative;
   box-sizing: border-box;
   width: 100%;
+  flex-shrink: 0;
+  overflow: hidden;
+  contain: layout style;
 }
 
 .leaderboard-row:hover {
@@ -163,7 +178,8 @@
   font-weight: 700;
 }
 
-.cell-laptime {
+.cell-laptime,
+.cell-laptimes {
   font-weight: 700;
   color: #fff;
   font-size: 0.77rem;

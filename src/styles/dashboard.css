@@ -130,6 +130,36 @@
   font-weight: 700;
 }
 
+/* Chequered Flag Badge & Banner */
+.badge-chequered {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(20, 20, 25, 0.95) 100%);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  font-size: 0.72rem;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.12);
+  animation: pulse-chequered 2.5s infinite ease-in-out;
+  white-space: nowrap;
+}
+
+@keyframes pulse-chequered {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 16px rgba(255, 255, 255, 0.45);
+    border-color: rgba(255, 255, 255, 0.85);
+  }
+}
+
 /* Header Controls & Status */
 .header-actions {
   display: flex;
@@ -197,38 +227,86 @@
   width: 100%;
 }
 
-/* Grid Layout for Live Timing Dashboard */
+/* Grid Layout for Live Timing Dashboard (Exact User Drawing 4-Panel Compact Layout) */
+.telemetry-layout-grid,
 .dashboard-grid {
   display: grid;
-  grid-template-columns: 1.55fr 1fr 1fr;
+  grid-template-columns: 1.1fr 1fr;
   align-items: stretch;
-  gap: 16px;
+  gap: 12px;
+  height: calc(100vh - 130px);
+  max-height: calc(100vh - 130px);
+  min-height: 540px;
+  overflow: hidden;
 }
 
-/* Column 1: Leaderboard (Predominant) */
+/* Left Panel: Tabla de tiempos (Full height, compact) */
+.telemetry-left-panel,
 .grid-col-leaderboard {
-  grid-column: 1;
   display: flex;
   flex-direction: column;
   height: 100%;
+  min-height: 0;
+  overflow: hidden;
 }
 
-/* Column 2: Map & Circle of Doom */
-.grid-col-center {
-  grid-column: 2;
+.telemetry-left-panel .leaderboard-container,
+.grid-col-leaderboard .leaderboard-container {
+  height: 100%;
+  min-height: 0;
+  flex: 1;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  height: 100%;
 }
 
-/* Column 3: Car Telemetry Gauges & Race Control */
-.grid-col-right {
-  grid-column: 3;
+/* Right Panel: Top (Map) + Bottom (Speed + Race Control) */
+.telemetry-right-panel {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
   height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.telemetry-map-section {
+  flex: 1.1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.telemetry-map-section .map-container {
+  height: 100%;
+  min-height: 0;
+  flex: 1;
+}
+
+.telemetry-bottom-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  flex: 0.95;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.telemetry-speed-box,
+.telemetry-rc-box {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.telemetry-speed-box .telemetry-widget,
+.telemetry-rc-box .race-control-container {
+  height: 100%;
+  min-height: 0;
+  flex: 1;
 }
 
 /* Weather bar at top */

@@ -2,13 +2,13 @@
 .telemetry-widget {
   display: flex;
   flex-direction: column;
-  padding: 14px 16px;
-  gap: 10px;
+  padding: 8px 12px;
+  gap: 6px;
   height: 100%;
   min-height: 0;
   box-sizing: border-box;
   justify-content: space-between;
-  overflow-y: auto;
+  overflow: hidden;
 }
 
 .telemetrix-card .telemetry-widget {
@@ -18,7 +18,7 @@
   border-radius: 0 !important;
   height: 100% !important;
   flex: 1;
-  padding: 12px 16px;
+  padding: 8px 12px;
 }
 
 /* Driver Header inside widget */
@@ -26,7 +26,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-bottom: 8px;
+  padding-bottom: 4px;
   border-bottom: 1px solid var(--f1-border);
   flex-shrink: 0;
 }
@@ -34,12 +34,12 @@
 .driver-identity {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .driver-color-pill {
-  width: 4px;
-  height: 32px;
+  width: 3px;
+  height: 24px;
   border-radius: 2px;
 }
 
@@ -51,26 +51,27 @@
 .driver-full-name {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 1rem;
+  font-size: 0.85rem;
   color: #fff;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
+  line-height: 1.1;
 }
 
 .driver-team-name {
   font-family: var(--font-body);
-  font-size: 0.72rem;
+  font-size: 0.65rem;
   color: var(--text-muted);
 }
 
 .drs-badge-large {
-  padding: 4px 12px;
-  border-radius: 6px;
+  padding: 2px 8px;
+  border-radius: 4px;
   font-family: var(--font-mono);
-  font-size: 0.82rem;
+  font-size: 0.72rem;
   font-weight: 800;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   border: 1px solid transparent;
   transition: var(--transition-smooth);
@@ -87,20 +88,20 @@
   background: rgba(251, 189, 8, 0.2);
   color: var(--color-yellow);
   border-color: rgba(251, 189, 8, 0.4);
-  box-shadow: 0 0 10px rgba(251, 189, 8, 0.3);
+  box-shadow: 0 0 8px rgba(251, 189, 8, 0.3);
 }
 
 .drs-active {
   background: rgba(0, 255, 170, 0.25);
   color: #00ffaa;
   border-color: #00ffaa;
-  box-shadow: 0 0 16px rgba(0, 255, 170, 0.6);
+  box-shadow: 0 0 12px rgba(0, 255, 170, 0.6);
   animation: drs-pulse 1s infinite alternate;
 }
 
 @keyframes drs-pulse {
-  from { box-shadow: 0 0 8px rgba(0, 255, 170, 0.4); }
-  to { box-shadow: 0 0 20px rgba(0, 255, 170, 0.8); }
+  from { box-shadow: 0 0 6px rgba(0, 255, 170, 0.4); }
+  to { box-shadow: 0 0 16px rgba(0, 255, 170, 0.8); }
 }
 
 /* F1 Steering Wheel Shift Lights */
@@ -108,17 +109,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  padding: 5px 10px;
+  gap: 3px;
+  padding: 3px 6px;
   background: #07090e;
   border: 1px solid var(--f1-border);
-  border-radius: 6px;
+  border-radius: 4px;
   flex-shrink: 0;
 }
 
 .shift-light {
-  width: 11px;
-  height: 11px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background: #181f2c;
   transition: all 0.08s ease;
@@ -126,17 +127,17 @@
 
 .shift-light.active.green {
   background: #00e676;
-  box-shadow: 0 0 8px #00e676;
+  box-shadow: 0 0 6px #00e676;
 }
 
 .shift-light.active.red {
   background: #ff1744;
-  box-shadow: 0 0 8px #ff1744;
+  box-shadow: 0 0 6px #ff1744;
 }
 
 .shift-light.active.purple {
   background: #d500f9;
-  box-shadow: 0 0 12px #d500f9;
+  box-shadow: 0 0 8px #d500f9;
   animation: flash-purple 0.2s infinite;
 }
 
@@ -150,16 +151,17 @@
   display: flex;
   align-items: center;
   justify-content: space-around;
-  gap: 12px;
-  padding: 4px 0;
-  flex-shrink: 0;
+  gap: 8px;
+  padding: 2px 0;
+  flex: 1;
+  min-height: 0;
 }
 
 /* Circular Speedometer Arc */
 .speedometer-gauge {
   position: relative;
-  width: 155px;
-  height: 155px;
+  width: 105px;
+  height: 105px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -175,12 +177,12 @@
 .gauge-bg-arc {
   fill: none;
   stroke: rgba(255, 255, 255, 0.06);
-  stroke-width: 9;
+  stroke-width: 8;
 }
 
 .gauge-progress-arc {
   fill: none;
-  stroke-width: 9;
+  stroke-width: 8;
   stroke-linecap: round;
   transition: stroke-dashoffset 0.08s linear, stroke 0.2s ease;
 }
@@ -195,48 +197,48 @@
 
 .speed-number {
   font-family: var(--font-mono);
-  font-size: 2.5rem;
+  font-size: 1.65rem;
   font-weight: 800;
   line-height: 1;
   color: #fff;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.02em;
 }
 
 .speed-unit {
-  font-family: var(--font-display);
-  font-size: 0.68rem;
-  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.52rem;
   font-weight: 700;
+  color: var(--text-muted);
   letter-spacing: 0.08em;
   margin-top: 1px;
 }
 
 .gear-display {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 3px;
   margin-top: 2px;
 }
 
 .gear-label {
   font-family: var(--font-mono);
-  font-size: 0.62rem;
+  font-size: 0.52rem;
   color: var(--text-muted);
 }
 
 .gear-value {
-  font-family: var(--font-mono);
-  font-size: 1.25rem;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
   font-weight: 900;
   color: var(--color-yellow);
 }
 
-/* Throttle & Brake Pedals */
+/* Pedals column */
 .pedals-column {
   display: flex;
-  align-items: flex-end;
-  gap: 12px;
-  height: 125px;
+  align-items: center;
+  gap: 8px;
+  height: 80px;
   flex-shrink: 0;
 }
 
@@ -244,67 +246,59 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px;
+  gap: 2px;
   height: 100%;
 }
 
+.pedal-value {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
 .pedal-bar-track {
-  width: 20px;
+  width: 12px;
   flex: 1;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--f1-border);
-  border-radius: 4px;
+  border-radius: 3px;
   position: relative;
   overflow: hidden;
   display: flex;
-  flex-direction: column-reverse;
+  flex-direction: column;
+  justify-content: flex-end;
 }
 
 .pedal-bar-fill {
   width: 100%;
   border-radius: 2px;
-  transition: height 0.06s linear;
+  transition: height 0.08s linear;
 }
 
 .pedal-throttle .pedal-bar-fill {
-  background: linear-gradient(0deg, #00b341 0%, #00ff88 100%);
-  box-shadow: 0 0 10px rgba(0, 255, 136, 0.4);
+  background: linear-gradient(to top, #00c853, #00e676);
+  box-shadow: 0 0 6px rgba(0, 230, 118, 0.5);
 }
 
 .pedal-brake .pedal-bar-fill {
-  background: linear-gradient(0deg, #b30000 0%, #ff1a1a 100%);
-  box-shadow: 0 0 10px rgba(255, 26, 26, 0.4);
+  background: linear-gradient(to top, #d50000, #ff1744);
+  box-shadow: 0 0 6px rgba(255, 23, 68, 0.5);
 }
 
 .pedal-label {
   font-family: var(--font-mono);
-  font-size: 0.62rem;
-  font-weight: 700;
+  font-size: 0.56rem;
+  color: var(--text-muted);
   text-transform: uppercase;
-}
-
-.pedal-throttle .pedal-label {
-  color: #00ff88;
-}
-
-.pedal-brake .pedal-label {
-  color: #ff3333;
-}
-
-.pedal-value {
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: #fff;
 }
 
 /* Secondary telemetry metrics (RPM, ERS, G-Force, Steer) */
 .telemetry-stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  padding-top: 6px;
-  padding-bottom: 2px;
+  gap: 6px;
+  padding-top: 4px;
   border-top: 1px solid var(--f1-border);
   flex-shrink: 0;
 }
@@ -314,14 +308,14 @@
   flex-direction: column;
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid var(--f1-border);
-  padding: 5px 8px;
-  border-radius: 6px;
+  padding: 3px 6px;
+  border-radius: 4px;
   min-width: 0;
 }
 
 .stat-label {
   font-family: var(--font-mono);
-  font-size: 0.6rem;
+  font-size: 0.55rem;
   color: var(--text-muted);
   font-weight: 600;
   text-transform: uppercase;
@@ -332,7 +326,7 @@
 
 .stat-value {
   font-family: var(--font-mono);
-  font-size: 0.88rem;
+  font-size: 0.76rem;
   font-weight: 800;
   color: #fff;
   white-space: nowrap;

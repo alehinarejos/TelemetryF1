@@ -9,6 +9,7 @@ interface CircuitMapProps {
   selectedDriverId: string;
   onSelectDriver: (driverId: string) => void;
   trackStatus: string;
+  telemetry?: any;
 }
 
 export const CircuitMap: React.FC<CircuitMapProps> = ({
@@ -17,6 +18,7 @@ export const CircuitMap: React.FC<CircuitMapProps> = ({
   selectedDriverId,
   onSelectDriver,
   trackStatus,
+  telemetry,
 }) => {
   const { t } = useLanguage();
   const pathRef = useRef<SVGPathElement | null>(null);
@@ -36,13 +38,18 @@ export const CircuitMap: React.FC<CircuitMapProps> = ({
     }
   }, [circuit]);
 
-  // Calculate coordinates (x, y) along path
+  // Calculate coordinates (x, y) along path with robust synchronous evaluation
   const getCoordinates = (progress: number): { x: number; y: number } => {
-    if (pathRef.current && pathLength > 0) {
+    const el = pathRef.current;
+    if (el) {
       try {
-        const dist = ((progress % 1.0) + 1.0) % 1.0 * pathLength;
-        const pt = pathRef.current.getPointAtLength(dist);
-        return { x: pt.x, y: pt.y };
+        const total = pathLength > 0 ? pathLength : el.getTotalLength();
+        if (total > 0) {
+          const normP = ((progress % 1.0) + 1.0) % 1.0;
+          const dist = normP * total;
+          const pt = el.getPointAtLength(dist);
+          return { x: pt.x, y: pt.y };
+        }
       } catch {
         // fallback below
       }
@@ -58,8 +65,16 @@ export const CircuitMap: React.FC<CircuitMapProps> = ({
   const selectedCar = entries.find(e => e.driver.id === selectedDriverId);
   const selectedCoords = selectedCar ? getCoordinates(selectedCar.trackProgress) : { x: 400, y: 280 };
 
+  // Determine current sector for selected car
+  const selectedProgress = selectedCar ? (((selectedCar.trackProgress % 1.0) + 1.0) % 1.0) : 0;
+  const currentSector = selectedProgress < (circuit.sectors?.s1EndProgress || 0.31)
+    ? 'Sector 1'
+    : selectedProgress < (circuit.sectors?.s2EndProgress || 0.68)
+      ? 'Sector 2'
+      : 'Sector 3';
+
   return (
-    <div className="f1-card map-container">
+    <div className="f1-card map-container" style={{ position: 'relative' }}>
       <div className="map-controls-bar">
         <div className="map-track-name">
           <span style={{ color: 'var(--f1-red)', fontWeight: 900 }}>{t('circuit')}</span>
@@ -97,6 +112,58 @@ export const CircuitMap: React.FC<CircuitMapProps> = ({
           </button>
         </div>
       </div>
+
+      {/* Real-time Driver Telemetry Floating HUD on Map */}
+      {selectedCar && (
+        <div style={{
+          position: 'absolute',
+          top: '48px',
+          left: '12px',
+          zIndex: 10,
+          background: 'rgba(10, 14, 23, 0.92)',
+          border: '1px solid rgba(255, 255, 255, 0.12)',
+          borderLeft: `4px solid ${selectedCar.driver.teamColor}`,
+          borderRadius: '6px',
+          padding: '6px 12px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '14px',
+          backdropFilter: 'blur(8px)',
+          boxShadow: '0 4px 16px rgba(0, 0, 0, 0.5)',
+          fontFamily: 'var(--font-mono)',
+          pointerEvents: 'none'
+        }}>
+          <div>
+            <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#fff', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span>{selectedCar.driver.flag}</span>
+              <span>#{selectedCar.driver.number} {selectedCar.driver.code}</span>
+              <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 400 }}>{selectedCar.driver.team}</span>
+            </div>
+            <div style={{ fontSize: '0.65rem', color: trackStatus === 'CHEQUERED' ? '#a0aec0' : 'var(--color-yellow)', marginTop: '2px' }}>
+              {trackStatus === 'CHEQUERED' ? '🏁 FINALIZADA • EN GARAJE' : selectedCar.inPit ? 'EN BOXES' : `${currentSector} • Pos ${selectedCar.position}`}
+            </div>
+          </div>
+
+          {telemetry && (
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', borderLeft: '1px solid rgba(255, 255, 255, 0.15)', paddingLeft: '12px' }}>
+              <div>
+                <span style={{ fontSize: '1.25rem', fontWeight: 900, color: trackStatus === 'CHEQUERED' || telemetry.speed === 0 ? '#a0aec0' : '#00ffaa', lineHeight: 1 }}>
+                  {trackStatus === 'CHEQUERED' ? 0 : telemetry.speed}
+                </span>
+                <span style={{ fontSize: '0.62rem', color: 'var(--text-muted)', marginLeft: '3px' }}>KM/H</span>
+              </div>
+              <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#ffd700' }}>
+                {trackStatus === 'CHEQUERED' || telemetry.gear === 0 ? 'N' : `${telemetry.gear}ª`}
+              </div>
+              {telemetry.drs === 2 && trackStatus !== 'CHEQUERED' && (
+                <span style={{ fontSize: '0.62rem', background: '#00D7B6', color: '#000', fontWeight: 900, padding: '1px 5px', borderRadius: '3px' }}>
+                  DRS
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* SVG Canvas Area */}
       <div className="map-canvas-wrapper">
@@ -140,6 +207,7 @@ export const CircuitMap: React.FC<CircuitMapProps> = ({
                 className={`car-marker ${isSelected ? 'selected' : ''}`}
                 transform={`translate(${x}, ${y})`}
                 onClick={() => onSelectDriver(entry.driver.id)}
+                style={{ cursor: 'pointer' }}
               >
                 {/* Outer halo for selected car */}
                 {isSelected && (
@@ -168,10 +236,37 @@ export const CircuitMap: React.FC<CircuitMapProps> = ({
                   strokeWidth={isSelected ? 2 : 1}
                 />
 
-                {/* Driver Number / Code */}
+                {/* Driver Number */}
                 <text className="car-marker-text">
                   {entry.driver.number}
                 </text>
+
+                {/* Speed indicator tooltip attached to selected car */}
+                {isSelected && telemetry && (
+                  <g transform="translate(0, -16)">
+                    <rect
+                      x="-26"
+                      y="-13"
+                      width="52"
+                      height="14"
+                      rx="3"
+                      fill="rgba(6, 10, 18, 0.9)"
+                      stroke={entry.driver.teamColor}
+                      strokeWidth="1"
+                    />
+                    <text
+                      x="0"
+                      y="-3"
+                      textAnchor="middle"
+                      fill={trackStatus === 'CHEQUERED' ? '#ffd700' : '#00ffaa'}
+                      fontSize="9"
+                      fontWeight="bold"
+                      fontFamily="var(--font-mono)"
+                    >
+                      {trackStatus === 'CHEQUERED' ? 'EN BOXES' : `${telemetry.speed} km/h`}
+                    </text>
+                  </g>
+                )}
               </g>
             );
           })}

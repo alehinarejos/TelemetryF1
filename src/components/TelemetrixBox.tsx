@@ -9,9 +9,8 @@ import type {
 import { useLanguage } from '../context/LanguageContext';
 import { CircuitMap } from './CircuitMap';
 import { CarTelemetry } from './CarTelemetry';
-import { CircleOfDoom } from './CircleOfDoom';
 import { Leaderboard } from './Leaderboard';
-import { Gauge, MapPin, Eye, Timer } from 'lucide-react';
+import { Gauge, MapPin, Timer } from 'lucide-react';
 
 interface TelemetrixBoxProps {
   circuit: CircuitInfo;
@@ -34,12 +33,11 @@ export const TelemetrixBox: React.FC<TelemetrixBoxProps> = ({
   onSelectDriver,
   telemetry,
   selectedDriver,
-  pitPrediction,
   trackStatus,
   isOfficialLive,
 }) => {
   const { t } = useLanguage();
-  const [viewMode, setViewMode] = useState<'map' | 'gauges' | 'times' | 'doom'>('map');
+  const [viewMode, setViewMode] = useState<'map' | 'gauges' | 'times'>('map');
 
   return (
     <div className="telemetrix-card">
@@ -57,7 +55,7 @@ export const TelemetrixBox: React.FC<TelemetrixBoxProps> = ({
           )}
         </div>
 
-        {/* Desktop View Switcher: Mapa, Velocidad, Tiempos, Circle of Doom */}
+        {/* Desktop View Switcher: Mapa, Velocidad, Tiempos */}
         <div className="telemetrix-desktop-views">
           <button
             className={`f1-btn ${viewMode === 'map' ? 'f1-btn-active' : ''}`}
@@ -85,15 +83,6 @@ export const TelemetrixBox: React.FC<TelemetrixBoxProps> = ({
             <Timer size={13} />
             <span>{t('times')}</span>
           </button>
-
-          <button
-            className={`f1-btn ${viewMode === 'doom' ? 'f1-btn-active' : ''}`}
-            style={{ padding: '4px 10px', fontSize: '0.75rem' }}
-            onClick={() => setViewMode('doom')}
-          >
-            <Eye size={13} />
-            <span>{t('circle_of_doom')}</span>
-          </button>
         </div>
 
         {/* Mobile Dropdown View Selector */}
@@ -101,12 +90,11 @@ export const TelemetrixBox: React.FC<TelemetrixBoxProps> = ({
           <select
             className="telemetrix-select-view"
             value={viewMode}
-            onChange={(e) => setViewMode(e.target.value as 'map' | 'gauges' | 'times' | 'doom')}
+            onChange={(e) => setViewMode(e.target.value as 'map' | 'gauges' | 'times')}
           >
             <option value="map">📍 {t('map')}</option>
             <option value="gauges">🏎️ {t('gauges')}</option>
             <option value="times">⏱️ {t('times')}</option>
-            <option value="doom">👁️ {t('circle_of_doom')}</option>
           </select>
         </div>
       </div>
@@ -133,7 +121,7 @@ export const TelemetrixBox: React.FC<TelemetrixBoxProps> = ({
         </div>
       )}
 
-      {/* Main Content: Map, Gauges, Times or Circle of Doom */}
+      {/* Main Content: Map, Gauges or Times */}
       <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, overflow: 'hidden' }}>
         {viewMode === 'map' && (
           <CircuitMap
@@ -142,6 +130,7 @@ export const TelemetrixBox: React.FC<TelemetrixBoxProps> = ({
             selectedDriverId={selectedDriverId}
             onSelectDriver={onSelectDriver}
             trackStatus={trackStatus}
+            telemetry={telemetry}
           />
         )}
 
@@ -160,16 +149,6 @@ export const TelemetrixBox: React.FC<TelemetrixBoxProps> = ({
               onSelectDriver={onSelectDriver}
             />
           </div>
-        )}
-
-        {viewMode === 'doom' && (
-          <CircleOfDoom
-            entries={entries}
-            selectedDriverId={selectedDriverId}
-            onSelectDriver={onSelectDriver}
-            pitPrediction={pitPrediction}
-            pitLossSeconds={circuit.pitLossSeconds}
-          />
         )}
       </div>
     </div>

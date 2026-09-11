@@ -48,6 +48,16 @@ export const Header: React.FC<HeaderProps> = ({
     return () => unsubscribe();
   }, []);
 
+  // Real-time second clock
+  const [nowMs, setNowMs] = useState<number>(() => Date.now());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setNowMs(Date.now());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
   const upcomingGp = scheduleState.schedule.find(g => !g.completed) || scheduleState.schedule[15];
   const timeline = getGrandPrixTimeline(upcomingGp);
 
@@ -58,6 +68,43 @@ export const Header: React.FC<HeaderProps> = ({
   const targetStartTime = nextTargetSession 
     ? (typeof nextTargetSession === 'object' && 'startTime' in nextTargetSession ? (nextTargetSession as any).startTime : new Date((nextTargetSession as any).startTimeUtc).getTime())
     : new Date(`${upcomingGp.startDate}T11:30:00Z`).getTime();
+
+  // Helper to format next session day and time
+  const formatNextSessionInfo = (item: any): string => {
+    if (!item) return '';
+    const dateObj = item.startTimeUtc 
+      ? new Date(item.startTimeUtc) 
+      : item.startTime 
+      ? new Date(item.startTime) 
+      : item.session?.startTimeUtc 
+      ? new Date(item.session.startTimeUtc) 
+      : null;
+    if (!dateObj || isNaN(dateObj.getTime())) return '';
+    const dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+    const day = dayNames[dateObj.getDay()];
+    const hours = dateObj.getHours().toString().padStart(2, '0');
+    const minutes = dateObj.getMinutes().toString().padStart(2, '0');
+    return `${day} ${hours}:${minutes}h`;
+  };
+
+  // Determine Chequered vs Live vs Standby states
+  const isChequered = 
+    session.trackStatus === 'CHEQUERED' ||
+    (!activeTimelineSession && lastFinishedSession && (nowMs - lastFinishedSession.endTime) < 3.5 * 3600 * 1000) ||
+    (!activeTimelineSession && !isOfficialLive && lastFinishedSession != null);
+
+  const isLiveActive = !isChequered && (
+    activeTimelineSession != null ||
+    (isOfficialLive && isStreaming && session.trackStatus !== 'CHEQUERED' && (session.timeRemainingSec > 0 || session.type === 'RACE'))
+  );
+
+  const remainingSec = (() => {
+    if (session.timeRemainingSec > 0) return session.timeRemainingSec;
+    if (activeTimelineSession) {
+      return Math.max(0, Math.floor((activeTimelineSession.endTime - nowMs) / 1000));
+    }
+    return 0;
+  })();
 
   // Live countdown to the next session
   const [sessionCountdown, setSessionCountdown] = useState({
@@ -109,17 +156,67 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        {/* Center Session Pill: Displays current GP and active session, or time remaining until next session */}
+        {/* Center Session Pill: Displays Chequered Flag + Next Session Countdown, OR Active Live Session, OR Standby */}
         <div className="session-pill" style={{ padding: '6px 14px' }}>
-          {isStreaming || activeTimelineSession ? (
-            // Active Live Session Running
+          {isChequered ? (
+            // 🏁 1. Chequered Flag & Post-Session Cooldown: Shows GP + 🏁 BANDERA A CUADROS + Dynamic Countdown to Next Session
+            <>
+              <div className="session-track-info">
+                <span className="country-flag">{upcomingGp.flag}</span>
+                <div>
+                  <div className="circuit-title">{upcomingGp.name} 2026</div>
+                  <div className="circuit-session-type" style={{ color: '#a0aec0', fontWeight: 700, fontSize: '0.72rem' }}>
+                    {lastFinishedSession?.session.name || session.name || 'SESIÓN'} FINALIZADA
+                  </div>
+                </div>
+              </div>
+
+              <div className="session-divider" />
+
+              {/* High-contrast animated Chequered Flag Badge */}
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <span className="badge-chequered">
+                  🏁 BANDERA A CUADROS
+                </span>
+              </div>
+
+              <div className="session-divider" />
+
+              {/* Dynamic Next Session Countdown */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Clock size={14} color="#00D7B6" />
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <span style={{ fontSize: '0.62rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', textTransform: 'uppercase' }}>
+                    {nextTargetSession ? `Próxima: ${(nextTargetSession as any).session?.name || (nextTargetSession as any).name} (${formatNextSessionInfo(nextTargetSession)})` : 'Próxima sesión:'}
+                  </span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 800, fontSize: '0.86rem', color: '#fff', letterSpacing: '0.04em' }}>
+                    {sessionCountdown.days > 0 && `${sessionCountdown.days}d `}
+                    {(sessionCountdown.days > 0 || sessionCountdown.hours > 0) && (
+                      <>{sessionCountdown.days > 0 ? String(sessionCountdown.hours).padStart(2, '0') : sessionCountdown.hours}h </>
+                    )}
+                    {(sessionCountdown.days > 0 || sessionCountdown.hours > 0 || sessionCountdown.minutes > 0) && (
+                      <>{(sessionCountdown.days > 0 || sessionCountdown.hours > 0) ? String(sessionCountdown.minutes).padStart(2, '0') : sessionCountdown.minutes}m </>
+                    )}
+                    <strong style={{ color: 'var(--f1-red)' }}>{String(sessionCountdown.seconds).padStart(2, '0')}s</strong>
+                  </span>
+                </div>
+              </div>
+
+              <div className="session-divider" />
+
+              <span className="f1-badge" style={{ fontSize: '0.66rem', color: '#ffd700', border: '1px solid rgba(255, 215, 0, 0.4)', background: 'rgba(255, 215, 0, 0.1)' }}>
+                FINALIZADA 🏁
+              </span>
+            </>
+          ) : isLiveActive ? (
+            // 🔴 2. Active Live Session Running on Track
             <>
               <div className="session-track-info">
                 <span className="country-flag">{upcomingGp.flag}</span>
                 <div>
                   <div className="circuit-title">{upcomingGp.name}</div>
                   <div className="circuit-session-type" style={{ color: '#ff4d4d', fontWeight: 800 }}>
-                    {activeTimelineSession ? `${activeTimelineSession.session.name} ${t('session_live')}` : `${session.type || 'RACE'} SESSION`}
+                    {activeTimelineSession ? `${activeTimelineSession.session.name} ${t('session_live')}` : `${session.name || session.type || 'F1'} ${t('session_live')}`}
                   </div>
                 </div>
               </div>
@@ -137,13 +234,8 @@ export const Header: React.FC<HeaderProps> = ({
                   <span className="lap-label">{t('remaining_upper')}</span>
                   <span className="lap-value" style={{ fontFamily: 'var(--font-mono)', fontWeight: 800, color: '#00D7B6', letterSpacing: '0.04em' }}>
                     {(() => {
-                      const sec = session.timeRemainingSec > 0 
-                        ? session.timeRemainingSec 
-                        : activeTimelineSession 
-                        ? Math.max(0, Math.floor((activeTimelineSession.endTime - Date.now()) / 1000)) 
-                        : 0;
-                      const mins = Math.floor(sec / 60);
-                      const secs = Math.floor(sec % 60);
+                      const mins = Math.floor(remainingSec / 60);
+                      const secs = Math.floor(remainingSec % 60);
                       return `${mins}:${secs.toString().padStart(2, '0')}`;
                     })()}
                   </span>
@@ -163,16 +255,14 @@ export const Header: React.FC<HeaderProps> = ({
               <span className="f1-badge badge-live">🔴 {t('live')}</span>
             </>
           ) : (
-            // Standby / Between Sessions: Shows current GP + Next Session + Time Remaining
+            // ⏱️ 3. Standby / Pre-Event: Shows current GP + Next Session + Time Remaining
             <>
               <div className="session-track-info">
                 <span className="country-flag" style={{ fontSize: '1.4rem' }}>{upcomingGp.flag}</span>
                 <div>
                   <div className="circuit-title" style={{ fontSize: '0.85rem' }}>{upcomingGp.name} 2026</div>
-                  <div className="circuit-session-type" style={{ color: lastFinishedSession ? '#a0aec0' : '#00D7B6', fontWeight: 700, fontSize: '0.72rem' }}>
-                    {lastFinishedSession 
-                      ? t('session_finished', { session: lastFinishedSession.session.name })
-                      : (nextTargetSession ? (nextTargetSession as any).session?.name || (nextTargetSession as any).name : t('waiting'))}
+                  <div className="circuit-session-type" style={{ color: '#00D7B6', fontWeight: 700, fontSize: '0.72rem' }}>
+                    {(nextTargetSession as any)?.session?.name || (nextTargetSession as any)?.name || t('waiting')}
                   </div>
                 </div>
               </div>
@@ -183,9 +273,7 @@ export const Header: React.FC<HeaderProps> = ({
                 <Clock size={14} color="#00D7B6" />
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                   <span style={{ fontSize: '0.62rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', textTransform: 'uppercase' }}>
-                    {lastFinishedSession && nextTargetSession 
-                      ? t('next_session_in', { session: (nextTargetSession as any).session?.name || (nextTargetSession as any).name })
-                      : t('next_event_in')}
+                    {t('next_event_in')}
                   </span>
                   <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 800, fontSize: '0.86rem', color: '#fff', letterSpacing: '0.04em' }}>
                     {sessionCountdown.days > 0 && `${sessionCountdown.days}d `}
@@ -219,25 +307,31 @@ export const Header: React.FC<HeaderProps> = ({
               gap: '7px',
               padding: '6px 12px',
               borderRadius: '20px',
-              background: isStreaming 
+              background: isLiveActive 
                 ? 'rgba(225, 6, 0, 0.16)' 
+                : isChequered
+                ? 'rgba(255, 255, 255, 0.08)'
                 : isConnected 
                 ? 'rgba(0, 215, 182, 0.12)' 
                 : 'rgba(255, 255, 255, 0.05)',
-              border: isStreaming 
+              border: isLiveActive 
                 ? '1px solid rgba(225, 6, 0, 0.4)' 
+                : isChequered
+                ? '1px solid rgba(255, 255, 255, 0.25)'
                 : isConnected 
                 ? '1px solid rgba(0, 215, 182, 0.3)' 
                 : '1px solid rgba(255, 255, 255, 0.1)',
             }}
             title={t('connection_status_title')}
           >
-            {isStreaming ? (
+            {isLiveActive ? (
               <Radio 
                 size={14} 
                 color="var(--f1-red)" 
                 style={{ animation: 'pulse 1.2s infinite', flexShrink: 0 }}
               />
+            ) : isChequered ? (
+              <span style={{ fontSize: '0.85rem' }}>🏁</span>
             ) : (
               <Wifi 
                 size={14} 
@@ -251,17 +345,19 @@ export const Header: React.FC<HeaderProps> = ({
                 fontFamily: 'var(--font-mono)', 
                 fontSize: '0.72rem', 
                 fontWeight: 800, 
-                color: isStreaming ? '#ff4d4d' : isConnected ? '#00D7B6' : '#ffd700',
+                color: isLiveActive ? '#ff4d4d' : isChequered ? '#ffffff' : isConnected ? '#00D7B6' : '#ffd700',
                 letterSpacing: '0.04em'
               }}>
-                {isStreaming 
+                {isLiveActive 
                   ? t('live')
+                  : isChequered
+                  ? 'FINALIZADA'
                   : isConnected 
                   ? t('connected')
                   : t('updating')}
               </span>
               <span className="status-pill-text-sub" style={{ fontSize: '0.62rem', color: 'var(--text-muted)' }}>
-                {t('official_f1_data')}
+                {isChequered ? 'Bandera a cuadros' : t('official_f1_data')}
               </span>
             </div>
 

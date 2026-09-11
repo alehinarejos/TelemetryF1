@@ -32,12 +32,16 @@ export interface LeaderboardEntry {
   intervalNum: number; // in seconds
   currentLapTime: string;
   bestLapTime: string;
+  lastLapTime?: string;
   s1Time: string;
   s2Time: string;
   s3Time: string;
   s1Status: SectorStatus;
   s2Status: SectorStatus;
   s3Status: SectorStatus;
+  s1Segments?: SectorStatus[];
+  s2Segments?: SectorStatus[];
+  s3Segments?: SectorStatus[];
   tyre: TyreInfo;
   pitStops: number;
   inPit: boolean;

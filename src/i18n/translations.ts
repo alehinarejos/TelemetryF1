@@ -170,7 +170,7 @@ export const translations = {
     live_timing_title: 'TABLA DE TIEMPOS EN VIVO',
     gap_leader: 'LÍDER',
     interval: 'INT',
-    lap_time: 'TIEMPO',
+    lap_time: 'MEJOR TIEMPO',
     tyres: 'NEUMÁTICOS',
     tyres_short: 'NEUM',
     laps: 'Vueltas',
