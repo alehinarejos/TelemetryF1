@@ -1,6 +1,6 @@
 {
-  "name": "OVERCUT F1 - Live Timing & Telemetría",
-  "short_name": "OVERCUT F1",
+  "name": "UNDERCUT F1 - Live Timing & Telemetría",
+  "short_name": "UNDERCUT F1",
   "description": "Dashboard oficial de telemetría y tiempos en directo de Fórmula 1 en tiempo real.",
   "start_url": "/",
   "display": "standalone",

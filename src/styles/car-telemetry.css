@@ -2,10 +2,23 @@
 .telemetry-widget {
   display: flex;
   flex-direction: column;
-  padding: 16px;
-  gap: 14px;
-  height: 380px;
+  padding: 14px 16px;
+  gap: 10px;
+  height: 100%;
+  min-height: 0;
   box-sizing: border-box;
+  justify-content: space-between;
+  overflow-y: auto;
+}
+
+.telemetrix-card .telemetry-widget {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  height: 100% !important;
+  flex: 1;
+  padding: 12px 16px;
 }
 
 /* Driver Header inside widget */
@@ -13,20 +26,21 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-bottom: 12px;
+  padding-bottom: 8px;
   border-bottom: 1px solid var(--f1-border);
+  flex-shrink: 0;
 }
 
 .driver-identity {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .driver-color-pill {
-  width: 5px;
-  height: 38px;
-  border-radius: 3px;
+  width: 4px;
+  height: 32px;
+  border-radius: 2px;
 }
 
 .driver-names-block {
@@ -37,29 +51,30 @@
 .driver-full-name {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 1.05rem;
+  font-size: 1rem;
   color: #fff;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .driver-team-name {
   font-family: var(--font-body);
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   color: var(--text-muted);
 }
 
 .drs-badge-large {
-  padding: 5px 12px;
+  padding: 4px 12px;
   border-radius: 6px;
   font-family: var(--font-mono);
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   border: 1px solid transparent;
   transition: var(--transition-smooth);
+  flex-shrink: 0;
 }
 
 .drs-off {
@@ -94,15 +109,16 @@
   align-items: center;
   justify-content: center;
   gap: 4px;
-  padding: 6px 12px;
+  padding: 5px 10px;
   background: #07090e;
   border: 1px solid var(--f1-border);
   border-radius: 6px;
+  flex-shrink: 0;
 }
 
 .shift-light {
-  width: 12px;
-  height: 12px;
+  width: 11px;
+  height: 11px;
   border-radius: 50%;
   background: #181f2c;
   transition: all 0.08s ease;
@@ -134,18 +150,20 @@
   display: flex;
   align-items: center;
   justify-content: space-around;
-  gap: 16px;
-  padding: 8px 0;
+  gap: 12px;
+  padding: 4px 0;
+  flex-shrink: 0;
 }
 
 /* Circular Speedometer Arc */
 .speedometer-gauge {
   position: relative;
-  width: 180px;
-  height: 180px;
+  width: 155px;
+  height: 155px;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .gauge-svg {
@@ -157,12 +175,12 @@
 .gauge-bg-arc {
   fill: none;
   stroke: rgba(255, 255, 255, 0.06);
-  stroke-width: 10;
+  stroke-width: 9;
 }
 
 .gauge-progress-arc {
   fill: none;
-  stroke-width: 10;
+  stroke-width: 9;
   stroke-linecap: round;
   transition: stroke-dashoffset 0.08s linear, stroke 0.2s ease;
 }
@@ -177,7 +195,7 @@
 
 .speed-number {
   font-family: var(--font-mono);
-  font-size: 2.8rem;
+  font-size: 2.5rem;
   font-weight: 800;
   line-height: 1;
   color: #fff;
@@ -186,29 +204,29 @@
 
 .speed-unit {
   font-family: var(--font-display);
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   color: var(--text-muted);
   font-weight: 700;
   letter-spacing: 0.08em;
-  margin-top: 2px;
+  margin-top: 1px;
 }
 
 .gear-display {
   display: flex;
   align-items: baseline;
   gap: 3px;
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 .gear-label {
   font-family: var(--font-mono);
-  font-size: 0.65rem;
+  font-size: 0.62rem;
   color: var(--text-muted);
 }
 
 .gear-value {
   font-family: var(--font-mono);
-  font-size: 1.4rem;
+  font-size: 1.25rem;
   font-weight: 900;
   color: var(--color-yellow);
 }
@@ -218,19 +236,20 @@
   display: flex;
   align-items: flex-end;
   gap: 12px;
-  height: 140px;
+  height: 125px;
+  flex-shrink: 0;
 }
 
 .pedal-bar-wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   height: 100%;
 }
 
 .pedal-bar-track {
-  width: 22px;
+  width: 20px;
   flex: 1;
   background: rgba(0, 0, 0, 0.4);
   border: 1px solid var(--f1-border);
@@ -259,7 +278,7 @@
 
 .pedal-label {
   font-family: var(--font-mono);
-  font-size: 0.65rem;
+  font-size: 0.62rem;
   font-weight: 700;
   text-transform: uppercase;
 }
@@ -274,7 +293,7 @@
 
 .pedal-value {
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 700;
   color: #fff;
 }
@@ -283,80 +302,87 @@
 .telemetry-stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-  padding-top: 8px;
+  gap: 8px;
+  padding-top: 6px;
+  padding-bottom: 2px;
   border-top: 1px solid var(--f1-border);
+  flex-shrink: 0;
 }
 
 .stat-box {
   display: flex;
   flex-direction: column;
-  background: rgba(0, 0, 0, 0.25);
+  background: rgba(0, 0, 0, 0.3);
   border: 1px solid var(--f1-border);
-  padding: 6px 10px;
+  padding: 5px 8px;
   border-radius: 6px;
+  min-width: 0;
 }
 
 .stat-label {
   font-family: var(--font-mono);
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   color: var(--text-muted);
   font-weight: 600;
   text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .stat-value {
   font-family: var(--font-mono);
-  font-size: 0.95rem;
+  font-size: 0.88rem;
   font-weight: 800;
   color: #fff;
+  white-space: nowrap;
 }
 
 /* Responsive adjustment for Car Telemetry */
 @media (max-width: 600px) {
   .telemetry-widget {
-    padding: 12px;
-    gap: 12px;
+    padding: 10px;
+    gap: 8px;
   }
 
   .telemetry-driver-banner {
-    padding-bottom: 8px;
+    padding-bottom: 6px;
   }
 
   .driver-full-name {
-    font-size: 0.9rem;
+    font-size: 0.88rem;
   }
 
   .shift-lights-bar {
     gap: 3px;
-    padding: 4px 8px;
+    padding: 3px 6px;
   }
 
   .shift-light {
-    width: 9px;
-    height: 9px;
+    width: 8px;
+    height: 8px;
   }
 
   .speedometer-gauge {
-    width: 150px;
-    height: 150px;
+    width: 135px;
+    height: 135px;
   }
 
   .speed-number {
-    font-size: 2.2rem;
+    font-size: 2rem;
   }
 
   .pedals-column {
-    height: 110px;
-    gap: 8px;
+    height: 105px;
+    gap: 6px;
   }
 
   .pedal-bar-track {
-    width: 18px;
+    width: 16px;
   }
 
   .telemetry-stats-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
+    gap: 6px;
   }
 }

@@ -99,6 +99,11 @@ export const App: React.FC = () => {
           rainProbability: weather.rainfall ? 95 : 0,
         }));
       },
+      onTimingData: (timingData) => {
+        if (timingData) {
+          engine.ingestSignalRTimingData(timingData);
+        }
+      },
       onRaceControl: (msg) => {
         if (msg) {
           const text = typeof msg === 'string' ? msg : msg.Message || JSON.stringify(msg);

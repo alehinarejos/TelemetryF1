@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { LeaderboardEntry } from '../types/telemetry';
 import { useLanguage } from '../context/LanguageContext';
+import { ArrowUpDown } from 'lucide-react';
 
 interface LeaderboardProps {
   entries: LeaderboardEntry[];
@@ -16,6 +17,12 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
   isQualifying = false,
 }) => {
   const { t } = useLanguage();
+  const [gapMode, setGapMode] = useState<'leader' | 'interval'>('leader');
+
+  const toggleGapMode = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setGapMode(prev => prev === 'leader' ? 'interval' : 'leader');
+  };
 
   return (
     <div className="f1-card leaderboard-container">
@@ -32,8 +39,20 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
         <span>{t('pos')}</span>
         <span>#</span>
         <span style={{ paddingLeft: '2px' }}>{t('driver')}</span>
-        <span>{t('gap_leader')}</span>
-        <span className="col-int">{t('interval')}</span>
+        
+        {/* Combined interactive Gap / Interval column */}
+        <button
+          type="button"
+          onClick={toggleGapMode}
+          className="leaderboard-gap-toggle-header"
+          title={gapMode === 'leader' ? `${t('gap_leader')} • Click para ver ${t('interval')}` : `${t('interval')} • Click para ver ${t('gap_leader')}`}
+        >
+          <span className="gap-mode-text">
+            {gapMode === 'leader' ? t('gap_leader') : t('interval')}
+          </span>
+          <ArrowUpDown size={11} className="gap-toggle-icon" />
+        </button>
+
         <span>{t('lap_time')}</span>
         <span className="col-sector" style={{ textAlign: 'center' }}>S1</span>
         <span className="col-sector" style={{ textAlign: 'center' }}>S2</span>
@@ -59,6 +78,12 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
             entry.tyre.compound === 'INTERMEDIATE' ? 'tyre-inter' : 'tyre-wet';
 
           const tyreLetter = entry.tyre.compound[0];
+
+          // Determine gap value to display based on mode
+          const isLeader = index === 0;
+          const displayedGap = isLeader
+            ? (entry.gapToLeader === 'GANADOR' ? t('winner_upper') : entry.gapToLeader)
+            : (gapMode === 'leader' ? entry.gapToLeader : entry.gapToAhead);
 
           return (
             <React.Fragment key={entry.driver.id}>
@@ -102,14 +127,9 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
                   <span style={{ fontSize: '0.82rem' }}>{entry.driver.flag}</span>
                 </div>
 
-                {/* Gap to Leader */}
-                <div className={`cell-gap ${index === 0 ? 'leader' : ''}`}>
-                  {index === 0 && entry.gapToLeader === 'GANADOR' ? t('winner_upper') : entry.gapToLeader}
-                </div>
-
-                {/* Interval to car ahead */}
-                <div className="cell-interval col-int">
-                  {entry.gapToAhead}
+                {/* Combined Gap to Leader / Interval */}
+                <div className={`cell-gap ${isLeader ? 'leader' : ''}`}>
+                  {displayedGap}
                 </div>
 
                 {/* Lap Time */}
@@ -138,7 +158,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
                     {tyreLetter}
                   </div>
                   <span className="tyre-age-badge" title="Vueltas con este neumático">
-                    {entry.tyre.age}v
+                    {entry.tyre.age}l
                   </span>
                   {entry.inPit ? (
                     <span className="pit-in-badge">PIT</span>

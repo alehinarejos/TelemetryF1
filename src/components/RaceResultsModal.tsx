@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { F1_SCHEDULE } from '../data/schedule';
 import { RACE_RESULTS_2026 } from '../data/raceResults2026';
 import type { DriverRaceResult } from '../data/raceResults2026';
+import { useLanguage } from '../context/LanguageContext';
 import { 
   X, 
   Trophy, 
@@ -27,6 +28,7 @@ export const RaceResultsModal: React.FC<RaceResultsModalProps> = ({
   onClose,
   onSelectRound,
 }) => {
+  const { t } = useLanguage();
   const [search, setSearch] = useState('');
 
   // Find the GP from schedule
@@ -67,10 +69,10 @@ export const RaceResultsModal: React.FC<RaceResultsModalProps> = ({
           <div className="race-modal-title-group">
             <div className="race-modal-badges">
               <span className="f1-badge" style={{ background: 'rgba(225,6,0,0.2)', borderColor: 'var(--f1-red)', color: '#fff' }}>
-                RONDA {gp.round} DE {F1_SCHEDULE.length}
+                {t('round_of_total', { round: gp.round, total: F1_SCHEDULE.length })}
               </span>
-              <span className="f1-badge badge-green">TEMPORADA 2026</span>
-              <span className="f1-badge">OFICIAL OPENF1</span>
+              <span className="f1-badge badge-green">{t('season_2026')}</span>
+              <span className="f1-badge">{t('official_openf1')}</span>
             </div>
 
             <h2 className="race-modal-title">
@@ -81,7 +83,7 @@ export const RaceResultsModal: React.FC<RaceResultsModalProps> = ({
             <div className="race-modal-subtitle">
               <span>{gp.circuitName}</span>
               <span>•</span>
-              <span>{gp.startDate} al {gp.endDate}</span>
+              <span>{gp.startDate} - {gp.endDate}</span>
               <span>•</span>
               <span>{gp.country}</span>
             </div>
@@ -90,7 +92,7 @@ export const RaceResultsModal: React.FC<RaceResultsModalProps> = ({
           <button 
             className="race-modal-close-btn" 
             onClick={onClose} 
-            title="Cerrar (Esc)"
+            title={t('close_esc')}
             aria-label="Cerrar modal"
           >
             <X size={20} />
@@ -106,7 +108,7 @@ export const RaceResultsModal: React.FC<RaceResultsModalProps> = ({
               onClick={() => onSelectRound(round - 1)}
             >
               <ChevronLeft size={14} />
-              <span>GP Anterior</span>
+              <span>{t('prev_gp')}</span>
             </button>
 
             <select
@@ -116,7 +118,7 @@ export const RaceResultsModal: React.FC<RaceResultsModalProps> = ({
             >
               {F1_SCHEDULE.filter((g) => g.completed).map((g) => (
                 <option key={g.round} value={g.round}>
-                  R{g.round}: {g.name} ({g.winner?.split(' ')[0] || 'Terminado'})
+                  R{g.round}: {g.name} ({g.winner?.split(' ')[0] || 'Fin'})
                 </option>
               ))}
             </select>
@@ -126,7 +128,7 @@ export const RaceResultsModal: React.FC<RaceResultsModalProps> = ({
               disabled={round >= 15}
               onClick={() => onSelectRound(round + 1)}
             >
-              <span>GP Siguiente</span>
+              <span>{t('next_gp_btn')}</span>
               <ChevronRight size={14} />
             </button>
           </div>
@@ -144,7 +146,7 @@ export const RaceResultsModal: React.FC<RaceResultsModalProps> = ({
             <Search size={13} color="var(--text-muted)" />
             <input
               type="text"
-              placeholder="Buscar en clasificación..."
+              placeholder={t('search_standings')}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               style={{
@@ -166,7 +168,7 @@ export const RaceResultsModal: React.FC<RaceResultsModalProps> = ({
               <Trophy size={18} />
             </div>
             <div className="summary-stat-info">
-              <span className="summary-stat-label">Ganador de Carrera</span>
+              <span className="summary-stat-label">{t('race_winner')}</span>
               <span className="summary-stat-val">
                 {winner ? `${winner.driverName} (${winner.team})` : gp.winner || 'N/A'}
               </span>
@@ -179,7 +181,7 @@ export const RaceResultsModal: React.FC<RaceResultsModalProps> = ({
                 <Timer size={18} />
               </div>
               <div className="summary-stat-info">
-                <span className="summary-stat-label">Pole Position</span>
+                <span className="summary-stat-label">{t('pole_position')}</span>
                 <span className="summary-stat-val">{gp.polePosition}</span>
               </div>
             </div>
@@ -190,8 +192,8 @@ export const RaceResultsModal: React.FC<RaceResultsModalProps> = ({
               <Flag size={18} />
             </div>
             <div className="summary-stat-info">
-              <span className="summary-stat-label">Distancia de Carrera</span>
-              <span className="summary-stat-val">{totalLaps} Vueltas Completadas</span>
+              <span className="summary-stat-label">{t('race_distance')}</span>
+              <span className="summary-stat-val">{t('laps_completed', { count: totalLaps })}</span>
             </div>
           </div>
         </div>
@@ -201,19 +203,19 @@ export const RaceResultsModal: React.FC<RaceResultsModalProps> = ({
           {filteredResults.length === 0 ? (
             <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--text-muted)' }}>
               <AlertCircle size={32} style={{ marginBottom: '8px', color: 'var(--f1-red)' }} />
-              <p>No se encontraron resultados para esta carrera o búsqueda.</p>
+              <p>{t('no_race_results')}</p>
             </div>
           ) : (
             <table className="race-results-table">
               <thead>
                 <tr>
-                  <th style={{ width: '50px', textAlign: 'center' }}>Pos</th>
-                  <th style={{ width: '45px', textAlign: 'center' }}>Nº</th>
-                  <th>Piloto</th>
-                  <th>Escudería</th>
-                  <th style={{ textAlign: 'center', width: '80px' }}>Vueltas</th>
-                  <th>Tiempo / Diferencia</th>
-                  <th style={{ textAlign: 'right', width: '80px', paddingRight: '20px' }}>Pts</th>
+                  <th style={{ width: '50px', textAlign: 'center' }}>{t('pos')}</th>
+                  <th style={{ width: '45px', textAlign: 'center' }}>#</th>
+                  <th>{t('driver')}</th>
+                  <th>{t('team')}</th>
+                  <th style={{ textAlign: 'center', width: '80px' }}>{t('laps')}</th>
+                  <th>{t('time_diff')}</th>
+                  <th style={{ textAlign: 'right', width: '80px', paddingRight: '20px' }}>{t('points')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -282,7 +284,7 @@ export const RaceResultsModal: React.FC<RaceResultsModalProps> = ({
                       {/* Gap / Interval / Status */}
                       <td style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem' }}>
                         {isP1 ? (
-                          <span style={{ color: '#ffd700', fontWeight: 800 }}>GANADOR</span>
+                          <span style={{ color: '#ffd700', fontWeight: 800 }}>{t('winner_upper')}</span>
                         ) : isDnf ? (
                           <span style={{ color: '#ff4d4d', fontWeight: 600 }}>{driver.status}</span>
                         ) : (
@@ -318,10 +320,10 @@ export const RaceResultsModal: React.FC<RaceResultsModalProps> = ({
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <Calendar size={13} color="var(--f1-red)" />
-            <span>Datos oficiales de carrera provistos por FIA Formula One & OpenF1 API</span>
+            <span>{t('modal_footer_data')}</span>
           </div>
 
-          <span>Total: {results.length} pilotos registrados</span>
+          <span>{t('total_drivers_registered', { count: results.length })}</span>
         </div>
       </div>
     </div>,

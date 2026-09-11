@@ -142,7 +142,7 @@ export const LeaderboardBox: React.FC<LeaderboardBoxProps> = ({
         >
           <Trophy size={14} style={{ display: 'inline', marginRight: '6px', flexShrink: 0 }} />
           <span className="tab-label-desktop">{t('drivers_tab')} ({drivers.length})</span>
-          <span className="tab-label-mobile">Pilotos ({drivers.length})</span>
+          <span className="tab-label-mobile">{t('drivers_tab')} ({drivers.length})</span>
         </button>
 
         <button
@@ -152,7 +152,7 @@ export const LeaderboardBox: React.FC<LeaderboardBoxProps> = ({
         >
           <Users size={14} style={{ display: 'inline', marginRight: '6px', flexShrink: 0 }} />
           <span className="tab-label-desktop">{t('constructors_tab')} ({constructors.length})</span>
-          <span className="tab-label-mobile">Constructores ({constructors.length})</span>
+          <span className="tab-label-mobile">{t('constructors_tab')} ({constructors.length})</span>
         </button>
       </div>
 

@@ -3,4 +3,4 @@ User-agent: *
 Allow: /
 
 # Sitemap Index
-Sitemap: https://overcut-f1.vercel.app/sitemap.xml
+Sitemap: https://undercut-f1.vercel.app/sitemap.xml

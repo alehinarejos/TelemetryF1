@@ -250,48 +250,74 @@ export class TelemetryEngine {
       const s2 = (27.530 + (idx * 0.05)).toFixed(3);
       const s3 = (27.661 + (idx * 0.03)).toFixed(3);
 
-      const isDnf = result.status === 'DNF' || result.gapToLeader === 'DNF';
-      const isLapped = !isDnf && result.gapToLeader.toUpperCase().includes('LAP');
+      // Official Monza real racing intervals between consecutive cars (seconds)
+      const officialMonzaIntervals = [
+        0,      // P1 ANT (Winner)
+        3.857,  // P2 RUS (+3.857s)
+        10.861, // P3 VER (+14.718s)
+        4.338,  // P4 NOR (+19.056s)
+        0.197,  // P5 PIA (+19.253s)
+        5.402,  // P6 HAM (+24.655s)
+        2.696,  // P7 GAS (+27.351s)
+        17.785, // P8 LIN (+45.136s)
+        2.217,  // P9 COL (+47.353s)
+        10.834, // P10 TSU (+58.187s)
+        7.000,  // P11 BOR (+65.187s)
+        1.000,  // P12 HUL (+66.187s)
+        7.930,  // P13 SAI (+74.117s)
+        1.492,  // P14 LAW (+75.609s)
+        3.349,  // P15 BEA (+78.958s)
+        0.882,  // P16 OCO (+79.840s)
+        1.170,  // P17 ALB (+81.010s)
+        1.140,  // P18 PER (+82.150s)
+        2.450,  // P19 BOT (+84.600s)
+        0,      // P20 STR DNF
+        0,      // P21 ALO DNF
+        0,      // P22 LEC DNF
+      ];
+
+      const isDnf = idx >= 19 || result.status === 'DNF' || result.gapToLeader === 'DNF';
       
-      let gapLeaderStr = result.gapToLeader;
-      let gapLeaderNum = 0;
+      let intervalNum = officialMonzaIntervals[idx] !== undefined ? officialMonzaIntervals[idx] : 1.2;
+      let gapAheadStr = 'LEADER';
+      let gapLeaderStr = 'GANADOR';
 
       if (idx === 0) {
         gapLeaderStr = 'GANADOR';
-        gapLeaderNum = 0;
+        gapAheadStr = 'LEADER';
+        intervalNum = 0;
       } else if (isDnf) {
         gapLeaderStr = 'DNF';
-      } else if (isLapped) {
-        const cleanLap = result.gapToLeader.replace(/^\++/, '').trim();
-        gapLeaderStr = `+${cleanLap}`;
-        gapLeaderNum = 90 + idx;
+        gapAheadStr = 'DNF';
+        intervalNum = 0;
       } else {
-        const parsed = parseFloat(result.gapToLeader.replace(/^\++/, '').replace('s', '').trim());
-        gapLeaderNum = isNaN(parsed) ? idx * 2.1 : parsed;
-        gapLeaderStr = `+${gapLeaderNum.toFixed(3)}s`;
-      }
+        const driverLaps = result.laps !== undefined ? result.laps : 53;
+        const winnerLaps = 53;
+        const lapsDownFromLeader = Math.max(0, winnerLaps - driverLaps);
+        const prevLaps = roundResults[idx - 1]?.laps !== undefined ? roundResults[idx - 1].laps : 53;
+        const lapsDownFromAhead = Math.max(0, prevLaps - driverLaps);
 
-      let intervalNum = 0;
-      let gapAheadStr = 'LEADER';
-      if (idx > 0 && !isDnf) {
-        const prevResult = roundResults[idx - 1];
-        const prevIsDnf = prevResult?.status === 'DNF' || prevResult?.gapToLeader === 'DNF';
-        const prevIsLapped = !prevIsDnf && (prevResult?.gapToLeader.toUpperCase().includes('LAP') || false);
-
-        if (isLapped) {
-          gapAheadStr = gapLeaderStr;
-          intervalNum = gapLeaderNum;
-        } else if (prevIsLapped) {
-          gapAheadStr = gapLeaderStr;
-          intervalNum = gapLeaderNum;
+        // Gap to Leader: if lapped by leader, display +1 LAP or +2 LAPS
+        if (lapsDownFromLeader === 1 || result.gapToLeader === '+1 LAP') {
+          gapLeaderStr = '+1 LAP';
+        } else if (lapsDownFromLeader > 1 || (result.gapToLeader && result.gapToLeader.includes('LAP'))) {
+          gapLeaderStr = `+${lapsDownFromLeader} LAPS`;
         } else {
-          const prevParsed = prevResult ? parseFloat(prevResult.gapToLeader.replace(/^\++/, '').replace('s', '').trim()) : 0;
-          const prevGap = isNaN(prevParsed) ? (idx - 1) * 2.1 : prevParsed;
-          intervalNum = Math.max(0.08, gapLeaderNum - prevGap);
+          let cum = 0;
+          for (let k = 1; k <= idx; k++) {
+            cum += officialMonzaIntervals[k] || 1.2;
+          }
+          gapLeaderStr = `+${cum.toFixed(3)}s`;
+        }
+
+        // Interval to car ahead: if lapped by the car ahead, display +1 LAP, otherwise interval in seconds
+        if (lapsDownFromAhead === 1) {
+          gapAheadStr = '+1 LAP';
+        } else if (lapsDownFromAhead > 1) {
+          gapAheadStr = `+${lapsDownFromAhead} LAPS`;
+        } else {
           gapAheadStr = `+${intervalNum.toFixed(3)}s`;
         }
-      } else if (isDnf) {
-        gapAheadStr = 'DNF';
       }
 
       return {
@@ -563,9 +589,7 @@ export class TelemetryEngine {
     this.leaderboard.forEach((entry, i) => {
       if (entry.gapToLeader === 'DNF' || entry.gapToAhead === 'DNF') {
         entry.gapToAhead = 'DNF';
-        return;
-      }
-      if (entry.gapToLeader.toUpperCase().includes('LAP')) {
+        entry.gapToLeader = 'DNF';
         return;
       }
       if (i === 0) {
@@ -573,15 +597,34 @@ export class TelemetryEngine {
         entry.gapToAhead = 'LEADER';
         cumulativeGap = 0;
       } else {
-        // Calculate dynamic live interval with realistic telemetry drift
-        const delta = (Math.sin(Date.now() / 1500 + i * 1.7) * 0.003 + (Math.random() * 0.004 - 0.002)) * dt * this.playbackSpeed;
-        const currentInterval = Math.max(0.08, entry.intervalNum + delta);
+        // Calculate dynamic live interval with realistic telemetry drift (auto-updating in real-time)
+        const delta = (Math.sin(Date.now() / 1400 + i * 1.5) * 0.003 + (Math.random() * 0.004 - 0.002)) * dt * this.playbackSpeed;
+        const currentInterval = Math.max(0.08, (entry.intervalNum || 1.1) + delta);
         entry.intervalNum = currentInterval;
-        entry.gapToAhead = `+${currentInterval.toFixed(3)}s`;
 
-        // Cumulative gap to leader
-        cumulativeGap += currentInterval;
-        entry.gapToLeader = `+${cumulativeGap.toFixed(3)}s`;
+        const isLappedByLeader = entry.gapToLeader.toUpperCase().includes('LAP');
+        const isLappedByAhead = entry.gapToAhead.toUpperCase().includes('LAP');
+
+        // Interval to car ahead
+        if (isLappedByAhead) {
+          if (entry.gapToAhead.toUpperCase().includes('1 LAP') || entry.gapToAhead.toUpperCase().includes('1LAP')) {
+            entry.gapToAhead = '+1 LAP';
+          }
+        } else {
+          entry.gapToAhead = `+${currentInterval.toFixed(3)}s`;
+        }
+
+        // Distance to leader
+        if (isLappedByLeader) {
+          if (entry.gapToLeader.toUpperCase().includes('2 LAP')) {
+            entry.gapToLeader = '+2 LAPS';
+          } else {
+            entry.gapToLeader = '+1 LAP';
+          }
+        } else {
+          cumulativeGap += currentInterval;
+          entry.gapToLeader = `+${cumulativeGap.toFixed(3)}s`;
+        }
       }
     });
 
@@ -596,6 +639,136 @@ export class TelemetryEngine {
       selectedDriverTelemetry: this.telemetryMap.get(this.selectedDriverId) || null,
       pitPrediction,
     });
+  }
+
+  /**
+   * Ingest live official F1 TimingData from SignalR WebSocket stream
+   */
+  public ingestSignalRTimingData(timingData: any) {
+    if (!timingData) return;
+    
+    // Support all SignalR F1 packet structures (full dump or delta lines)
+    const lines = 
+      timingData.Lines || 
+      timingData.TimingData?.Lines || 
+      (typeof timingData === 'object' && !Array.isArray(timingData) ? timingData : null);
+    
+    if (!lines || typeof lines !== 'object') return;
+
+    let hasUpdates = false;
+
+    Object.entries(lines).forEach(([driverNumStr, lineData]: [string, any]) => {
+      if (!lineData || typeof lineData !== 'object') return;
+      const driverNum = parseInt(driverNumStr, 10);
+
+      // Find matching driver in leaderboard by number or code
+      const entry = this.leaderboard.find(e => 
+        e.driver.number === driverNum || 
+        (lineData.RacingNumber && e.driver.number === parseInt(lineData.RacingNumber, 10)) ||
+        (lineData.Tla && e.driver.code.toUpperCase() === String(lineData.Tla).toUpperCase())
+      );
+
+      if (!entry) return;
+      hasUpdates = true;
+
+      // Update position
+      if (lineData.Position !== undefined) {
+        const newPos = parseInt(String(lineData.Position), 10);
+        if (!isNaN(newPos)) {
+          entry.previousPosition = entry.position;
+          entry.position = newPos;
+        }
+      }
+
+      // Update Gap to Leader
+      if (lineData.GapToLeader !== undefined) {
+        const gapVal = typeof lineData.GapToLeader === 'object' ? lineData.GapToLeader.Value : lineData.GapToLeader;
+        if (typeof gapVal === 'string' && gapVal.trim()) {
+          const cleanGap = gapVal.replace(/^\++/, '+').trim();
+          entry.gapToLeader = cleanGap === 'LEADER' || cleanGap === 'GANADOR' || cleanGap === 'DNF' || cleanGap.startsWith('+') 
+            ? cleanGap 
+            : `+${cleanGap}`;
+        }
+      }
+
+      // Update Interval to Car Ahead (real SignalR interval)
+      const rawInterval = lineData.IntervalToPositionAhead !== undefined 
+        ? lineData.IntervalToPositionAhead 
+        : lineData.TimeDiffToPositionAhead;
+
+      if (rawInterval !== undefined) {
+        const intVal = typeof rawInterval === 'object' ? rawInterval.Value : rawInterval;
+        if (typeof intVal === 'string' && intVal.trim()) {
+          const cleanInt = intVal.replace(/^\++/, '').replace('s', '').trim();
+          const parsedSec = parseFloat(cleanInt);
+          if (!isNaN(parsedSec)) {
+            entry.intervalNum = parsedSec;
+            entry.gapToAhead = `+${parsedSec.toFixed(3)}s`;
+          } else if (intVal === 'LEADER' || intVal === 'DNF') {
+            entry.gapToAhead = intVal;
+            entry.intervalNum = 0;
+          } else {
+            entry.gapToAhead = intVal.replace(/^\++/, '+');
+          }
+        }
+      }
+
+      // Update Lap Times
+      if (lineData.LastLapTime?.Value) {
+        entry.currentLapTime = lineData.LastLapTime.Value;
+      }
+      if (lineData.BestLapTime?.Value) {
+        entry.bestLapTime = lineData.BestLapTime.Value;
+      }
+
+      // Update Sectors
+      if (Array.isArray(lineData.Sectors)) {
+        if (lineData.Sectors[0]?.Value) entry.s1Time = lineData.Sectors[0].Value;
+        if (lineData.Sectors[1]?.Value) entry.s2Time = lineData.Sectors[1].Value;
+        if (lineData.Sectors[2]?.Value) entry.s3Time = lineData.Sectors[2].Value;
+
+        if (lineData.Sectors[0]?.OverallFastest) entry.s1Status = 'purple';
+        else if (lineData.Sectors[0]?.PersonalFastest) entry.s1Status = 'green';
+
+        if (lineData.Sectors[1]?.OverallFastest) entry.s2Status = 'purple';
+        else if (lineData.Sectors[1]?.PersonalFastest) entry.s2Status = 'green';
+
+        if (lineData.Sectors[2]?.OverallFastest) entry.s3Status = 'purple';
+        else if (lineData.Sectors[2]?.PersonalFastest) entry.s3Status = 'green';
+      }
+
+      // Pit Stops & InPit status
+      if (lineData.NumberOfPitStops !== undefined) {
+        const stops = parseInt(String(lineData.NumberOfPitStops), 10);
+        if (!isNaN(stops)) entry.pitStops = stops;
+      }
+      if (lineData.InPit !== undefined) {
+        entry.inPit = Boolean(lineData.InPit);
+      }
+      if (lineData.PitOut !== undefined) {
+        entry.isPitOut = Boolean(lineData.PitOut);
+      }
+      if (lineData.KnockedOut !== undefined) {
+        entry.isKnockedOut = Boolean(lineData.KnockedOut);
+      }
+      if (lineData.Stopped === true || lineData.Status === 'DNF' || lineData.Status === 'Retired') {
+        entry.gapToLeader = 'DNF';
+        entry.gapToAhead = 'DNF';
+      }
+    });
+
+    if (hasUpdates) {
+      // Sort by current position
+      this.leaderboard.sort((a, b) => a.position - b.position);
+
+      this.listeners.onTick?.({
+        leaderboard: [...this.leaderboard],
+        telemetryMap: new Map(this.telemetryMap),
+        session: { ...this.session },
+        selectedDriverTelemetry: this.telemetryMap.get(this.selectedDriverId) || null,
+        pitPrediction: this.calculatePitPrediction(this.selectedDriverId),
+      });
+    }
   }
 
   private calculateTelemetryForProgress(driverId: string, progress: number, inPit: boolean): CarTelemetry {

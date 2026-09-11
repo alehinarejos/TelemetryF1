@@ -99,11 +99,11 @@ export const Header: React.FC<HeaderProps> = ({
         {/* Brand */}
         <div className="brand-section">
           <div className="f1-logo-badge" style={{ letterSpacing: '0.02em', padding: '4px 8px', fontSize: '1rem', fontWeight: 900 }}>
-            OC
+            UC
           </div>
           <div className="app-title-group">
             <span className="app-name" style={{ letterSpacing: '0.06em', display: 'flex', alignItems: 'center', gap: '5px' }}>
-              OVERCUT <span style={{ color: 'var(--f1-red)', fontSize: '0.82em', fontWeight: 900 }}>F1</span>
+              UNDERCUT <span style={{ color: 'var(--f1-red)', fontSize: '0.82em', fontWeight: 900 }}>F1</span>
             </span>
             <span className="app-subtitle">{t('app_subtitle')}</span>
           </div>
@@ -128,13 +128,13 @@ export const Header: React.FC<HeaderProps> = ({
 
               {session.totalLaps > 0 ? (
                 <div className="session-lap-counter">
-                  <span className="lap-label">VUELTA</span>
+                  <span className="lap-label">{t('lap_upper')}</span>
                   <span className="lap-value">{session.currentLap}</span>
                   <span className="lap-label">/ {session.totalLaps}</span>
                 </div>
               ) : (
                 <div className="session-lap-counter">
-                  <span className="lap-label">RESTANTE</span>
+                  <span className="lap-label">{t('remaining_upper')}</span>
                   <span className="lap-value">
                     {Math.floor(session.timeRemainingSec / 60)}:
                     {(session.timeRemainingSec % 60).toString().padStart(2, '0')}
@@ -149,7 +149,7 @@ export const Header: React.FC<HeaderProps> = ({
               ) : session.vscDeployed ? (
                 <span className="f1-badge badge-vsc">VSC ACTIVE</span>
               ) : (
-                <span className="f1-badge badge-green">PISTA VERDE</span>
+                <span className="f1-badge badge-green">{t('track_clear_green')}</span>
               )}
 
               <span className="f1-badge badge-live">🔴 {t('live')}</span>
@@ -222,7 +222,7 @@ export const Header: React.FC<HeaderProps> = ({
                 ? '1px solid rgba(0, 215, 182, 0.3)' 
                 : '1px solid rgba(255, 255, 255, 0.1)',
             }}
-            title="Estado de conexión oficial"
+            title={t('connection_status_title')}
           >
             {isStreaming ? (
               <Radio 
@@ -285,7 +285,7 @@ export const Header: React.FC<HeaderProps> = ({
         >
           <LayoutDashboard size={14} />
           <span className="tab-label-desktop">{t('tab_dashboard')}</span>
-          <span className="tab-label-mobile">Inicio</span>
+          <span className="tab-label-mobile">{t('tab_home_mobile')}</span>
         </button>
 
         <button 
@@ -294,7 +294,7 @@ export const Header: React.FC<HeaderProps> = ({
         >
           <Gauge size={14} />
           <span className="tab-label-desktop">{t('tab_telemetry')}</span>
-          <span className="tab-label-mobile">Telemetría</span>
+          <span className="tab-label-mobile">{t('tab_telemetry_mobile')}</span>
         </button>
 
         <button 
@@ -303,7 +303,7 @@ export const Header: React.FC<HeaderProps> = ({
         >
           <Trophy size={14} />
           <span className="tab-label-desktop">{t('tab_leaderboard')}</span>
-          <span className="tab-label-mobile">Mundial</span>
+          <span className="tab-label-mobile">{t('tab_leaderboard_mobile')}</span>
         </button>
 
         <button 
@@ -312,7 +312,7 @@ export const Header: React.FC<HeaderProps> = ({
         >
           <Calendar size={14} />
           <span className="tab-label-desktop">{t('tab_schedule')}</span>
-          <span className="tab-label-mobile">Calendario</span>
+          <span className="tab-label-mobile">{t('tab_schedule_mobile')}</span>
         </button>
       </nav>
     </header>

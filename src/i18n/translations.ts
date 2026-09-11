@@ -200,7 +200,7 @@ export const translations = {
     close_esc: 'Cerrar (Esc)',
 
     // Footer
-    footer_text: 'OVERCUT F1 • Tiempos, telemetría y clasificaciones oficiales de la temporada 2026.',
+    footer_text: 'UNDERCUT F1 • Tiempos, telemetría y clasificaciones oficiales de la temporada 2026.',
     footer_subtext: 'Todos los datos se sincronizan automáticamente con las sesiones oficiales de Fórmula 1.',
 
     // Additional UI & Mobile Tab Labels
@@ -399,7 +399,7 @@ export const translations = {
     close_esc: 'Close (Esc)',
 
     // Footer
-    footer_text: 'OVERCUT F1 • Official timing, telemetry and standings for the 2026 season.',
+    footer_text: 'UNDERCUT F1 • Official timing, telemetry and standings for the 2026 season.',
     footer_subtext: 'All data is automatically synchronized with official Formula 1 sessions.',
 
     // Additional UI & Mobile Tab Labels
@@ -598,7 +598,7 @@ export const translations = {
     close_esc: 'Fermer (Échap)',
 
     // Footer
-    footer_text: 'OVERCUT F1 • Chronométrage, télémétrie et classements officiels de la saison 2026.',
+    footer_text: 'UNDERCUT F1 • Chronométrage, télémétrie et classements officiels de la saison 2026.',
     footer_subtext: 'Toutes les données sont automatiquement synchronisées avec les séances officielles de Formule 1.',
 
     // Additional UI & Mobile Tab Labels
@@ -797,7 +797,7 @@ export const translations = {
     close_esc: 'Chiudi (Esc)',
 
     // Footer
-    footer_text: 'OVERCUT F1 • Tempi sul giro, telemetria e classifiche ufficiali della stagione 2026.',
+    footer_text: 'UNDERCUT F1 • Tempi sul giro, telemetria e classifiche ufficiali della stagione 2026.',
     footer_subtext: 'Tutti i dati sono sincronizzati automaticamente con le sessioni ufficiali di Formula 1.',
 
     // Additional UI & Mobile Tab Labels

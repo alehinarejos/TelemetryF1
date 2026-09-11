@@ -11,8 +11,8 @@
 
 .leaderboard-header-row {
   display: grid;
-  grid-template-columns: 28px 32px 74px minmax(62px, 1fr) minmax(62px, 1fr) minmax(72px, 1.1fr) 46px 46px 46px minmax(95px, 1.2fr);
-  gap: 6px;
+  grid-template-columns: 28px 34px 76px minmax(76px, 1.15fr) minmax(86px, 1.25fr) 48px 48px 48px minmax(102px, 1.35fr);
+  gap: 8px;
   padding: 8px 12px;
   background: rgba(0, 0, 0, 0.3);
   border-bottom: 1px solid var(--f1-border);
@@ -25,6 +25,42 @@
   align-items: center;
   box-sizing: border-box;
   width: 100%;
+}
+
+.leaderboard-gap-toggle-header {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 4px;
+  padding: 2px 6px;
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  width: fit-content;
+  user-select: none;
+}
+
+.leaderboard-gap-toggle-header:hover {
+  background: rgba(225, 6, 0, 0.2);
+  border-color: var(--f1-red);
+  color: #fff;
+}
+
+.gap-toggle-icon {
+  color: var(--f1-red);
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.leaderboard-gap-toggle-header:hover .gap-toggle-icon {
+  transform: scale(1.15);
 }
 
 .leaderboard-body {
@@ -40,13 +76,13 @@
 
 .leaderboard-row {
   display: grid;
-  grid-template-columns: 28px 32px 74px minmax(62px, 1fr) minmax(62px, 1fr) minmax(72px, 1.1fr) 46px 46px 46px minmax(95px, 1.2fr);
-  gap: 6px;
+  grid-template-columns: 28px 34px 76px minmax(76px, 1.15fr) minmax(86px, 1.25fr) 48px 48px 48px minmax(102px, 1.35fr);
+  gap: 8px;
   padding: 5.5px 12px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
   align-items: center;
   font-family: var(--font-mono);
-  font-size: 0.76rem;
+  font-size: 0.77rem;
   cursor: pointer;
   transition: var(--transition-smooth);
   position: relative;
@@ -79,7 +115,7 @@
 .cell-pos {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 0.82rem;
+  font-size: 0.84rem;
   color: var(--text-highlight);
   text-align: center;
 }
@@ -100,9 +136,9 @@
 
 .driver-number {
   font-family: var(--font-mono);
-  font-size: 0.68rem;
+  font-size: 0.70rem;
   color: var(--text-muted);
-  width: 14px;
+  width: 15px;
   text-align: right;
 }
 
@@ -110,15 +146,16 @@
   font-family: var(--font-display);
   font-weight: 800;
   letter-spacing: 0.03em;
-  font-size: 0.78rem;
+  font-size: 0.80rem;
   color: #fff;
 }
 
 /* Time & Gaps */
-.cell-gap, .cell-interval {
-  font-size: 0.73rem;
+.cell-gap {
+  font-size: 0.76rem;
   color: var(--text-secondary);
   white-space: nowrap;
+  letter-spacing: 0.02em;
 }
 
 .cell-gap.leader {
@@ -129,8 +166,9 @@
 .cell-laptime {
   font-weight: 700;
   color: #fff;
-  font-size: 0.74rem;
+  font-size: 0.77rem;
   white-space: nowrap;
+  letter-spacing: 0.02em;
 }
 
 /* Sector Badges */
@@ -138,9 +176,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.67rem;
+  font-size: 0.69rem;
   font-weight: 700;
-  padding: 1.5px 2px;
+  padding: 2px 3px;
   border-radius: 3px;
   text-align: center;
   letter-spacing: 0.01em;
@@ -172,7 +210,7 @@
 .cell-tyre {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
   min-width: 0;
   white-space: nowrap;
 }
@@ -218,19 +256,19 @@
 
 .tyre-age-badge {
   font-family: var(--font-mono);
-  font-size: 0.66rem;
+  font-size: 0.68rem;
   font-weight: 700;
   color: #e2e8f0;
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  padding: 1px 3.5px;
+  padding: 1px 4px;
   border-radius: 3px;
   white-space: nowrap;
 }
 
 .pit-stops-badge {
   font-family: var(--font-mono);
-  font-size: 0.63rem;
+  font-size: 0.65rem;
   color: var(--text-muted);
   background: rgba(255, 255, 255, 0.04);
   padding: 1px 4px;
@@ -301,23 +339,21 @@
     box-sizing: border-box !important;
   }
 
-  /* Suppress Sectors (S1, S2, S3) and Interval (INT) as requested */
+  /* Suppress Sectors (S1, S2, S3) */
   .col-sector,
-  .cell-sector,
-  .col-int,
-  .cell-interval {
+  .cell-sector {
     display: none !important;
   }
 
-  /* 6 columns: POS, PILOTO (#), NOMBRE (PILOTO), LÍDER, TIEMPO, NEUMÁTICOS (NEUM) */
+  /* 6 columns: POS, PILOTO (#), NOMBRE (PILOTO), LÍDER/INT (TOGGLE), TIEMPO, NEUMÁTICOS (NEUM) */
   .leaderboard-header-row,
   .leaderboard-row {
     min-width: 0 !important;
     width: 100% !important;
     max-width: 100% !important;
-    grid-template-columns: 22px 24px minmax(46px, 1fr) minmax(50px, 1fr) minmax(58px, 1.1fr) 56px !important;
+    grid-template-columns: 22px 26px minmax(48px, 1fr) minmax(56px, 1.15fr) minmax(62px, 1.25fr) 56px !important;
     padding: 6px 6px !important;
-    gap: 4px !important;
+    gap: 5px !important;
     font-size: 0.72rem !important;
     box-sizing: border-box !important;
   }
@@ -333,7 +369,7 @@
 
   .cell-gap,
   .cell-laptime {
-    font-size: 0.7rem;
+    font-size: 0.71rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
