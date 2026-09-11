@@ -116,7 +116,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     if (ogLocale) ogLocale.setAttribute('content', meta.locale);
 
     const ogUrl = document.querySelector('meta[property="og:url"]');
-    if (ogUrl) ogUrl.setAttribute('content', `https://undercut-f1.vercel.app/?lang=${language}`);
+    if (ogUrl) ogUrl.setAttribute('content', `https://undercut-f1-live.vercel.app/?lang=${language}`);
 
     // Twitter Card Tags
     const twitterTitle = document.querySelector('meta[name="twitter:title"]');
