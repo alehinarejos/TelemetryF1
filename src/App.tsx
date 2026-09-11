@@ -41,7 +41,7 @@ export const App: React.FC = () => {
   const engineRef = useRef<TelemetryEngine | null>(null);
 
   if (!engineRef.current) {
-    engineRef.current = new TelemetryEngine('monza');
+    engineRef.current = new TelemetryEngine('madrid');
   }
   const engine = engineRef.current;
 
@@ -141,7 +141,7 @@ export const App: React.FC = () => {
     checkStatus();
     const interval = setInterval(checkStatus, 30000);
     return () => clearInterval(interval);
-  }, [signalRStatus]);
+  }, []);
 
   // Connect listeners and start engine for real telemetry feed
   useEffect(() => {

@@ -139,40 +139,242 @@ export class TelemetryEngine {
   private timerId: number | null = null;
   private listeners: EngineListeners = {};
 
-  constructor(circuitId: string = 'monza') {
-    const selectedCircuit = CIRCUIT_MAP.get(circuitId) || CIRCUITS.find(c => c.id === 'monza') || CIRCUITS[0];
+  constructor(circuitId: string = 'madrid') {
+    const selectedCircuit = CIRCUIT_MAP.get(circuitId) || CIRCUITS.find(c => c.id === 'madrid') || CIRCUITS[0];
     this.circuit = selectedCircuit;
 
     this.session = {
-      id: 'session-monza-2026-r15',
+      id: 'session-madrid-2026-r16',
       circuit: this.circuit,
-      type: 'RACE',
-      name: 'Gran Premio de Italia 2026 (Monza)',
-      trackStatus: 'CHEQUERED',
-      currentLap: 53,
-      totalLaps: 53,
-      timeRemainingSec: 0,
-      airTemp: 28.5,
-      trackTemp: 42.1,
-      humidity: 42,
+      type: 'PRACTICE',
+      name: 'Gran Premio de España 2026 (Madrid)',
+      trackStatus: 'GREEN',
+      currentLap: 0,
+      totalLaps: 55,
+      timeRemainingSec: 3600,
+      airTemp: 24.8,
+      trackTemp: 37.5,
+      humidity: 36,
       rainProbability: 0,
-      windSpeed: 8.2,
-      windDirection: 'N',
+      windSpeed: 7.2,
+      windDirection: 'NE',
       safetyCarDeployed: false,
       vscDeployed: false,
       redFlagDeployed: false,
       drsEnabled: true,
     };
 
-    // Load authentic recorded data from the last completed session (Round 15 Monza)
-    this.loadOfficialRecordedSession(15);
+    if (circuitId === 'madrid' || this.circuit.id === 'madrid') {
+      this.loadMadridSession();
+    } else {
+      this.loadOfficialRecordedSession(15);
+    }
     this.start();
+  }
+
+  /**
+   * Load current active weekend session for Circuito de Madrid (Round 16)
+   */
+  public loadMadridSession() {
+    const madridCircuit = CIRCUIT_MAP.get('madrid') || CIRCUITS[0];
+    this.circuit = madridCircuit;
+
+    const fp1Start = new Date('2026-09-11T11:30:00Z').getTime();
+    const fp1End = new Date('2026-09-11T12:30:00Z').getTime();
+    const now = Date.now();
+    let remainingSec = 3600;
+    if (now >= fp1Start && now <= fp1End) {
+      remainingSec = Math.max(0, Math.floor((fp1End - now) / 1000));
+    }
+
+    this.session = {
+      id: 'session-2026-r16-madrid',
+      circuit: madridCircuit,
+      type: 'PRACTICE',
+      name: 'Gran Premio de España 2026 (Madrid)',
+      trackStatus: 'GREEN',
+      currentLap: 0,
+      totalLaps: 0, // Libres/Practice session: 0 total laps (timed session)
+      timeRemainingSec: remainingSec,
+      airTemp: 24.8,
+      trackTemp: 37.5,
+      humidity: 36,
+      rainProbability: 0,
+      windSpeed: 7.2,
+      windDirection: 'NE',
+      safetyCarDeployed: false,
+      vscDeployed: false,
+      redFlagDeployed: false,
+      drsEnabled: true,
+    };
+
+    // Realistic Madrid fast benchmark laps for each driver (5.474 km lap ~1:32.450 - 1:35.000)
+    const baseLapTimes = [
+      92.450, // ANT P1 (1:32.450)
+      92.580, // RUS P2 (1:32.580)
+      92.710, // VER P3 (1:32.710)
+      92.790, // NOR P4 (1:32.790)
+      92.850, // PIA P5 (1:32.850)
+      92.990, // HAM P6 (1:32.990)
+      93.150, // GAS P7 (1:33.150)
+      93.220, // SAI P8 (1:33.220)
+      93.310, // ALO P9 (1:33.310)
+      93.400, // LEC P10 (1:33.400)
+      93.580, // LIN P11
+      93.650, // COL P12
+      93.720, // TSU P13
+      93.810, // BOR P14
+      93.900, // HUL P15
+      94.020, // LAW P16
+      94.150, // BEA P17
+      94.280, // OCO P18
+      94.410, // ALB P19
+      94.550, // PER P20
+      94.700, // BOT P21
+      94.900, // STR P22
+    ];
+
+    const speedTraps = [
+      348, 347, 346, 346, 345, 345, 344, 345, 346, 344,
+      343, 343, 344, 342, 341, 342, 343, 340, 341, 340, 339, 341
+    ];
+
+    // Standard driver starting grid from official 2026 driver roster
+    this.leaderboard = DRIVERS.map((driver, idx) => {
+      const baseSec = baseLapTimes[idx] || 93.0;
+      const s1 = (28.650 + (idx * 0.04)).toFixed(3);
+      const s2 = (34.800 + (idx * 0.05)).toFixed(3);
+      const s3 = (29.000 + (idx * 0.03)).toFixed(3);
+      const intervalNum = idx === 0 ? 0 : Number((baseLapTimes[idx] - baseLapTimes[idx - 1]).toFixed(3));
+      const gapLeaderNum = Number((baseSec - baseLapTimes[0]).toFixed(3));
+
+      return {
+        position: idx + 1,
+        previousPosition: idx + 1,
+        driver: {
+          id: driver.id,
+          code: driver.code,
+          number: driver.number,
+          firstName: driver.firstName,
+          lastName: driver.lastName,
+          team: driver.team,
+          teamColor: driver.teamColor,
+          country: driver.country,
+          flag: driver.flag,
+        },
+        gapToLeader: idx === 0 ? 'LÍDER' : `+${gapLeaderNum.toFixed(3)}s`,
+        gapToAhead: idx === 0 ? 'LEADER' : `+${intervalNum.toFixed(3)}s`,
+        intervalNum: intervalNum,
+        currentLapTime: this.formatLapTime(baseSec),
+        bestLapTime: this.formatLapTime(baseSec),
+        s1Time: s1,
+        s2Time: s2,
+        s3Time: s3,
+        s1Status: idx === 0 ? 'purple' : idx < 3 ? 'green' : 'yellow',
+        s2Status: idx === 1 ? 'purple' : idx < 4 ? 'green' : 'yellow',
+        s3Status: idx === 0 ? 'purple' : idx < 3 ? 'green' : 'yellow',
+        tyre: {
+          compound: idx % 3 === 0 ? 'SOFT' : idx % 3 === 1 ? 'MEDIUM' : 'HARD',
+          age: Math.floor(Math.random() * 5) + 1,
+          used: false,
+        },
+        pitStops: 0,
+        inPit: false,
+        isPitOut: false,
+        isKnockedOut: false,
+        isEliminationRisk: false,
+        speedTrap: speedTraps[idx] || 345,
+        lastLapTimeNum: baseSec,
+        trackProgress: (1.0 - idx * 0.04 + 1.0) % 1.0,
+      };
+    });
+
+    // Populate telemetry curves
+    this.leaderboard.forEach((entry, idx) => {
+      const isLeader = idx === 0;
+      const speed = isLeader ? 348 : Math.max(336, 348 - idx * 0.6);
+      this.telemetryMap.set(entry.driver.id, {
+        driverId: entry.driver.id,
+        speed: Math.round(speed),
+        rpm: isLeader ? 12900 : 12750,
+        gear: 8,
+        throttle: 100,
+        brake: 0,
+        drs: 2,
+        steerAngle: 0,
+        gForceLat: 0.3,
+        gForceLong: 0.8,
+        ersBattery: Math.max(75, 95 - idx * 1.5),
+        ersDeploy: 80,
+      });
+    });
+
+    this.raceControlLog = [
+      {
+        id: 'rc-mad-1',
+        timestamp: '13:15:00',
+        flag: 'GREEN',
+        scope: 'Track',
+        messageEn: 'TRACK CLEAR - FP1 AT CIRCUITO DE MADRID (MADRING)',
+        messageEs: 'PISTA DESPEJADA - FP1 EN CIRCUITO DE MADRID (MADRING)',
+        category: 'SYSTEM',
+      },
+      {
+        id: 'rc-mad-2',
+        timestamp: '13:18:00',
+        flag: 'GREEN',
+        scope: 'Track',
+        messageEn: 'FIA INSPECTION COMPLETE - SURFACE DRY, ALL 20 TURNS OPERATIONAL',
+        messageEs: 'INSPECCIÓN FIA COMPLETADA - PISTA SECA, 20 CURVAS OPERATIVAS',
+        category: 'SYSTEM',
+      },
+    ];
+
+    this.teamRadioLog = [
+      {
+        id: 'tr-mad-1',
+        timestamp: '13:20:00',
+        driver: DRIVERS.find(d => d.code === 'ANT') || DRIVERS[0],
+        speaker: 'Driver',
+        messageEn: 'Track layout looks incredible, ready to head out for FP1 installation lap.',
+        messageEs: 'El trazado de Madrid tiene una pinta increíble, listos para la vuelta de instalación en FP1.',
+        audioToneType: 'calm',
+        durationSec: 3.8,
+      },
+      {
+        id: 'tr-mad-2',
+        timestamp: '13:21:30',
+        driver: DRIVERS.find(d => d.code === 'SAI') || DRIVERS[12],
+        speaker: 'Driver',
+        messageEn: 'Home Grand Prix in Madrid, feeling great with the car balance.',
+        messageEs: 'Gran Premio de casa en Madrid, muy buenas sensaciones con el coche.',
+        audioToneType: 'calm',
+        durationSec: 4.1,
+      },
+      {
+        id: 'tr-mad-3',
+        timestamp: '13:22:15',
+        driver: DRIVERS.find(d => d.code === 'ALO') || DRIVERS[14],
+        speaker: 'Driver',
+        messageEn: 'Monumental banked corner will be flat out with DRS.',
+        messageEs: 'La curva peraltada de La Monumental se hará a fondo con DRS.',
+        audioToneType: 'calm',
+        durationSec: 3.5,
+      },
+    ];
+
+    this.selectedDriverId = this.leaderboard[0]?.driver.id || 'ant';
+    this.emitCurrentState();
   }
 
   /**
    * Load authentic recorded real data from Round 15 (Monza GP 2026)
    */
   public loadOfficialRecordedSession(roundNumber: number = 15) {
+    if (roundNumber === 16) {
+      this.loadMadridSession();
+      return;
+    }
     const roundResults = RACE_RESULTS_2026[roundNumber] || RACE_RESULTS_2026[15];
     const monzaCircuit = CIRCUIT_MAP.get('monza') || CIRCUITS[0];
     this.circuit = monzaCircuit;
@@ -435,8 +637,12 @@ export class TelemetryEngine {
     if (isLive) {
       this.start();
     } else {
-      this.stop();
-      this.loadOfficialRecordedSession(15);
+      // Keep simulation running smoothly on active circuit without jumping back to older races
+      if (this.circuit.id === 'madrid') {
+        this.start();
+      } else {
+        this.start();
+      }
     }
   }
 
@@ -522,6 +728,13 @@ export class TelemetryEngine {
 
   private tick() {
     const dt = (0.060 * this.playbackSpeed); // delta time scaled
+
+    // Decrement practice/qualifying session time remaining
+    if (this.session.type === 'PRACTICE' || this.session.type === 'QUALIFYING') {
+      if (this.session.timeRemainingSec > 0) {
+        this.session.timeRemainingSec = Math.max(0, this.session.timeRemainingSec - dt);
+      }
+    }
 
     // Update car positions & physics
     this.leaderboard.forEach((entry, idx) => {

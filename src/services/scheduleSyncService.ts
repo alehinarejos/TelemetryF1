@@ -202,10 +202,10 @@ class ScheduleSyncService {
     let updatedAny = false;
     const updatedSessions = upcomingGp.sessions.map((sess) => {
       const match = 
-        (sess.type === 'FP1' && sessionName.toLowerCase().includes('practice 1')) ||
-        (sess.type === 'FP2' && sessionName.toLowerCase().includes('practice 2')) ||
-        (sess.type === 'FP3' && sessionName.toLowerCase().includes('practice 3')) ||
-        (sess.type === 'Qualifying' && sessionName.toLowerCase().includes('qualifying')) ||
+        (sess.type === 'FP1' && (sessionName.toLowerCase().includes('practice 1') || sessionName.toLowerCase().includes('fp1'))) ||
+        (sess.type === 'FP2' && (sessionName.toLowerCase().includes('practice 2') || sessionName.toLowerCase().includes('fp2'))) ||
+        (sess.type === 'FP3' && (sessionName.toLowerCase().includes('practice 3') || sessionName.toLowerCase().includes('fp3'))) ||
+        (sess.type === 'Qualifying' && (sessionName.toLowerCase().includes('qualifying') || sessionName.toLowerCase().includes('qualy'))) ||
         (sess.type === 'Race' && sessionName.toLowerCase().includes('race'));
 
       if (match) {

@@ -52,7 +52,7 @@ export const TelemetrixBox: React.FC<TelemetrixBoxProps> = ({
             <span className="f1-badge badge-live">{t('official_live')}</span>
           ) : (
             <span className="f1-badge" style={{ background: 'rgba(255, 215, 0, 0.15)', color: '#ffd700', border: '1px solid rgba(255, 215, 0, 0.3)' }}>
-              {circuit.name} (R15)
+              {circuit.name}
             </span>
           )}
         </div>

@@ -126,7 +126,7 @@ export const Header: React.FC<HeaderProps> = ({
 
               <div className="session-divider" />
 
-              {session.totalLaps > 0 ? (
+              {session.type === 'RACE' || session.type === 'SPRINT' ? (
                 <div className="session-lap-counter">
                   <span className="lap-label">{t('lap_upper')}</span>
                   <span className="lap-value">{session.currentLap}</span>
@@ -135,9 +135,17 @@ export const Header: React.FC<HeaderProps> = ({
               ) : (
                 <div className="session-lap-counter">
                   <span className="lap-label">{t('remaining_upper')}</span>
-                  <span className="lap-value">
-                    {Math.floor(session.timeRemainingSec / 60)}:
-                    {(session.timeRemainingSec % 60).toString().padStart(2, '0')}
+                  <span className="lap-value" style={{ fontFamily: 'var(--font-mono)', fontWeight: 800, color: '#00D7B6', letterSpacing: '0.04em' }}>
+                    {(() => {
+                      const sec = session.timeRemainingSec > 0 
+                        ? session.timeRemainingSec 
+                        : activeTimelineSession 
+                        ? Math.max(0, Math.floor((activeTimelineSession.endTime - Date.now()) / 1000)) 
+                        : 0;
+                      const mins = Math.floor(sec / 60);
+                      const secs = Math.floor(sec % 60);
+                      return `${mins}:${secs.toString().padStart(2, '0')}`;
+                    })()}
                   </span>
                 </div>
               )}

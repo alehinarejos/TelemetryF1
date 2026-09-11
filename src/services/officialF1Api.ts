@@ -63,7 +63,7 @@ class OfficialF1Service {
           activeSession: null,
           latestCompletedSession: null,
           nextSession: {
-            name: 'Práctica 1 - GP de España (Madrid)',
+            name: 'FP1 - GP de España (Madrid)',
             circuit: 'Madring',
             dateStart: '2026-09-11T11:30:00Z',
           },
@@ -86,7 +86,7 @@ class OfficialF1Service {
         activeSession: isLive ? latest : null,
         latestCompletedSession: latest,
         nextSession: {
-          name: 'Práctica 1 - GP de España (Madrid)',
+          name: 'FP1 - GP de España (Madrid)',
           circuit: 'Madring',
           dateStart: '2026-09-11T11:30:00Z',
         },
@@ -98,7 +98,7 @@ class OfficialF1Service {
         activeSession: null,
         latestCompletedSession: null,
         nextSession: {
-          name: 'Práctica 1 - GP de España (Madrid)',
+          name: 'FP1 - GP de España (Madrid)',
           circuit: 'Madring',
           dateStart: '2026-09-11T11:30:00Z',
         },
