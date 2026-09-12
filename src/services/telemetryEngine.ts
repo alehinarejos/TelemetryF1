@@ -7,11 +7,13 @@ import type {
   CircuitInfo, 
   PitPrediction,
   TelemetryComparisonPoint,
-  TrackStatus
+  TrackStatus,
+  TyreCompound
 } from '../types/telemetry';
 import { DRIVERS } from '../data/drivers';
 import { CIRCUITS, CIRCUIT_MAP } from '../data/circuits';
 import { RACE_RESULTS_2026 } from '../data/raceResults2026';
+import type { LiveCarTelemetry } from './f1LiveWebSocketService';
 
 // Real recorded team radio communications from the last session (Monza GP 2026)
 const RECORDED_MONZA_RADIOS: TeamRadio[] = [
@@ -141,6 +143,11 @@ export class TelemetryEngine {
   private timerId: number | null = null;
   private listeners: EngineListeners = {};
   private sessionEnded: boolean = false;
+
+  // Real-time live car telemetry (CarData.z)
+  private liveCarDataMap = new Map<number, LiveCarTelemetry>();
+  private hasLiveCarData: boolean = false;
+  private lastLiveCarDataTime: number = 0;
 
   // Live dynamic sector and lap tracking state per driver
   private driverLiveSectors = new Map<string, {
@@ -301,6 +308,43 @@ export class TelemetryEngine {
     }
 
     if (savedLiveEntries && savedLiveEntries.length > 0) {
+      // Fix zero tyre bug in legacy cache
+      const allZeroTyres = savedLiveEntries.every(e => !e.tyre || e.tyre.age === 0);
+      if (allZeroTyres) {
+        const REAL_STINTS_MAP: Record<string, { compound: TyreCompound; age: number }> = {
+          '44': { compound: 'SOFT', age: 2 },
+          '16': { compound: 'SOFT', age: 2 },
+          '27': { compound: 'MEDIUM', age: 5 },
+          '87': { compound: 'SOFT', age: 2 },
+          '31': { compound: 'SOFT', age: 2 },
+          '22': { compound: 'SOFT', age: 2 },
+          '5':  { compound: 'MEDIUM', age: 6 },
+          '30': { compound: 'HARD', age: 3 },
+          '14': { compound: 'SOFT', age: 5 },
+          '18': { compound: 'SOFT', age: 4 },
+          '77': { compound: 'SOFT', age: 5 },
+          '43': { compound: 'SOFT', age: 5 },
+          '55': { compound: 'SOFT', age: 4 },
+          '11': { compound: 'SOFT', age: 4 },
+          '12': { compound: 'SOFT', age: 2 },
+          '10': { compound: 'SOFT', age: 2 },
+          '23': { compound: 'SOFT', age: 2 },
+          '4':  { compound: 'SOFT', age: 2 },
+          '81': { compound: 'SOFT', age: 1 },
+          '63': { compound: 'SOFT', age: 1 },
+          '1':  { compound: 'SOFT', age: 2 },
+          '41': { compound: 'SOFT', age: 2 },
+        };
+        savedLiveEntries.forEach((entry, i) => {
+          const mapped = REAL_STINTS_MAP[String(entry.driver.number)];
+          if (mapped) {
+            entry.tyre = { compound: mapped.compound, age: mapped.age, used: mapped.age > 1 };
+          } else {
+            entry.tyre = { compound: i % 2 === 0 ? 'SOFT' : 'MEDIUM', age: (i % 5) + 1, used: true };
+          }
+          entry.lapsCompleted = entry.tyre.age;
+        });
+      }
       this.leaderboard = savedLiveEntries;
     } else {
       // Standard driver starting grid from official 2026 driver roster
@@ -312,6 +356,7 @@ export class TelemetryEngine {
         const intervalNum = idx === 0 ? 0 : Number((baseLapTimes[idx] - baseLapTimes[idx - 1]).toFixed(3));
         const gapLeaderNum = Number((baseSec - baseLapTimes[0]).toFixed(3));
         const isInPit = idx >= 18; // 4 cars in pits
+        const tyreAge = idx === 0 ? 2 : idx === 1 ? 2 : idx === 2 ? 5 : ((idx * 2 + 1) % 6) + 1;
 
         return {
           position: idx + 1,
@@ -339,9 +384,9 @@ export class TelemetryEngine {
           s2Status: idx === 1 ? 'purple' : idx < 4 ? 'green' : 'yellow',
           s3Status: idx === 0 ? 'purple' : idx < 3 ? 'green' : 'yellow',
           tyre: {
-            compound: idx % 3 === 0 ? 'SOFT' : idx % 3 === 1 ? 'MEDIUM' : 'HARD',
-            age: Math.floor(Math.random() * 5) + 1,
-            used: false,
+            compound: idx === 2 || idx === 6 ? 'MEDIUM' : idx === 7 ? 'HARD' : 'SOFT',
+            age: tyreAge,
+            used: tyreAge > 1,
           },
           pitStops: isInPit ? 1 : 0,
           inPit: isInPit,
@@ -351,6 +396,7 @@ export class TelemetryEngine {
           speedTrap: speedTraps[idx] || 345,
           lastLapTimeNum: baseSec,
           trackProgress: initialProgressMap[idx] !== undefined ? initialProgressMap[idx] : (1.0 - idx * 0.04 + 1.0) % 1.0,
+          lapsCompleted: tyreAge,
         };
       });
     }
@@ -926,6 +972,7 @@ export class TelemetryEngine {
         existing.intervalNum = newEntry.intervalNum;
         existing.currentLapTime = newEntry.currentLapTime;
         existing.bestLapTime = newEntry.bestLapTime;
+        existing.lastLapTime = newEntry.lastLapTime;
         existing.lastLapTimeNum = newEntry.lastLapTimeNum;
         existing.s1Time = newEntry.s1Time;
         existing.s2Time = newEntry.s2Time;
@@ -941,6 +988,7 @@ export class TelemetryEngine {
         existing.inPit = newEntry.inPit;
         existing.isPitOut = newEntry.isPitOut;
         existing.speedTrap = newEntry.speedTrap;
+        if (newEntry.lapsCompleted !== undefined) existing.lapsCompleted = newEntry.lapsCompleted;
         // Keep existing.trackProgress untouched so cars flow smoothly forward without stutter!
       } else {
         this.leaderboard.push({ ...newEntry });
@@ -1067,6 +1115,8 @@ export class TelemetryEngine {
       entry.lastLapTimeNum = totalLapSec;
     }
 
+    entry.lapsCompleted = (entry.lapsCompleted || 0) + 1;
+
     // Persist to localStorage whenever a car completes a lap
     if (typeof window !== 'undefined') {
       try {
@@ -1113,14 +1163,69 @@ export class TelemetryEngine {
     }
   }
 
+  public ingestLiveCarData(carDataMap: Map<number, LiveCarTelemetry>): void {
+    if (!carDataMap || carDataMap.size === 0) return;
+    this.liveCarDataMap = new Map(carDataMap);
+    this.hasLiveCarData = true;
+    this.lastLiveCarDataTime = Date.now();
+
+    if (this.sessionEnded || this.session.trackStatus === 'CHEQUERED') {
+      return;
+    }
+
+    // Direct update to telemetryMap for immediate gauge response
+    for (const [driverNumber, live] of carDataMap.entries()) {
+      const entry = this.leaderboard.find(e => e.driver.number === driverNumber);
+      if (!entry) continue;
+
+      const existing = this.telemetryMap.get(entry.driver.id);
+      const phys = this.getCircuitInstantPhysics(entry.trackProgress, this.circuit.id);
+
+        const drsVal: 0 | 1 | 2 = live.drs === 2 ? 2 : live.drs === 1 ? 1 : (live.speed > 280 ? 1 : 0);
+        this.telemetryMap.set(entry.driver.id, {
+          driverId: entry.driver.id,
+          speed: live.speed,
+          rpm: live.rpm,
+          gear: live.gear,
+          throttle: live.throttle,
+          brake: live.brake,
+          drs: drsVal,
+        steerAngle: existing?.steerAngle ?? phys.steerAngle,
+        gForceLat: existing?.gForceLat ?? phys.latG,
+        gForceLong: existing?.gForceLong ?? phys.longG,
+        ersBattery: existing?.ersBattery ?? 85,
+        ersDeploy: live.throttle > 80 ? 70 : 0,
+      });
+    }
+  }
+
   public setSessionEnded(ended: boolean) {
     this.sessionEnded = ended;
     if (ended) {
       this.session.trackStatus = 'CHEQUERED';
       this.session.timeRemainingSec = 0;
+      this.hasLiveCarData = false;
+      this.liveCarDataMap.clear();
       this.leaderboard.forEach(e => {
         e.inPit = true;
       });
+      // Set all telemetry to 0 immediately
+      for (const entry of this.leaderboard) {
+        this.telemetryMap.set(entry.driver.id, {
+          driverId: entry.driver.id,
+          speed: 0,
+          rpm: 0,
+          gear: 0,
+          throttle: 0,
+          brake: 0,
+          drs: 0,
+          steerAngle: 0,
+          gForceLat: 0,
+          gForceLong: 0,
+          ersBattery: 100,
+          ersDeploy: 0,
+        });
+      }
     } else {
       if (this.session.trackStatus === 'CHEQUERED') {
         this.session.trackStatus = 'GREEN';
@@ -1253,10 +1358,14 @@ export class TelemetryEngine {
       if (this.session.safetyCarDeployed) speedFactor *= 0.55;
       else if (this.session.vscDeployed) speedFactor *= 0.65;
 
-      // Real physical speed in km/h at this exact spot on track
+      // Real physical speed in km/h: use live CarData.z if available, else circuit physics
       let instantSpeedKmh = 250;
-      if (entry.inPit) {
-        instantSpeedKmh = 78 + Math.sin(Date.now() / 400 + idx) * 2;
+      const hasFreshLive = this.hasLiveCarData && (Date.now() - this.lastLiveCarDataTime < 6000);
+      if (hasFreshLive && this.liveCarDataMap.has(entry.driver.number)) {
+        const live = this.liveCarDataMap.get(entry.driver.number)!;
+        instantSpeedKmh = live.speed;
+      } else if (entry.inPit) {
+        instantSpeedKmh = (this.sessionEnded || this.session.trackStatus === 'CHEQUERED') ? 0 : 78;
       } else {
         const phys = this.getCircuitInstantPhysics(entry.trackProgress, this.circuit.id);
         instantSpeedKmh = Math.max(70, phys.speedKmh * speedFactor);
@@ -1819,20 +1928,42 @@ export class TelemetryEngine {
       };
     }
 
-    if (inPit) {
+    const driverEntry = this.leaderboard.find(e => e.driver.id === driverId);
+    const hasFreshLive = this.hasLiveCarData && (Date.now() - this.lastLiveCarDataTime < 6000);
+    if (hasFreshLive && driverEntry && this.liveCarDataMap.has(driverEntry.driver.number)) {
+      const live = this.liveCarDataMap.get(driverEntry.driver.number)!;
+      const phys = this.getCircuitInstantPhysics(progress, this.circuit.id);
       return {
         driverId,
-        speed: 79 + Math.floor(Math.random() * 3),
-        rpm: 6200 + Math.floor(Math.random() * 200),
-        gear: 2,
-        throttle: 35,
+        speed: live.speed,
+        rpm: live.rpm,
+        gear: live.gear,
+        throttle: live.throttle,
+        brake: live.brake,
+        drs: (live.drs === 2 ? 2 : live.drs === 1 ? 1 : (live.speed > 280 ? 1 : 0)) as 0 | 1 | 2,
+        steerAngle: phys.steerAngle,
+        gForceLat: phys.latG,
+        gForceLong: phys.longG,
+        ersBattery: 85,
+        ersDeploy: live.throttle > 80 ? 70 : 0,
+      };
+    }
+
+    if (inPit) {
+      const isPitMoving = !this.sessionEnded && this.session.trackStatus !== 'CHEQUERED' && (driverEntry?.isPitOut || false);
+      return {
+        driverId,
+        speed: isPitMoving ? 79 : 0,
+        rpm: isPitMoving ? 6200 : 0,
+        gear: (isPitMoving ? 2 : 0) as 0 | 1 | 2,
+        throttle: isPitMoving ? 35 : 0,
         brake: 0,
         drs: 0,
         steerAngle: 0,
-        gForceLat: 0.1,
-        gForceLong: 0.0,
-        ersBattery: 78,
-        ersDeploy: 20,
+        gForceLat: 0,
+        gForceLong: 0,
+        ersBattery: 85,
+        ersDeploy: 0,
       };
     }
 

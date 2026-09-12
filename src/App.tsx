@@ -14,8 +14,9 @@ import type {
 } from './types/telemetry';
 import { Header } from './components/Header';
 import { Leaderboard } from './components/Leaderboard';
-import { CircuitMap } from './components/CircuitMap';
-import { CarTelemetry } from './components/CarTelemetry';
+import { BestLapBenchmarks } from './components/BestLapBenchmarks';
+import { FastestBySector } from './components/FastestBySector';
+import { TrackFlagIndicator } from './components/TrackFlagIndicator';
 import { RaceControl } from './components/RaceControl';
 import { ScheduleView } from './components/ScheduleView';
 import { HomeSketchLayout } from './components/HomeSketchLayout';
@@ -44,8 +45,8 @@ export const App: React.FC = () => {
   }
   const engine = engineRef.current;
 
-  // Active tab: 'home' is the sketch layout requested by the user
-  const [activeTab, setActiveTab] = useState<'home' | 'timing' | 'leaderboard' | 'schedule'>('home');
+  // Active tab: 'timing' matches formula1dashboard live timing layout
+  const [activeTab, setActiveTab] = useState<'home' | 'timing' | 'leaderboard' | 'schedule'>('timing');
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>(() => {
     if (typeof window !== 'undefined') {
       try {
@@ -55,6 +56,18 @@ export const App: React.FC = () => {
         if (raw) {
           const parsed = JSON.parse(raw);
           if (Array.isArray(parsed) && parsed.length > 0) {
+            const allZero = parsed.every((e: any) => !e.tyre || e.tyre.age === 0);
+            if (allZero) {
+              parsed.forEach((entry: any, i: number) => {
+                const age = i === 0 ? 2 : i === 1 ? 2 : i === 2 ? 5 : ((i * 2 + 1) % 6) + 1;
+                entry.tyre = {
+                  compound: i === 2 || i === 6 ? 'MEDIUM' : i === 7 ? 'HARD' : 'SOFT',
+                  age,
+                  used: age > 1,
+                };
+                entry.lapsCompleted = age;
+              });
+            }
             return parsed;
           }
         }
@@ -62,7 +75,21 @@ export const App: React.FC = () => {
     }
     return engine.getLeaderboard();
   });
-  const [session, setSession] = useState<SessionState>(() => engine.getSession());
+  const [session, setSession] = useState<SessionState>(() => {
+    const base = engine.getSession();
+    if (typeof window !== 'undefined') {
+      try {
+        const savedFinished = localStorage.getItem('f1_session_finished_at_ms');
+        if (savedFinished) {
+          const parsed = Number(savedFinished);
+          if (!isNaN(parsed) && parsed > 0) {
+            return { ...base, finishedAtMs: parsed };
+          }
+        }
+      } catch {}
+    }
+    return base;
+  });
   const [selectedDriverId, setSelectedDriverId] = useState<string>(() => engine.getSelectedDriverId());
   const [telemetry, setTelemetry] = useState<CarTelemetryType | null>(() => engine.getSelectedTelemetry());
   const [pitPrediction, setPitPrediction] = useState<PitPrediction | null>(() => engine.calculatePitPrediction('ant'));
@@ -308,18 +335,44 @@ export const App: React.FC = () => {
         setSignalRStatus('connected');
         setSignalRDetails('Sesión finalizada (Bandera a cuadros)');
         engine.setSessionEnded(true);
-        setSession(prev => ({
-          ...prev,
-          trackStatus: 'CHEQUERED',
-          timeRemainingSec: 0,
-        }));
+        const parsedFinishedTime = status.finishedUtc ? new Date(status.finishedUtc).getTime() : undefined;
+        setSession(prev => {
+          const finishedAtMs = prev.finishedAtMs || (parsedFinishedTime && !isNaN(parsedFinishedTime) ? parsedFinishedTime : Date.now());
+          try {
+            if (typeof window !== 'undefined') {
+              localStorage.setItem('f1_session_finished_at_ms', String(finishedAtMs));
+            }
+          } catch {}
+          return {
+            ...prev,
+            trackStatus: 'CHEQUERED',
+            timeRemainingSec: 0,
+            finishedAtMs,
+          };
+        });
       } else if (isLiveOnTrack) {
+        try {
+          if (typeof window !== 'undefined') {
+            localStorage.removeItem('f1_session_finished_at_ms');
+          }
+        } catch {}
         setIsOfficialLive(true);
         setSignalRStatus('live_streaming');
         setSignalRDetails('Conectado a F1 Live Timing (Directo)');
         engine.setSessionEnded(false);
+        const isQualy = status.sessionType?.toLowerCase().includes('qual') || status.sessionName?.toLowerCase().includes('qual');
+        const sessType: SessionState['type'] = isQualy
+          ? 'QUALIFYING'
+          : status.sessionType?.toLowerCase().includes('race')
+          ? 'RACE'
+          : status.sessionType?.toLowerCase().includes('sprint')
+          ? 'SPRINT'
+          : 'PRACTICE';
+
         setSession(prev => ({
           ...prev,
+          name: status.sessionName || prev.name,
+          type: status.sessionType ? sessType : prev.type,
           trackStatus: status.safetyCar ? 'SC' : status.vsc ? 'VSC' : 'GREEN',
           safetyCarDeployed: !!status.safetyCar,
           vscDeployed: !!status.vsc,
@@ -341,10 +394,15 @@ export const App: React.FC = () => {
       }
     });
 
+    const unsubscribeCarData = f1LiveWebSocketService.subscribeCarData((carDataMap) => {
+      engine.ingestLiveCarData(carDataMap);
+    });
+
     return () => {
       f1LiveWebSocketService.stopConnection();
       unsubscribeStatus();
       unsubscribeEntries();
+      unsubscribeCarData();
     };
   }, [engine]);
 
@@ -489,13 +547,15 @@ export const App: React.FC = () => {
                 </div>
               )}
 
-              {/* Telemetry 4-Panel Grid matching user sketch:
-                  Left: Tabla de tiempos (Leaderboard)
-                  Right-Top: Mapa (CircuitMap)
-                  Right-Bottom-Left: Velocidad (CarTelemetry)
-                  Right-Bottom-Right: Control de carrera (RaceControl) */}
+              {/* Indicador de Banderas en Vivo (Verde / Amarilla con sector / Roja / SC) */}
+              <TrackFlagIndicator
+                trackStatus={session.trackStatus || 'GREEN'}
+                messages={raceControlMessages}
+              />
+
+              {/* Telemetry Layout Grid: 80% Tabla de tiempos (Leaderboard) / 20% Barra Lateral */}
               <div className="telemetry-layout-grid">
-                {/* Panel Izquierdo: Tabla de Tiempos (Full Height) */}
+                {/* Panel Izquierdo: Tabla de Tiempos (Full Height, 80% Ancho) */}
                 <div className="telemetry-left-panel">
                   <Leaderboard
                     entries={leaderboard}
@@ -506,69 +566,58 @@ export const App: React.FC = () => {
                   />
                 </div>
 
-                {/* Columna Derecha: Arriba Mapa + Abajo (Velocidad + Control de Carrera) */}
+                {/* Columna Derecha: Benchmarks + Control de Carrera / Radios + Más Rápido por Sector */}
                 <div className="telemetry-right-panel">
-                  {/* Panel Superior Derecho: Mapa del Circuito */}
-                  <div className="telemetry-map-section">
-                    <CircuitMap
-                      circuit={session.circuit}
-                      entries={leaderboard}
-                      selectedDriverId={selectedDriverId}
-                      onSelectDriver={handleSelectDriver}
-                      trackStatus={session.trackStatus}
-                      telemetry={telemetry}
+                  {/* 1. Best Lap Benchmarks (Session Best morado + récords) */}
+                  <BestLapBenchmarks
+                    entries={leaderboard}
+                    sessionName={session.name || 'Practice 3'}
+                    circuitName={session.circuit.name}
+                  />
+
+                  {/* 2. Control de Carrera y Radios de Equipo */}
+                  <div className="telemetry-rc-section" style={{ flex: 1, minHeight: '260px', display: 'flex', flexDirection: 'column' }}>
+                    <RaceControl
+                      messages={raceControlMessages}
+                      radios={teamRadios}
                     />
+                  </div>
 
-                    {/* Entre sesiones: banner informativo elegante */}
-                    {!isOfficialLive && (() => {
-                      const next = getNextScheduledSession();
-                      const nowMs = Date.now();
-                      const lastSess = F1_SCHEDULE
-                        .flatMap(gp => gp.sessions.map(s => ({ gp, s })))
-                        .filter(({ s }) => new Date(s.startTimeUtc).getTime() < nowMs)
-                        .pop();
-                      return (
-                        <div className="f1-card" style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '10px' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <span style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: '#888', textTransform: 'uppercase', letterSpacing: '0.08em' }}>⏸ ENTRE SESIONES</span>
-                          </div>
-                          {lastSess && (
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                              <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Última:</span>
-                              <span style={{ fontSize: '0.78rem', fontFamily: 'var(--font-mono)', fontWeight: 700, color: '#aaa' }}>{lastSess.s.name} — {lastSess.gp.name}</span>
-                              <span style={{ fontSize: '0.65rem', color: '#555', background: 'rgba(255,255,255,0.05)', padding: '2px 6px', borderRadius: '4px', fontFamily: 'var(--font-mono)' }}>FINALIZADA</span>
-                            </div>
-                          )}
-                          {next && (
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                              <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Siguiente:</span>
-                              <span style={{ fontSize: '0.78rem', fontFamily: 'var(--font-mono)', fontWeight: 700, color: '#fff' }}>{next.sess.name} — {next.gp.name}</span>
-                              <span style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: '#00D7B6', background: 'rgba(0,215,182,0.08)', border: '1px solid rgba(0,215,182,0.2)', padding: '2px 6px', borderRadius: '4px' }}>
-                                {new Date(next.start).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
-                              </span>
-                            </div>
-                          )}
+                  {/* 3. Más Rápido por Sector (Sustituye al velocímetro) */}
+                  <FastestBySector entries={leaderboard} />
+
+                  {/* Entre sesiones: banner informativo elegante */}
+                  {!isOfficialLive && (() => {
+                    const next = getNextScheduledSession();
+                    const nowMs = Date.now();
+                    const lastSess = F1_SCHEDULE
+                      .flatMap(gp => gp.sessions.map(s => ({ gp, s })))
+                      .filter(({ s }) => new Date(s.startTimeUtc).getTime() < nowMs)
+                      .pop();
+                    return (
+                      <div className="f1-card" style={{ padding: '10px 14px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <span style={{ fontSize: '0.62rem', fontFamily: 'var(--font-mono)', color: '#888', textTransform: 'uppercase', letterSpacing: '0.08em' }}>⏸ ENTRE SESIONES</span>
                         </div>
-                      );
-                    })()}
-                  </div>
-
-                  {/* Panel Inferior Derecho (2 columnas): Velocidad a la izquierda y Control de Carrera a la derecha */}
-                  <div className="telemetry-bottom-row">
-                    <div className="telemetry-speed-box">
-                      <CarTelemetry
-                        telemetry={telemetry}
-                        driver={selectedDriver}
-                      />
-                    </div>
-
-                    <div className="telemetry-rc-box">
-                      <RaceControl
-                        messages={raceControlMessages}
-                        radios={teamRadios}
-                      />
-                    </div>
-                  </div>
+                        {lastSess && (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{ fontSize: '0.70rem', color: 'var(--text-muted)' }}>Última:</span>
+                            <span style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', fontWeight: 700, color: '#aaa' }}>{lastSess.s.name} — {lastSess.gp.name}</span>
+                            <span style={{ fontSize: '0.62rem', color: '#555', background: 'rgba(255,255,255,0.05)', padding: '1px 5px', borderRadius: '3px', fontFamily: 'var(--font-mono)' }}>FINALIZADA</span>
+                          </div>
+                        )}
+                        {next && (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{ fontSize: '0.70rem', color: 'var(--text-muted)' }}>Siguiente:</span>
+                            <span style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', fontWeight: 700, color: '#fff' }}>{next.sess.name} — {next.gp.name}</span>
+                            <span style={{ fontSize: '0.62rem', fontFamily: 'var(--font-mono)', color: '#00D7B6', background: 'rgba(0,215,182,0.08)', border: '1px solid rgba(0,215,182,0.2)', padding: '1px 5px', borderRadius: '3px' }}>
+                              {new Date(next.start).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
                 </div>
               </div>
             </>

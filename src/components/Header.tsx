@@ -87,11 +87,30 @@ export const Header: React.FC<HeaderProps> = ({
     return `${day} ${hours}:${minutes}h`;
   };
 
+  // Maximum cooldown for Chequered Flag display: 1.5 hours (90 min)
+  const CHEQUERED_COOLDOWN_MS = 90 * 60 * 1000;
+
   // Determine Chequered vs Live vs Standby states
-  const isChequered = 
-    session.trackStatus === 'CHEQUERED' ||
-    (!activeTimelineSession && lastFinishedSession && (nowMs - lastFinishedSession.endTime) < 3.5 * 3600 * 1000) ||
-    (!activeTimelineSession && !isOfficialLive && lastFinishedSession != null);
+  const isRecentFinish = (() => {
+    // 1. If we have explicit finishedAtMs timestamp from live stream
+    if (session.finishedAtMs) {
+      return (nowMs - session.finishedAtMs) < CHEQUERED_COOLDOWN_MS;
+    }
+    // 2. If trackStatus is CHEQUERED but no timestamp, fall back to timeline or default 90m
+    if (session.trackStatus === 'CHEQUERED') {
+      if (lastFinishedSession && !isNaN(lastFinishedSession.endTime)) {
+        return (nowMs - lastFinishedSession.endTime) < CHEQUERED_COOLDOWN_MS;
+      }
+      return true;
+    }
+    // 3. Fallback based on schedule timeline
+    if (!activeTimelineSession && lastFinishedSession && !isNaN(lastFinishedSession.endTime)) {
+      return (nowMs - lastFinishedSession.endTime) < CHEQUERED_COOLDOWN_MS;
+    }
+    return false;
+  })();
+
+  const isChequered = !activeTimelineSession && !isOfficialLive && isRecentFinish;
 
   const isLiveActive = !isChequered && (
     activeTimelineSession != null ||

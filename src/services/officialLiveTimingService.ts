@@ -278,7 +278,12 @@ class OfficialLiveTimingSyncService {
         const s3Segments = this.extractSegments(sectors[2]?.Segments, s3Status);
 
         // Tyre data from TimingAppData
-        const stints = appLines[racingNum]?.Stints || [];
+        const rawStints = appLines[racingNum]?.Stints;
+        const stints = Array.isArray(rawStints) 
+          ? rawStints 
+          : (typeof rawStints === 'object' && rawStints !== null 
+              ? Object.keys(rawStints).sort((a, b) => Number(a) - Number(b)).map(k => (rawStints as any)[k]) 
+              : []);
         const currentStint = stints[stints.length - 1];
         const compoundRaw = currentStint?.Compound?.toUpperCase() || 'MEDIUM';
         const compound = ['SOFT', 'MEDIUM', 'HARD', 'INTERMEDIATE', 'WET'].includes(compoundRaw) ? compoundRaw as any : 'MEDIUM';

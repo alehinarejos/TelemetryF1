@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useMemo } from 'react';
 import type { CircuitInfo, LeaderboardEntry } from '../types/telemetry';
 import { ZoomIn, ZoomOut, RotateCcw, Crosshair } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
@@ -38,13 +38,75 @@ export const CircuitMap: React.FC<CircuitMapProps> = ({
     }
   }, [circuit]);
 
-  // Calculate coordinates (x, y) along path with robust synchronous evaluation
-  const getCoordinates = (progress: number): { x: number; y: number } => {
+  // Generate pit lane path dynamically parallel to the start/finish straight
+  const pitLaneSvgPath = useMemo(() => {
+    const el = pathRef.current;
+    if (!el) return '';
+    try {
+      const total = pathLength > 0 ? pathLength : el.getTotalLength();
+      if (total <= 0) return '';
+      const points: string[] = [];
+      const steps = 16;
+      for (let i = 0; i <= steps; i++) {
+        // Pit lane runs along the start/finish straight (~0.960 to 0.035)
+        const p = 0.960 + (i / steps) * 0.075;
+        const normP = ((p % 1.0) + 1.0) % 1.0;
+        const dist = normP * total;
+        const pt = el.getPointAtLength(dist);
+        const delta = 3;
+        const p1 = el.getPointAtLength(Math.max(0, dist - delta));
+        const p2 = el.getPointAtLength(Math.min(total, dist + delta));
+        const dx = p2.x - p1.x;
+        const dy = p2.y - p1.y;
+        const len = Math.hypot(dx, dy) || 1;
+        const nx = -dy / len;
+        const ny = dx / len;
+        const px = pt.x + nx * 18;
+        const py = pt.y + ny * 18;
+        points.push(`${i === 0 ? 'M' : 'L'} ${px.toFixed(1)},${py.toFixed(1)}`);
+      }
+      return points.join(' ');
+    } catch {
+      return '';
+    }
+  }, [pathLength, circuit]);
+
+  // Calculate coordinates (x, y) along path with pit lane support
+  const getCoordinates = (
+    progress: number,
+    inPit: boolean = false,
+    driverIndex: number = 0
+  ): { x: number; y: number } => {
     const el = pathRef.current;
     if (el) {
       try {
         const total = pathLength > 0 ? pathLength : el.getTotalLength();
         if (total > 0) {
+          if (inPit) {
+            // Pit lane is situated along the start/finish straight (~0.968 to 0.028)
+            // Each team/driver has a dedicated pit garage slot
+            const totalDrivers = entries.length || 20;
+            const pitProgress = 0.968 + (driverIndex / Math.max(1, totalDrivers)) * 0.058;
+            const normP = ((pitProgress % 1.0) + 1.0) % 1.0;
+            const dist = normP * total;
+            const pt = el.getPointAtLength(dist);
+
+            const delta = 3;
+            const p1 = el.getPointAtLength(Math.max(0, dist - delta));
+            const p2 = el.getPointAtLength(Math.min(total, dist + delta));
+            const dx = p2.x - p1.x;
+            const dy = p2.y - p1.y;
+            const len = Math.hypot(dx, dy) || 1;
+            const nx = -dy / len;
+            const ny = dx / len;
+
+            const pitOffset = 18;
+            return {
+              x: pt.x + nx * pitOffset,
+              y: pt.y + ny * pitOffset,
+            };
+          }
+
           const normP = ((progress % 1.0) + 1.0) % 1.0;
           const dist = normP * total;
           const pt = el.getPointAtLength(dist);
@@ -63,15 +125,21 @@ export const CircuitMap: React.FC<CircuitMapProps> = ({
   };
 
   const selectedCar = entries.find(e => e.driver.id === selectedDriverId);
-  const selectedCoords = selectedCar ? getCoordinates(selectedCar.trackProgress) : { x: 400, y: 280 };
+  const selectedIndex = entries.findIndex(e => e.driver.id === selectedDriverId);
+  const selectedInPit = selectedCar ? (selectedCar.inPit || trackStatus === 'CHEQUERED') : false;
+  const selectedCoords = selectedCar 
+    ? getCoordinates(selectedCar.trackProgress, selectedInPit, selectedIndex >= 0 ? selectedIndex : 0) 
+    : { x: 400, y: 280 };
 
   // Determine current sector for selected car
   const selectedProgress = selectedCar ? (((selectedCar.trackProgress % 1.0) + 1.0) % 1.0) : 0;
-  const currentSector = selectedProgress < (circuit.sectors?.s1EndProgress || 0.31)
-    ? 'Sector 1'
-    : selectedProgress < (circuit.sectors?.s2EndProgress || 0.68)
-      ? 'Sector 2'
-      : 'Sector 3';
+  const currentSector = selectedInPit
+    ? 'Pit Lane'
+    : selectedProgress < (circuit.sectors?.s1EndProgress || 0.31)
+      ? 'Sector 1'
+      : selectedProgress < (circuit.sectors?.s2EndProgress || 0.68)
+        ? 'Sector 2'
+        : 'Sector 3';
 
   return (
     <div className="f1-card map-container" style={{ position: 'relative' }}>
@@ -195,9 +263,31 @@ export const CircuitMap: React.FC<CircuitMapProps> = ({
           {/* Center Dashed Line */}
           <path d={circuit.svgPath} className="track-centerline" />
 
+          {/* Pit Lane Tarmac & Markings */}
+          {pitLaneSvgPath && (
+            <g className="pit-lane-layer">
+              <path 
+                d={pitLaneSvgPath} 
+                stroke="rgba(255, 255, 255, 0.22)" 
+                strokeWidth="6" 
+                fill="none" 
+                strokeLinecap="round"
+              />
+              <path 
+                d={pitLaneSvgPath} 
+                stroke="#00ffff" 
+                strokeWidth="1.5" 
+                fill="none" 
+                strokeDasharray="4 4" 
+                opacity="0.8"
+              />
+            </g>
+          )}
+
           {/* Driver Markers */}
-          {entries.map((entry) => {
-            const { x, y } = getCoordinates(entry.trackProgress);
+          {entries.map((entry, idx) => {
+            const inPit = entry.inPit || trackStatus === 'CHEQUERED';
+            const { x, y } = getCoordinates(entry.trackProgress, inPit, idx);
             const isSelected = entry.driver.id === selectedDriverId;
             const radius = isSelected ? 9 : 6.5;
 
@@ -232,14 +322,41 @@ export const CircuitMap: React.FC<CircuitMapProps> = ({
                   className="car-marker-circle"
                   r={radius}
                   fill={entry.driver.teamColor}
-                  stroke={isSelected ? '#ffffff' : '#000000'}
-                  strokeWidth={isSelected ? 2 : 1}
+                  stroke={isSelected ? '#ffffff' : inPit ? '#00ffff' : '#000000'}
+                  strokeWidth={isSelected ? 2 : inPit ? 1.5 : 1}
+                  opacity={inPit ? 0.9 : 1}
                 />
 
                 {/* Driver Number */}
                 <text className="car-marker-text">
                   {entry.driver.number}
                 </text>
+
+                {/* Small PIT Badge for cars in box */}
+                {inPit && (
+                  <g transform="translate(0, 10)">
+                    <rect
+                      x="-8"
+                      y="-4"
+                      width="16"
+                      height="7"
+                      rx="2"
+                      fill="rgba(5, 8, 15, 0.92)"
+                      stroke="#00ffff"
+                      strokeWidth="0.6"
+                    />
+                    <text
+                      x="0"
+                      y="1.2"
+                      textAnchor="middle"
+                      fill="#00ffff"
+                      fontSize="4.8"
+                      fontWeight="900"
+                    >
+                      PIT
+                    </text>
+                  </g>
+                )}
 
                 {/* Speed indicator tooltip attached to selected car */}
                 {isSelected && telemetry && (
@@ -258,12 +375,12 @@ export const CircuitMap: React.FC<CircuitMapProps> = ({
                       x="0"
                       y="-3"
                       textAnchor="middle"
-                      fill={trackStatus === 'CHEQUERED' ? '#ffd700' : '#00ffaa'}
+                      fill={trackStatus === 'CHEQUERED' || inPit ? '#ffd700' : '#00ffaa'}
                       fontSize="9"
                       fontWeight="bold"
                       fontFamily="var(--font-mono)"
                     >
-                      {trackStatus === 'CHEQUERED' ? 'EN BOXES' : `${telemetry.speed} km/h`}
+                      {trackStatus === 'CHEQUERED' || inPit ? 'EN BOXES' : `${telemetry.speed} km/h`}
                     </text>
                   </g>
                 )}
@@ -278,6 +395,10 @@ export const CircuitMap: React.FC<CircuitMapProps> = ({
         <div className="legend-item">
           <div className="legend-color-dot" style={{ background: 'var(--color-drs)' }} />
           <span>{t('drs_zone')}</span>
+        </div>
+        <div className="legend-item">
+          <div className="legend-color-dot" style={{ background: '#00ffff' }} />
+          <span>Pit Lane / Boxes</span>
         </div>
         <div className="legend-item">
           <div className="legend-color-dot" style={{ background: '#ffffff' }} />

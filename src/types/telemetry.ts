@@ -51,6 +51,7 @@ export interface LeaderboardEntry {
   speedTrap: number; // km/h
   lastLapTimeNum: number; // in seconds
   trackProgress: number; // 0 to 1 along circuit
+  lapsCompleted?: number; // total laps completed by driver
 }
 
 export interface CarTelemetry {
@@ -112,6 +113,7 @@ export interface SessionState {
   vscDeployed: boolean;
   redFlagDeployed: boolean;
   drsEnabled: boolean;
+  finishedAtMs?: number;
 }
 
 export interface RaceControlMessage {

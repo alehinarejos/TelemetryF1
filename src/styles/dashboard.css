@@ -221,26 +221,29 @@
 /* Main Content Area */
 .main-content {
   flex: 1;
-  padding: 18px 24px;
-  max-width: 1920px;
+  padding: 12px 18px;
+  max-width: 100%;
   margin: 0 auto;
   width: 100%;
+  box-sizing: border-box;
 }
 
-/* Grid Layout for Live Timing Dashboard (Exact User Drawing 4-Panel Compact Layout) */
+/* Grid Layout for Live Timing Dashboard: 80% Leaderboard / 20% Right sidebar */
 .telemetry-layout-grid,
 .dashboard-grid {
   display: grid;
-  grid-template-columns: 1.1fr 1fr;
+  grid-template-columns: minmax(0, 4fr) minmax(260px, 1fr);
   align-items: stretch;
-  gap: 12px;
-  height: calc(100vh - 130px);
-  max-height: calc(100vh - 130px);
-  min-height: 540px;
+  gap: 14px;
+  height: calc(100vh - 120px);
+  max-height: calc(100vh - 120px);
+  min-height: 560px;
   overflow: hidden;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-/* Left Panel: Tabla de tiempos (Full height, compact) */
+/* Left Panel: Tabla de tiempos (Full height, 80% width) */
 .telemetry-left-panel,
 .grid-col-leaderboard {
   display: flex;
@@ -248,6 +251,7 @@
   height: 100%;
   min-height: 0;
   overflow: hidden;
+  width: 100%;
 }
 
 .telemetry-left-panel .leaderboard-container,
@@ -258,30 +262,47 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
-/* Right Panel: Top (Map) + Bottom (Speed + Race Control) */
+/* Right Panel: Top (Benchmarks) + Middle (Race Control) + Bottom (Fastest by Sector) */
 .telemetry-right-panel {
   display: flex;
   flex-direction: column;
   gap: 12px;
   height: 100%;
   min-height: 0;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 2px;
 }
 
-.telemetry-map-section {
-  flex: 1.1;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+.telemetry-right-panel::-webkit-scrollbar {
+  width: 4px;
 }
 
-.telemetry-map-section .map-container {
-  height: 100%;
-  min-height: 0;
-  flex: 1;
+.telemetry-right-panel::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+
+/* Track Flag Indicator Bar */
+.track-flag-indicator-bar {
+  width: 100%;
+  box-sizing: border-box;
+  animation: fadeIn 0.3s ease;
+}
+
+/* Best Lap Benchmarks Card */
+.best-lap-benchmarks-card {
+  flex-shrink: 0;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+
+/* Fastest By Sector Card */
+.fastest-by-sector-card {
+  flex-shrink: 0;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
 }
 
 .telemetry-bottom-row {

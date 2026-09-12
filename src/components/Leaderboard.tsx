@@ -1,107 +1,103 @@
 import React, { useState } from 'react';
 import type { LeaderboardEntry } from '../types/telemetry';
 import { useLanguage } from '../context/LanguageContext';
-import { ArrowUpDown } from 'lucide-react';
+import { TeamLogo } from './TeamLogo';
 
-// Mini sector bars (3 bars per sector) — like f1telemetry.com
-function MiniSectors({ status, segments }: { status: string; segments?: Array<string>; driverIdx?: number; sectorIdx?: number }) {
-  const colors: Record<string, string> = {
-    purple: '#b034d1', green: '#00D46A', yellow: '#ffd60a', pit: '#0095ff', none: '#333333',
-  };
-  const base = colors[status] || colors.none;
-  let fills: string[] = [];
-  if (segments && segments.length > 0) {
-    fills = segments.slice(0, 3).map(s => colors[s] || base);
-    while (fills.length < 3) fills.push(base);
-  } else {
-    fills = [base, base, base];
+// Helper to parse lap time to seconds for finding fastest lap
+const parseLapTimeToSec = (t?: string): number => {
+  if (!t || t.includes('-') || t.includes('DNF') || t.trim() === '') return Infinity;
+  const clean = t.replace('+', '').trim();
+  const parts = clean.split(':');
+  if (parts.length === 2) {
+    return parseFloat(parts[0]) * 60 + parseFloat(parts[1]);
   }
-  return (
-    <div style={{ display: 'flex', gap: '1.5px', marginTop: '2px' }}>
-      {fills.map((c, i) => (
-        <div key={i} style={{ width: '6px', height: '2.5px', borderRadius: '1px', backgroundColor: c, opacity: status === 'none' ? 0.3 : 0.95 }} />
-      ))}
-    </div>
-  );
-}
+  return parseFloat(clean) || Infinity;
+};
 
-// Sector cell with mini sector bars (fixed height, zero layout shift)
-function SectorCell({ time, status, segments, driverIdx, sectorIdx }: { time: string; status: string; segments?: Array<string>; driverIdx: number; sectorIdx: number }) {
-  const displayTime = time && time.trim() !== '' ? time : '--.---';
-  const bg = status === 'purple' ? 'rgba(176,34,210,0.22)' : status === 'green' ? 'rgba(0,212,106,0.16)' : status === 'yellow' ? 'rgba(255,214,10,0.14)' : status === 'pit' ? 'rgba(0,149,255,0.16)' : 'transparent';
-  const fg = status === 'purple' ? '#d134f0' : status === 'green' ? '#00D46A' : status === 'yellow' ? '#ffd60a' : status === 'pit' ? '#0095ff' : '#666';
+// Mini Sector Group (8 mini-bars for S1, 8 for S2, 9 for S3 = 25 total)
+function MiniSectorGroup({
+  time,
+  status,
+  segments,
+  count,
+}: {
+  time?: string;
+  status: string;
+  segments?: Array<string>;
+  count: number;
+}) {
+  const colorMap: Record<string, string> = {
+    purple: '#d354ff',
+    green: '#00e676',
+    yellow: '#ffd60a',
+    pit: '#0095ff',
+    none: 'rgba(255, 255, 255, 0.12)',
+  };
+
+  const ticks: string[] = [];
+  for (let i = 0; i < count; i++) {
+    if (segments && segments[i] && colorMap[segments[i]]) {
+      ticks.push(colorMap[segments[i]]);
+    } else if (status && status !== 'none') {
+      ticks.push(colorMap[status] || colorMap.none);
+    } else {
+      ticks.push(colorMap.none);
+    }
+  }
+
+  const timeColor =
+    status === 'purple'
+      ? '#d354ff'
+      : status === 'green'
+      ? '#00e676'
+      : status === 'yellow'
+      ? '#ffd60a'
+      : status === 'pit'
+      ? '#0095ff'
+      : '#64748b';
+
   return (
     <div style={{
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
-      justifyContent: 'center',
-      background: bg,
-      borderRadius: '3px',
-      padding: '1px 2px',
-      height: '24px',
-      boxSizing: 'border-box',
-      overflow: 'hidden',
+      gap: '2px',
+      flex: 1,
+      minWidth: 0,
     }}>
-      <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.66rem', fontWeight: 700, color: fg, whiteSpace: 'nowrap', lineHeight: 1 }}>{displayTime}</span>
-      <MiniSectors status={status} segments={segments} driverIdx={driverIdx} sectorIdx={sectorIdx} />
-    </div>
-  );
-}
-
-// Lap times cell displaying both Last Lap (top) and Best Lap (bottom) like official F1 Live Timing
-function LapTimesCell({
-  lastLapTime,
-  bestLapTime,
-  isOverallFastest,
-  isLeaderRow,
-}: {
-  lastLapTime?: string;
-  bestLapTime: string;
-  isOverallFastest: boolean;
-  isLeaderRow: boolean;
-}) {
-  const displayLast = lastLapTime && lastLapTime !== '--:--.---' ? lastLapTime : '--:--.---';
-  const displayBest = bestLapTime && bestLapTime !== '--:--.---' ? bestLapTime : '--:--.---';
-
-  return (
-    <div className="cell-laptimes" style={{
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      height: '30px',
-      boxSizing: 'border-box',
-      lineHeight: 1.15,
-    }}>
-      {/* Top: Last Lap Time (Última vuelta cerrada) */}
-      <span
-        style={{
-          fontFamily: 'var(--font-mono)',
-          fontSize: '0.62rem',
-          color: '#bbb',
-          fontWeight: 600,
-          letterSpacing: '0.01em',
-          whiteSpace: 'nowrap',
-        }}
-        title={`Última vuelta cerrada: ${displayLast}`}
-      >
-        {displayLast}
-      </span>
-
-      {/* Bottom: Best Lap Time (Mejor vuelta de sesión) */}
-      <span
-        style={{
-          fontFamily: 'var(--font-mono)',
-          fontSize: '0.73rem',
-          fontWeight: 800,
-          color: isOverallFastest ? '#d134f0' : isLeaderRow ? '#00ffaa' : '#51cf66',
-          letterSpacing: '0.01em',
-          whiteSpace: 'nowrap',
-        }}
-        title={`Mejor vuelta de sesión: ${displayBest}`}
-      >
-        {displayBest}
+      {/* Row of micro-bars (larger, vivid, clearly visible) */}
+      <div style={{ display: 'flex', gap: '2.5px', width: '100%', justifyContent: 'center' }}>
+        {ticks.map((c, i) => (
+          <div
+            key={i}
+            style={{
+              flex: 1,
+              maxWidth: '12px',
+              minWidth: '4px',
+              height: '8px',
+              borderRadius: '2px',
+              backgroundColor: c,
+              boxShadow: c === '#d354ff' 
+                ? '0 0 6px rgba(211, 84, 255, 0.85)' 
+                : c === '#00e676'
+                ? '0 0 5px rgba(0, 230, 118, 0.65)'
+                : 'none',
+              transition: 'background-color 0.2s ease',
+            }}
+          />
+        ))}
+      </div>
+      {/* Sector time */}
+      <span style={{
+        fontFamily: 'var(--font-mono)',
+        fontSize: '0.72rem',
+        fontWeight: status === 'purple' || status === 'green' ? 800 : 600,
+        color: timeColor,
+        lineHeight: 1.1,
+        whiteSpace: 'nowrap',
+        marginTop: '1px',
+      }}>
+        {time && time.trim() !== '' ? time : '—'}
       </span>
     </div>
   );
@@ -120,64 +116,91 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
   selectedDriverId,
   onSelectDriver,
   isQualifying = false,
-  sessionType = 'PRACTICE',
+  sessionType: _sessionType = 'PRACTICE',
 }) => {
-  const isPracticeOrQualy = sessionType === 'PRACTICE' || sessionType === 'QUALIFYING';
   const { t } = useLanguage();
-  const [gapMode, setGapMode] = useState<'leader' | 'interval'>('leader');
+  const [viewMode, setViewMode] = useState<'timing' | 'stints'>('timing');
 
-  const toggleGapMode = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setGapMode(prev => prev === 'leader' ? 'interval' : 'leader');
-  };
+  // Find the overall session best lap time
+  let minSessionBestSec = Infinity;
+  for (const e of entries) {
+    const s = parseLapTimeToSec(e.bestLapTime);
+    if (s < minSessionBestSec) {
+      minSessionBestSec = s;
+    }
+  }
 
   return (
     <div className="f1-card leaderboard-container">
-      <div className="card-header">
-        <div className="card-title">
-          <span style={{ color: 'var(--f1-red)', fontWeight: 900 }}>{t('timing')}</span>
-          <span>{t('live_timing_title')}</span>
+      {/* Top Header Card Controls: Timing / Stints toggle */}
+      <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px' }}>
+        <div className="card-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ fontSize: '0.92rem', fontWeight: 800, color: '#fff', fontFamily: 'var(--font-display)' }}>
+            Leaderboard
+          </span>
+          <div style={{
+            display: 'inline-flex',
+            background: 'rgba(255, 255, 255, 0.06)',
+            borderRadius: '6px',
+            padding: '2px',
+            marginLeft: '12px',
+          }}>
+            <button
+              style={{
+                background: viewMode === 'timing' ? '#2563eb' : 'transparent',
+                color: viewMode === 'timing' ? '#fff' : '#94a3b8',
+                border: 'none',
+                borderRadius: '4px',
+                padding: '3px 10px',
+                fontSize: '0.68rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                fontFamily: 'var(--font-mono)',
+              }}
+              onClick={() => setViewMode('timing')}
+            >
+              Timing
+            </button>
+            <button
+              style={{
+                background: viewMode === 'stints' ? '#2563eb' : 'transparent',
+                color: viewMode === 'stints' ? '#fff' : '#94a3b8',
+                border: 'none',
+                borderRadius: '4px',
+                padding: '3px 10px',
+                fontSize: '0.68rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                fontFamily: 'var(--font-mono)',
+              }}
+              onClick={() => setViewMode('stints')}
+            >
+              Stints
+            </button>
+          </div>
         </div>
+
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          {isPracticeOrQualy && (
-            <span style={{ fontSize: '0.62rem', fontFamily: 'var(--font-mono)', color: '#00D7B6', background: 'rgba(0,215,182,0.1)', border: '1px solid rgba(0,215,182,0.25)', borderRadius: '4px', padding: '2px 6px', fontWeight: 700 }}>
-              MEJOR VUELTA
-            </span>
-          )}
-          <div className="f1-badge badge-green">{t('official_fia')}</div>
+          <div className="f1-badge badge-green" style={{ fontSize: '0.62rem', padding: '2px 8px' }}>
+            {t('official_fia')}
+          </div>
         </div>
       </div>
 
-      {/* Table Header */}
+      {/* Table Header: POS | DRIVER | GAP | INT | LAST | BEST | MINI-SECTORS | LAPS | PIT | TYRE */}
       <div className="leaderboard-header-row">
-        <span>{t('pos')}</span>
-        <span>#</span>
-        <span style={{ paddingLeft: '2px' }}>{t('driver')}</span>
-        
-        {/* Combined interactive Gap / Interval column */}
-        <button
-          type="button"
-          onClick={toggleGapMode}
-          className="leaderboard-gap-toggle-header"
-          title={gapMode === 'leader' ? `${t('gap_leader')} • Click para ver ${t('interval')}` : `${t('interval')} • Click para ver ${t('gap_leader')}`}
-        >
-          <span className="gap-mode-text">
-            {gapMode === 'leader' ? t('gap_leader') : t('interval')}
-          </span>
-          <ArrowUpDown size={11} className="gap-toggle-icon" />
-        </button>
-
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', lineHeight: 1.1 }}>
-          <span style={{ fontSize: '0.48rem', color: 'var(--text-muted)', letterSpacing: '0.04em' }}>ÚLTIMA</span>
-          <span style={{ fontSize: '0.62rem', color: '#fff', fontWeight: 800, letterSpacing: '0.03em' }}>MEJOR</span>
-        </div>
-        <span className="col-sector" style={{ textAlign: 'center' }}>S1</span>
-        <span className="col-sector" style={{ textAlign: 'center' }}>S2</span>
-        <span className="col-sector" style={{ textAlign: 'center' }}>S3</span>
-        <span style={{ textAlign: 'left', paddingLeft: '2px' }}>
-          <span className="show-desktop">{t('tyres')}</span>
-          <span className="show-mobile">{t('tyres_short')}</span>
+        <span className="col-header-center">POS</span>
+        <span style={{ paddingLeft: '4px' }}>DRIVER</span>
+        <span className="col-header-center">GAP</span>
+        <span className="col-header-center">INT</span>
+        <span className="col-header-center">LAST</span>
+        <span className="col-header-center">BEST</span>
+        <span className="col-header-center" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '4px' }}>
+          MINI-SECTORS <span style={{ fontSize: '0.55rem', opacity: 0.6 }}>ⓘ</span>
         </span>
+        <span className="col-header-center">LAPS</span>
+        <span className="col-header-center">PIT</span>
+        <span className="col-header-center">TYRE</span>
       </div>
 
       {/* Table Body */}
@@ -187,11 +210,37 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
           const showQ1Divider = isQualifying && index === 15;
           const showQ2Divider = isQualifying && index === 10;
 
-          // Determine gap value to display based on mode
           const isLeader = index === 0;
-          const displayedGap = isLeader
-            ? (entry.gapToLeader === 'GANADOR' ? t('winner_upper') : entry.gapToLeader)
-            : (gapMode === 'leader' ? entry.gapToLeader : entry.gapToAhead);
+          const displayedGap = isLeader ? '—' : (entry.gapToLeader ? entry.gapToLeader.replace('LÍDER', '—') : '—');
+          const displayedInt = isLeader ? '—' : (entry.gapToAhead ? entry.gapToAhead.replace('LEADER', '—') : '—');
+          const displayLast = entry.lastLapTime && entry.lastLapTime !== '--:--.---' ? entry.lastLapTime : (entry.currentLapTime || '—');
+          const displayBest = entry.bestLapTime && entry.bestLapTime !== '--:--.---' ? entry.bestLapTime : '—';
+          
+          const bestSec = parseLapTimeToSec(entry.bestLapTime);
+          const isOverallBestLap = bestSec === minSessionBestSec && minSessionBestSec !== Infinity;
+          const lapsCount = entry.lapsCompleted !== undefined ? entry.lapsCompleted : (entry.tyre?.age || 0);
+
+          // Compound color definitions
+          const compoundLetter = entry.tyre?.compound ? entry.tyre.compound[0] : 'S';
+          const isCompoundSoft = entry.tyre?.compound === 'SOFT';
+          const isCompoundMedium = entry.tyre?.compound === 'MEDIUM';
+          const isCompoundHard = entry.tyre?.compound === 'HARD';
+          const isCompoundInter = entry.tyre?.compound === 'INTERMEDIATE';
+          const isCompoundWet = entry.tyre?.compound === 'WET';
+
+          const compColor = isCompoundSoft
+            ? '#ff3b30'
+            : isCompoundMedium
+            ? '#ffd60a'
+            : isCompoundHard
+            ? '#ffffff'
+            : isCompoundInter
+            ? '#34c759'
+            : isCompoundWet
+            ? '#007aff'
+            : '#64748b';
+
+          const hasTyre = Boolean(entry.tyre && entry.tyre.compound);
 
           return (
             <React.Fragment key={entry.driver.id}>
@@ -215,81 +264,175 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
                 className={`leaderboard-row ${isSelected ? 'selected' : ''} ${entry.inPit ? 'in-pit' : ''} ${entry.isEliminationRisk ? 'elimination-danger' : ''}`}
                 onClick={() => onSelectDriver(entry.driver.id)}
               >
-                {/* Position + delta arrow */}
+                {/* 1. POS */}
                 <div className="cell-pos" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1px' }}>
-                  <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '0.84rem', color: index === 0 ? 'var(--color-yellow)' : 'var(--text-highlight)' }}>{entry.position}</span>
-                  {(entry.previousPosition - entry.position) > 0 && <span style={{ fontSize: '0.48rem', color: '#00D46A', lineHeight: 1 }}>▲</span>}
+                  <span style={{
+                    fontFamily: 'var(--font-display)',
+                    fontWeight: 800,
+                    fontSize: '0.84rem',
+                    color: index === 0 ? '#ffd700' : '#f1f5f9'
+                  }}>
+                    {entry.position}
+                  </span>
+                  {(entry.previousPosition - entry.position) > 0 && <span style={{ fontSize: '0.48rem', color: '#00e676', lineHeight: 1 }}>▲</span>}
                   {(entry.previousPosition - entry.position) < 0 && <span style={{ fontSize: '0.48rem', color: '#ff4444', lineHeight: 1 }}>▼</span>}
                 </div>
 
-                {/* Driver Number & Team Bar */}
-                <div className="cell-driver">
-                  <div 
-                    className="driver-team-bar" 
-                    style={{ backgroundColor: entry.driver.teamColor }} 
-                  />
-                  <span className="driver-number">{entry.driver.number}</span>
+                {/* 2. DRIVER (Logo + Driver Code) */}
+                <div className="cell-driver-with-logo">
+                  <TeamLogo team={entry.driver.team} color={entry.driver.teamColor} size={20} />
+                  <span className="driver-code" style={{
+                    fontFamily: 'var(--font-display)',
+                    fontWeight: 800,
+                    fontSize: '0.80rem',
+                    color: '#f8fafc',
+                    letterSpacing: '0.02em',
+                  }}>
+                    {entry.driver.code}
+                  </span>
                 </div>
 
-                {/* Code, Flag & PitOut badge */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', minWidth: 0 }}>
-                  <span className="driver-code">{entry.driver.code}</span>
-                  <span style={{ fontSize: '0.78rem' }}>{entry.driver.flag}</span>
-                  {entry.isPitOut && (
-                    <span style={{ fontSize: '0.53rem', fontWeight: 900, background: 'rgba(0,149,255,0.2)', border: '1px solid rgba(0,149,255,0.45)', color: '#0af', padding: '0px 3px', borderRadius: '2px', letterSpacing: '0.03em' }}>OUT</span>
-                  )}
-                </div>
-
-                {/* Combined Gap to Leader / Interval */}
-                <div className={`cell-gap ${isLeader ? 'leader' : ''}`}>
+                {/* 3. GAP */}
+                <div className="cell-gap" style={{ textAlign: 'center', fontFamily: 'var(--font-mono)', fontSize: '0.68rem', color: isLeader ? '#64748b' : '#cbd5e1' }}>
                   {displayedGap}
                 </div>
 
-                {/* Lap Times (Last Lap / Best Lap) */}
-                <LapTimesCell
-                  lastLapTime={entry.lastLapTime || entry.currentLapTime}
-                  bestLapTime={entry.bestLapTime || entry.currentLapTime}
-                  isOverallFastest={entry.s1Status === 'purple' && entry.s2Status === 'purple' && entry.s3Status === 'purple'}
-                  isLeaderRow={index === 0}
-                />
-
-                {/* Sector 1 — with mini sector bars */}
-                <div className="col-sector">
-                  <SectorCell time={entry.s1Time} status={entry.s1Status} segments={entry.s1Segments} driverIdx={index} sectorIdx={0} />
+                {/* 4. INT */}
+                <div className="cell-interval" style={{ textAlign: 'center', fontFamily: 'var(--font-mono)', fontSize: '0.68rem', color: isLeader ? '#64748b' : '#cbd5e1' }}>
+                  {displayedInt}
                 </div>
 
-                {/* Sector 2 */}
-                <div className="col-sector">
-                  <SectorCell time={entry.s2Time} status={entry.s2Status} segments={entry.s2Segments} driverIdx={index} sectorIdx={1} />
+                {/* 5. LAST */}
+                <div className="cell-lap-single" style={{ textAlign: 'center', fontFamily: 'var(--font-mono)', fontSize: '0.70rem', color: entry.lastLapTime && !entry.inPit ? '#00e676' : '#94a3b8' }}>
+                  {displayLast}
                 </div>
 
-                {/* Sector 3 */}
-                <div className="col-sector">
-                  <SectorCell time={entry.s3Time} status={entry.s3Status} segments={entry.s3Segments} driverIdx={index} sectorIdx={2} />
+                {/* 6. BEST (Fastest lap of whole session in PURPLE!) */}
+                <div className="cell-lap-single" style={{ textAlign: 'center', fontFamily: 'var(--font-mono)', fontSize: '0.72rem' }}>
+                  {isOverallBestLap ? (
+                    <span style={{
+                      color: '#d354ff',
+                      fontWeight: 900,
+                      textShadow: '0 0 10px rgba(211, 84, 255, 0.5)',
+                      letterSpacing: '0.01em',
+                    }}>
+                      {displayBest}
+                    </span>
+                  ) : displayBest !== '—' ? (
+                    <span style={{ color: '#f1f5f9', fontWeight: 700 }}>
+                      {displayBest}
+                    </span>
+                  ) : (
+                    <span style={{ color: '#64748b' }}>—</span>
+                  )}
                 </div>
 
-                {/* Tyre compound circle + age + pit badge */}
-                <div className="cell-tyre">
-                  <div style={{
-                    width: '20px', height: '20px', borderRadius: '50%',
-                    border: `2px solid ${entry.tyre.compound === 'SOFT' ? '#ff3b30' : entry.tyre.compound === 'MEDIUM' ? '#ffd60a' : entry.tyre.compound === 'HARD' ? '#ddd' : entry.tyre.compound === 'INTERMEDIATE' ? '#34c759' : '#007aff'}`,
-                    backgroundColor: `${entry.tyre.compound === 'SOFT' ? '#ff3b30' : entry.tyre.compound === 'MEDIUM' ? '#ffd60a' : entry.tyre.compound === 'HARD' ? '#ddd' : entry.tyre.compound === 'INTERMEDIATE' ? '#34c759' : '#007aff'}22`,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-                    fontSize: '0.64rem', fontWeight: 900, fontFamily: 'var(--font-display)',
-                    color: entry.tyre.compound === 'SOFT' ? '#ff3b30' : entry.tyre.compound === 'MEDIUM' ? '#ffd60a' : entry.tyre.compound === 'HARD' ? '#ddd' : entry.tyre.compound === 'INTERMEDIATE' ? '#34c759' : '#007aff',
-                  }} title={`${entry.tyre.compound}${entry.tyre.used ? ' (usado)' : ''}`}>
-                    {entry.tyre.compound[0]}
-                  </div>
-                  <span style={{
-                    fontFamily: 'var(--font-mono)', fontSize: '0.67rem', fontWeight: 700,
-                    color: entry.tyre.age > 20 ? '#ff8c00' : entry.tyre.age > 10 ? '#ffd60a' : '#aaa',
-                    background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', padding: '1px 4px', borderRadius: '3px',
-                  }} title={`${entry.tyre.age} vueltas`}>{entry.tyre.age}v</span>
+                {/* 7. MINI-SECTORS (S1, S2, S3 with 25 mini-ticks) */}
+                <div className="cell-mini-sectors" style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  padding: '0 4px',
+                  minWidth: 0,
+                  flex: 1,
+                }}>
+                  <MiniSectorGroup time={entry.s1Time} status={entry.s1Status} segments={entry.s1Segments} count={8} />
+                  <MiniSectorGroup time={entry.s2Time} status={entry.s2Status} segments={entry.s2Segments} count={8} />
+                  <MiniSectorGroup time={entry.s3Time} status={entry.s3Status} segments={entry.s3Segments} count={9} />
+                </div>
+
+                {/* 8. LAPS */}
+                <div className="cell-laps-completed" style={{
+                  textAlign: 'center',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.72rem',
+                  fontWeight: 700,
+                  color: '#94a3b8'
+                }}>
+                  {lapsCount}
+                </div>
+
+                {/* 9. PIT */}
+                <div className="cell-pit-status" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   {entry.inPit ? (
-                    <span style={{ background: 'rgba(0,149,255,0.25)', border: '1px solid rgba(0,149,255,0.5)', color: '#0af', fontSize: '0.6rem', fontWeight: 900, padding: '1px 5px', borderRadius: '3px', letterSpacing: '0.04em' }}>PIT</span>
-                  ) : entry.pitStops > 0 ? (
-                    <span className="pit-stops-badge">{entry.pitStops}p</span>
-                  ) : null}
+                    <span style={{
+                      background: 'rgba(37, 99, 235, 0.25)',
+                      border: '1px solid rgba(59, 130, 246, 0.5)',
+                      color: '#60a5fa',
+                      fontSize: '0.60rem',
+                      fontWeight: 800,
+                      padding: '2px 5px',
+                      borderRadius: '4px',
+                      letterSpacing: '0.03em',
+                    }}>
+                      IN PIT
+                    </span>
+                  ) : entry.isPitOut ? (
+                    <span style={{
+                      background: 'rgba(0, 230, 118, 0.2)',
+                      border: '1px solid rgba(0, 230, 118, 0.45)',
+                      color: '#00e676',
+                      fontSize: '0.58rem',
+                      fontWeight: 800,
+                      padding: '2px 4px',
+                      borderRadius: '4px',
+                    }}>
+                      OUT LAP
+                    </span>
+                  ) : (
+                    <span style={{ color: '#64748b', fontSize: '0.70rem', fontFamily: 'var(--font-mono)' }}>
+                      —
+                    </span>
+                  )}
+                </div>
+
+                {/* 10. TYRE (Compound circle + Lap count) */}
+                <div className="cell-tyre-clean" style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '4px',
+                }}>
+                  {hasTyre ? (
+                    <>
+                      <div
+                        style={{
+                          width: '18px',
+                          height: '18px',
+                          borderRadius: '50%',
+                          border: `2px solid ${compColor}`,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0,
+                          fontSize: '0.62rem',
+                          fontWeight: 900,
+                          fontFamily: 'var(--font-display)',
+                          color: compColor,
+                          background: 'rgba(0,0,0,0.5)',
+                        }}
+                        title={`${entry.tyre.compound} (${entry.tyre.age} laps)`}
+                      >
+                        {compoundLetter}
+                      </div>
+                      <span style={{
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: '0.68rem',
+                        fontWeight: 700,
+                        color: compColor,
+                      }}>
+                        {entry.tyre.age}
+                      </span>
+                    </>
+                  ) : (
+                    <div style={{
+                      width: '16px',
+                      height: '16px',
+                      borderRadius: '50%',
+                      border: '1.5px solid #475569',
+                      background: 'rgba(255,255,255,0.03)',
+                    }} />
+                  )}
                 </div>
               </div>
             </React.Fragment>
